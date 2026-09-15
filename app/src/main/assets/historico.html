@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Histórico - Divergências</title>
+
+    <link
+        href="css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <nav
+        class="navbar navbar-expand-lg"
+        style="background-color: #b6202f;"
+        data-bs-theme="dark"
+    >
+
+        <div class="container-fluid">
+
+            <a
+                class="navbar-brand fw-bold"
+                href="index.html"
+            >
+                Divergências
+            </a>
+
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu"
+                aria-expanded="false"
+                aria-label="Abrir menu"
+            >
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <div
+                class="collapse navbar-collapse"
+                id="navbarMenu"
+            >
+
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="historico.html"
+                        >
+                            Histórico
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link disabled"
+                            aria-disabled="true"
+                            href="#"
+                        >
+                            Exportar Divergências...
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Conteúdo -->
+
+    <main class="container py-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h1 class="h3 mb-1">
+                    Histórico
+                </h1>
+
+                <p class="text-muted mb-0">
+                    Divergências registradas
+                </p>
+
+            </div>
+
+            <a
+                href="index.html"
+                class="btn btn-outline-secondary"
+            >
+                Nova divergência
+            </a>
+
+        </div>
+
+
+        <!-- Histórico -->
+
+        <div id="historico">
+
+            <div class="text-muted text-center py-4">
+                Carregando histórico...
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/historico.js"></script>
+
+</body>
+
+</html>
