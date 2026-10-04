@@ -42,72 +42,128 @@
 
 <body>
 
-    <nav
-    class="navbar navbar-expand-lg"
+    <!-- =========================================================
+     NAVBAR + MENU LATERAL (estilo app nativo)
+     ========================================================= -->
+
+<nav
+    class="navbar"
     style="background-color: #b6202f;"
     data-bs-theme="dark"
 >
-
     <div class="container-fluid">
 
+        <!-- Botão hamburger -->
+        <button
+            class="navbar-toggler border-0"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#menuLateral"
+            aria-controls="menuLateral"
+            aria-label="Abrir menu"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Nome do app (centro) -->
         <a
-            class="navbar-brand fw-bold"
+            class="navbar-brand fw-bold mx-auto"
             href="index.html"
         >
             Divergências
         </a>
 
+        <!-- Espaço vazio para equilibrar o layout -->
+        <div style="width: 40px;"></div>
+
+    </div>
+</nav>
+
+
+<!-- =========================================================
+     MENU LATERAL (Offcanvas)
+     ========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start"
+    tabindex="-1"
+    id="menuLateral"
+    aria-labelledby="menuLateralLabel"
+>
+    <div class="offcanvas-header" style="background-color: #b6202f;">
+        <h5
+            class="offcanvas-title text-white fw-bold"
+            id="menuLateralLabel"
+        >
+            Divergências
+        </h5>
+
         <button
-            class="navbar-toggler"
             type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarMenu"
-            aria-controls="navbarMenu"
-            aria-expanded="false"
-            aria-label="Abrir menu"
-        >
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fechar"
+        ></button>
+    </div>
 
-            <span class="navbar-toggler-icon"></span>
+    <div class="offcanvas-body p-0">
 
-        </button>
+        <div class="list-group list-group-flush">
 
-        <div
-            class="collapse navbar-collapse"
-            id="navbarMenu"
-        >
+            <a
+                href="sobre.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Sobre o app</strong>
+                <div class="small text-muted">
+                    Versão e informações
+                </div>
+            </a>
 
-            <ul class="navbar-nav ms-auto">
+            <a
+                href="index.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Calcular divergência</strong>
+                <div class="small text-muted">
+                    Registrar nova divergência
+                </div>
+            </a>
 
-                <li class="nav-item">
+            <a
+                href="historico.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Histórico</strong>
+                <div class="small text-muted">
+                    Ver divergências registradas
+                </div>
+            </a>
 
-                    <a
-                        class="nav-link"
-                        href="historico.html"
-                    >
-                        Histórico
-                    </a>
+            <a
+                href="notas.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Contagem de notas</strong>
+                <div class="small text-muted">
+                    Contar cédulas e moedas
+                </div>
+            </a>
 
-                </li>
-
-                <li class="nav-item">
-
-                    <a
-                        class="nav-link disabled"
-                        aria-disabled="true"
-                        href="#"
-                    >
-                        Exportar Divergências...
-                    </a>
-
-                </li>
-
-            </ul>
+            <!-- <a
+                href="sobre.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Sobre o app</strong>
+                <div class="small text-muted">
+                    Versão e informações
+                </div>
+            </a> -->
 
         </div>
 
     </div>
-
-</nav>
+</div>
 
 
 

@@ -32,6 +32,56 @@ let divergenciaEditando = null;
 let divergenciaParaExcluir = null;
 
 /* =========================================================
+ * MOCK DO ANDROID (só para testar no navegador)
+ * ========================================================= */
+if (typeof Android === "undefined") {
+    // "Banco" em memória só para o navegador
+    let mockDb = [];
+    let nextId = 1;
+
+    window.Android = {
+        listar: function () {
+            return JSON.stringify(mockDb);
+        },
+
+        salvar: function (valorOriginal, quantidade, valorPromocional, divergencia) {
+            const id = nextId++;
+            mockDb.push({
+                id: id,
+                valorOriginal: valorOriginal,
+                quantidade: quantidade,
+                valorPromocional: valorPromocional,
+                divergencia: divergencia,
+                dataHora: Date.now()
+            });
+            return id;
+        },
+
+        atualizar: function (id, valorOriginal, quantidade, valorPromocional, divergencia) {
+            const index = mockDb.findIndex(item => String(item.id) === String(id));
+            if (index === -1) return 0;
+
+            mockDb[index] = {
+                ...mockDb[index],
+                valorOriginal,
+                quantidade,
+                valorPromocional,
+                divergencia
+            };
+            return 1;
+        },
+
+        excluir: function (id) {
+            const tamanhoAntes = mockDb.length;
+            mockDb = mockDb.filter(item => String(item.id) !== String(id));
+            return tamanhoAntes !== mockDb.length ? 1 : 0;
+        }
+    };
+
+    console.log("Android mock ativo (modo navegador)");
+}
+
+/* =========================================================
  * MOEDA
  * ========================================================= */
 

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sobre - Divergências</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+
+        .sobre-card {
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .app-nome {
+            font-size: 28px;
+            font-weight: 700;
+            color: #b6202f;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .info-valor {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .descricao {
+            background: #f8f8f8;
+            border-radius: 10px;
+            padding: 20px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
+<!-- =========================================================
+     NAVBAR + MENU LATERAL (estilo app nativo)
+     ========================================================= -->
+
+<nav
+    class="navbar"
+    style="background-color: #b6202f;"
+    data-bs-theme="dark"
+>
+    <div class="container-fluid">
+
+        <!-- Botão hamburger -->
+        <button
+            class="navbar-toggler border-0"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#menuLateral"
+            aria-controls="menuLateral"
+            aria-label="Abrir menu"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Nome do app (centro) -->
+        <a
+            class="navbar-brand fw-bold mx-auto"
+            href="index.html"
+        >
+            Divergências
+        </a>
+
+        <!-- Espaço vazio para equilibrar o layout -->
+        <div style="width: 40px;"></div>
+
+    </div>
+</nav>
+
+
+<!-- =========================================================
+     MENU LATERAL (Offcanvas)
+     ========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start"
+    tabindex="-1"
+    id="menuLateral"
+    aria-labelledby="menuLateralLabel"
+>
+    <div class="offcanvas-header" style="background-color: #b6202f;">
+        <h5
+            class="offcanvas-title text-white fw-bold"
+            id="menuLateralLabel"
+        >
+            Divergências
+        </h5>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fechar"
+        ></button>
+    </div>
+
+    <div class="offcanvas-body p-0">
+
+        <div class="list-group list-group-flush">
+
+            <a
+                href="sobre.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Sobre o app</strong>
+                <div class="small text-muted">
+                    Versão e informações
+                </div>
+            </a>
+
+            <a
+                href="index.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Calcular divergência</strong>
+                <div class="small text-muted">
+                    Registrar nova divergência
+                </div>
+            </a>
+
+            <a
+                href="historico.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Histórico</strong>
+                <div class="small text-muted">
+                    Ver divergências registradas
+                </div>
+            </a>
+
+            <a
+                href="notas.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Contagem de notas</strong>
+                <div class="small text-muted">
+                    Contar cédulas e moedas
+                </div>
+            </a>
+
+            <!-- <a
+                href="sobre.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Sobre o app</strong>
+                <div class="small text-muted">
+                    Versão e informações
+                </div>
+            </a> -->
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- =========================================================
+     CONTEÚDO
+     ========================================================= -->
+
+<div class="container">
+
+    <div class="card shadow-sm sobre-card">
+        <div class="card-body p-4">
+
+            <div class="text-center mb-4">
+                <div class="app-nome">Divergências</div>
+                <div class="text-muted mt-1">
+                    Sistema de controle de divergências
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Informações do app -->
+            <div class="mb-4">
+
+                <div class="info-item">
+                    <span class="info-label">Nome do aplicativo</span>
+                    <span class="info-valor">Divergências</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Versão</span>
+                    <span class="info-valor" id="appVersao">1.0.0.0</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Última atualização</span>
+                    <span class="info-valor" id="appAtualizacao">04/10/2026</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Desenvolvedor</span>
+                    <span class="info-valor">Heitor Bisneto (Bisneto Inc.)</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Plataforma</span>
+                    <span class="info-valor">Android</span>
+                </div>
+
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Descrição -->
+            <h5 class="mb-3">Sobre o projeto</h5>
+
+            <div class="descricao">
+                <p class="mb-3">
+                    O <strong>Divergências</strong> é um aplicativo
+                    desenvolvido para facilitar o registro e o
+                    acompanhamento de diferenças de valores
+                    entre o preço original e o preço promocional
+                    de produtos.
+                </p>
+
+                <p class="mb-3">
+                    Com ele você pode:
+                </p>
+
+                <ul class="mb-0">
+                    <li>Calcular divergências por produto e quantidade</li>
+                    <li>Salvar o histórico de registros</li>
+                    <li>Editar e excluir lançamentos</li>
+                    <li>Realizar contagem de cédulas e moedas</li>
+                </ul>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="text-center text-muted small">
+                © 2026 Bisneto Inc. Todos os direitos reservados.
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script src="js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

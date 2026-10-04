@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Contagem de Dinheiro</title>
+
+<!-- Bootstrap -->
+<link
+    href="css/bootstrap.min.css"
+    rel="stylesheet"
+>
+
+<style>
+
+    body {
+        background: #f5f5f5;
+    }
+
+    .contagem-card {
+        max-width: 800px;
+        margin: 40px auto;
+    }
+
+    .valor-total {
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .resultado {
+        background: #f8f8f8;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .denominacao {
+        font-weight: 600;
+    }
+
+    .valor-denominacao {
+        min-width: 120px;
+        text-align: right;
+        font-weight: 600;
+    }
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
+<!-- =========================================================
+     NAVBAR + MENU LATERAL (estilo app nativo)
+     ========================================================= -->
+
+<nav
+    class="navbar"
+    style="background-color: #b6202f;"
+    data-bs-theme="dark"
+>
+    <div class="container-fluid">
+
+        <!-- Botão hamburger -->
+        <button
+            class="navbar-toggler border-0"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#menuLateral"
+            aria-controls="menuLateral"
+            aria-label="Abrir menu"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Nome do app (centro) -->
+        <a
+            class="navbar-brand fw-bold mx-auto"
+            href="index.html"
+        >
+            Divergências
+        </a>
+
+        <!-- Espaço vazio para equilibrar o layout -->
+        <div style="width: 40px;"></div>
+
+    </div>
+</nav>
+
+
+<!-- =========================================================
+     MENU LATERAL (Offcanvas)
+     ========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start"
+    tabindex="-1"
+    id="menuLateral"
+    aria-labelledby="menuLateralLabel"
+>
+    <div class="offcanvas-header" style="background-color: #b6202f;">
+        <h5
+            class="offcanvas-title text-white fw-bold"
+            id="menuLateralLabel"
+        >
+            Divergências
+        </h5>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fechar"
+        ></button>
+    </div>
+
+    <div class="offcanvas-body p-0">
+
+        <div class="list-group list-group-flush">
+
+            <a
+                href="sobre.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Sobre o app</strong>
+                <div class="small text-muted">
+                    Versão e informações
+                </div>
+            </a>
+
+            <a
+                href="index.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Calcular divergência</strong>
+                <div class="small text-muted">
+                    Registrar nova divergência
+                </div>
+            </a>
+
+            <a
+                href="historico.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Histórico</strong>
+                <div class="small text-muted">
+                    Ver divergências registradas
+                </div>
+            </a>
+
+            <a
+                href="notas.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Contagem de notas</strong>
+                <div class="small text-muted">
+                    Contar cédulas e moedas
+                </div>
+            </a>
+
+            <!-- <a
+                href="sobre.html"
+                class="list-group-item list-group-item-action py-3"
+            >
+                <strong>Sobre o app</strong>
+                <div class="small text-muted">
+                    Versão e informações
+                </div>
+            </a> -->
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- =========================================================
+     CONTEÚDO
+     ========================================================= -->
+
+<div class="container">
+
+    <div class="card shadow-sm contagem-card">
+
+        <div class="card-body p-4">
+
+            <h3 class="mb-4">
+                Contagem de Dinheiro
+            </h3>
+
+
+            <!-- =================================================
+                 CÉDULAS
+                 ================================================= -->
+
+            <h5 class="mb-3">
+                Cédulas
+            </h5>
+
+            <!-- R$ 100 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="nota100"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 100,00
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="nota100"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="10000"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total100"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- R$ 50 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="nota50"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 50,00
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="nota50"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="5000"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total50"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- R$ 20 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="nota20"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 20,00
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="nota20"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="2000"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total20"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- R$ 10 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="nota10"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 10,00
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="nota10"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="1000"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total10"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- R$ 5 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="nota5"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 5,00
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="nota5"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="500"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total5"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- R$ 2 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="nota2"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 2,00
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="nota2"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="200"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total2"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <hr class="my-4">
+
+
+            <!-- =================================================
+                 MOEDAS
+                 ================================================= -->
+
+            <h5 class="mb-3">
+                Moedas
+            </h5>
+
+
+            <!-- R$ 1 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="moeda1"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 1,00
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="moeda1"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="100"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total1"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- R$ 0,50 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="moeda50"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 0,50
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="moeda50"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="50"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total50centavos"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- R$ 0,25 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="moeda25"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 0,25
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="moeda25"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="25"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total25centavos"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- R$ 0,10 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="moeda10"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 0,10
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="moeda10"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="10"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total10centavos"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- R$ 0,05 -->
+            <div class="row align-items-center mb-3">
+
+                <div class="col-6 col-md-4">
+
+                    <label
+                        for="moeda5"
+                        class="form-label denominacao mb-0"
+                    >
+                        R$ 0,05
+                    </label>
+
+                </div>
+
+                <div class="col-6 col-md-4">
+
+                    <input
+                        type="number"
+                        class="form-control quantidade"
+                        id="moeda5"
+                        min="0"
+                        step="1"
+                        value=""
+                        inputmode="numeric"
+                        data-valor="5"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="col-md-4 mt-2 mt-md-0">
+
+                    <div
+                        class="valor-denominacao"
+                        id="total5centavos"
+                    >
+                        R$ 0,00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <hr class="my-4">
+
+
+            <!-- =================================================
+                 TOTAL
+                 ================================================= -->
+
+            <div class="resultado">
+
+                <div class="text-muted mb-2">
+                    Valor total
+                </div>
+
+                <div
+                    id="valorTotal"
+                    class="valor-total"
+                >
+                    R$ 0,00
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap -->
+<script src="js/bootstrap.bundle.min.js"></script>
+
+<!-- JavaScript da página -->
+<script src="js/contagem.js"></script>
+
+</body>
+
+</html>
