@@ -16,164 +16,165 @@
         href="css/bootstrap.min.css"
         rel="stylesheet"
     >
-
 </head>
 
 <body>
-
     <!-- Navbar -->
-
     <!-- =========================================================
      NAVBAR + MENU LATERAL (estilo app nativo)
      ========================================================= -->
 
-<nav
-    class="navbar"
-    style="background-color: #b6202f;"
-    data-bs-theme="dark"
->
-    <div class="container-fluid">
+    <nav
+        class="navbar"
+        style="background-color: #b6202f;"
+        data-bs-theme="dark"
+    >
+        <div class="container-fluid">
 
-        <!-- Botão hamburger -->
-        <button
-            class="navbar-toggler border-0"
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#menuLateral"
-            aria-controls="menuLateral"
-            aria-label="Abrir menu"
-        >
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Nome do app (centro) -->
-        <a
-            class="navbar-brand fw-bold mx-auto"
-            href="index.html"
-        >
-            Divergências
-        </a>
-
-        <!-- Espaço vazio para equilibrar o layout -->
-        <div style="width: 40px;"></div>
-
-    </div>
-</nav>
-
-
-<!-- =========================================================
-     MENU LATERAL (Offcanvas)
-     ========================================================= -->
-
-<div
-    class="offcanvas offcanvas-start"
-    tabindex="-1"
-    id="menuLateral"
-    aria-labelledby="menuLateralLabel"
->
-    <div class="offcanvas-header" style="background-color: #b6202f;">
-        <h5
-            class="offcanvas-title text-white fw-bold"
-            id="menuLateralLabel"
-        >
-            Divergências
-        </h5>
-
-        <button
-            type="button"
-            class="btn-close btn-close-white"
-            data-bs-dismiss="offcanvas"
-            aria-label="Fechar"
-        ></button>
-    </div>
-
-    <div class="offcanvas-body p-0">
-
-        <div class="list-group list-group-flush">
-
-            <a
-                href="sobre.html"
-                class="list-group-item list-group-item-action py-3"
+            <!-- Botão hamburger -->
+            <button
+                class="navbar-toggler border-0"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#menuLateral"
+                aria-controls="menuLateral"
+                aria-label="Abrir menu"
             >
-                <strong>Sobre o app</strong>
-                <div class="small text-muted">
-                    Versão e informações
-                </div>
-            </a>
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
+            <!-- Nome do app (centro) -->
             <a
+                class="navbar-brand fw-bold mx-auto"
                 href="index.html"
-                class="list-group-item list-group-item-action py-3"
             >
-                <strong>Calcular divergência</strong>
-                <div class="small text-muted">
-                    Registrar nova divergência
-                </div>
+                Divergências
             </a>
 
-            <a
-                href="historico.html"
-                class="list-group-item list-group-item-action py-3"
-            >
-                <strong>Histórico</strong>
-                <div class="small text-muted">
-                    Ver divergências registradas
-                </div>
-            </a>
-
-            <a
-                href="notas.html"
-                class="list-group-item list-group-item-action py-3"
-            >
-                <strong>Contagem de notas</strong>
-                <div class="small text-muted">
-                    Contar cédulas e moedas
-                </div>
-            </a>
-
-            <!-- <a
-                href="sobre.html"
-                class="list-group-item list-group-item-action py-3"
-            >
-                <strong>Sobre o app</strong>
-                <div class="small text-muted">
-                    Versão e informações
-                </div>
-            </a> -->
+            <!-- Espaço vazio para equilibrar o layout -->
+            <div style="width: 40px;"></div>
 
         </div>
+    </nav>
 
+
+    <!-- =========================================================
+        MENU LATERAL (Offcanvas)
+        ========================================================= -->
+
+    <div
+        class="offcanvas offcanvas-start"
+        tabindex="-1"
+        id="menuLateral"
+        aria-labelledby="menuLateralLabel"
+    >
+        <div class="offcanvas-header" style="background-color: #b6202f;">
+            <h5
+                class="offcanvas-title text-white fw-bold"
+                id="menuLateralLabel"
+            >
+                Divergências
+            </h5>
+
+            <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="offcanvas"
+                aria-label="Fechar"
+            ></button>
+        </div>
+
+        <div class="offcanvas-body p-0">
+
+            <div class="list-group list-group-flush">
+
+                <a
+                    href="sobre.html"
+                    class="list-group-item list-group-item-action py-3"
+                >
+                    <strong>Sobre o app</strong>
+                    <div class="small text-muted">
+                        Versão e informações
+                    </div>
+                </a>
+
+                <a
+                    href="index.html"
+                    class="list-group-item list-group-item-action py-3"
+                >
+                    <strong>Calcular divergência</strong>
+                    <div class="small text-muted">
+                        Registrar nova divergência
+                    </div>
+                </a>
+
+                <a
+                    href="historico.html"
+                    class="list-group-item list-group-item-action py-3"
+                >
+                    <strong>Histórico</strong>
+                    <div class="small text-muted">
+                        Ver divergências registradas
+                    </div>
+                </a>
+
+                <a
+                    href="notas.html"
+                    class="list-group-item list-group-item-action py-3"
+                >
+                    <strong>Contagem de notas</strong>
+                    <div class="small text-muted">
+                        Contar cédulas e moedas
+                    </div>
+                </a>
+
+                <a href="configuracoes.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Configurações</strong>
+                    <div class="small text-muted">Preferências do aplicativo</div>
+                </a>
+            </div>
+        </div>
     </div>
-</div>
 
 
     <!-- Conteúdo -->
 
     <main class="container py-4">
-
         <div class="d-flex justify-content-between align-items-center mb-4">
 
             <div>
-
-                <h1 class="h3 mb-1">
-                    Histórico
-                </h1>
-
-                <p class="text-muted mb-0">
-                    Divergências registradas
-                </p>
-
+                <h1 class="h3 mb-1">Histórico</h1>
+                <p class="text-muted mb-0">Divergências registradas</p>
             </div>
 
-            <a
-                href="index.html"
-                class="btn btn-outline-secondary"
-            >
-                Nova divergência
-            </a>
+            <!-- Menu de 3 pontinhos (estilo WhatsApp) -->
+            <div class="dropdown">
+                <button
+                    class="btn btn-link text-dark p-1"
+                    type="button"
+                    id="menuOpcoes"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style="font-size: 1.5rem; line-height: 1; text-decoration: none;"
+                >
+                    ⋮
+                </button>
 
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="menuOpcoes">
+                    <li>
+                        <a class="dropdown-item" href="index.html">
+                            Nova divergência
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <button class="dropdown-item" type="button" id="btnExportarTudo">
+                            Exportar tudo (CSV)
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
-
 
         <!-- Histórico -->
 
@@ -184,8 +185,44 @@
             </div>
 
         </div>
-
     </main>
+
+    <!-- =========================================================
+     MODAL DE DETALHES DA DIVERGÊNCIA
+     ========================================================= -->
+    <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <div class="modal-header" style="background-color: #b6202f;">
+                    <h5 class="modal-title text-white" id="modalDetalhesLabel">
+                        Detalhes da Divergência
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <div class="modal-body" id="conteudoDetalhes">
+                    <!-- Preenchido via JavaScript -->
+                </div>
+
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Fechar
+                    </button>
+
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-primary" id="btnExportarItem">
+                            Exportar
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btnCompartilharItem">
+                            Compartilhar
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 
     <script src="js/bootstrap.bundle.min.js"></script>

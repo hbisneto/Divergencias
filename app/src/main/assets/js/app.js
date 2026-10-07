@@ -1,31 +1,21 @@
-const form = document.getElementById("formDivergencia");
-const resultado = document.getElementById("resultado");
-const historico = document.getElementById("historico");
-
-const valorOriginalInput =
-    document.getElementById("valorOriginal");
-
-const quantidadeInput =
-    document.getElementById("quantidade");
-
-const valorPromocionalInput =
-    document.getElementById("valorPromocional");
-
-const botaoSubmit =
-    form.querySelector("button[type='submit']");
-
-
-const modalConfirmarExclusaoElement =
-    document.getElementById("modalConfirmarExclusao");
-
-const botaoConfirmarExclusao =
-    document.getElementById("confirmarExclusao");
-
+const form                          = document.getElementById("formDivergencia");
+const resultado                     = document.getElementById("resultado");
+const historico                     = document.getElementById("historico");
+const codigoProdutoInput            = document.getElementById("codigoProduto");
+const pdvInput                      = document.getElementById("pdv");
+const descricaoInput                = document.getElementById("descricao");
+const motivoInput                   = document.getElementById("motivo");
+const valorOriginalInput            = document.getElementById("valorOriginal");
+const quantidadeInput               = document.getElementById("quantidade");
+const valorPromocionalInput         = document.getElementById("valorPromocional");
+const valorTotalInput               = document.getElementById("valorTotal");
+const botaoSubmit                   = form.querySelector("button[type='submit']");
+const modalConfirmarExclusaoElement = document.getElementById("modalConfirmarExclusao");
+const botaoConfirmarExclusao        = document.getElementById("confirmarExclusao");
 const modalConfirmarExclusao =
     new bootstrap.Modal(
         modalConfirmarExclusaoElement
     );
-
 
 let divergencias = [];
 let divergenciaEditando = null;
@@ -44,29 +34,37 @@ if (typeof Android === "undefined") {
             return JSON.stringify(mockDb);
         },
 
-        salvar: function (valorOriginal, quantidade, valorPromocional, divergencia) {
+        salvar: function (codigoProduto, pdv, descricao, valorOriginal, quantidade, valorPromocional, divergencia, motivo) {
             const id = nextId++;
             mockDb.push({
-                id: id,
-                valorOriginal: valorOriginal,
-                quantidade: quantidade,
-                valorPromocional: valorPromocional,
-                divergencia: divergencia,
+                id,
+                codigoProduto,
+                pdv,
+                descricao,
+                valorOriginal,
+                quantidade,
+                valorPromocional,
+                divergencia,
+                motivo,
                 dataHora: Date.now()
             });
             return id;
         },
 
-        atualizar: function (id, valorOriginal, quantidade, valorPromocional, divergencia) {
+        atualizar: function (id, codigoProduto, pdv, descricao, valorOriginal, quantidade, valorPromocional, divergencia, motivo) {
             const index = mockDb.findIndex(item => String(item.id) === String(id));
             if (index === -1) return 0;
 
             mockDb[index] = {
                 ...mockDb[index],
+                codigoProduto,
+                pdv,
+                descricao,
                 valorOriginal,
                 quantidade,
                 valorPromocional,
-                divergencia
+                divergencia,
+                motivo
             };
             return 1;
         },
@@ -116,6 +114,23 @@ function centavosParaMoeda(valor) {
  * DATA
  * ========================================================= */
 
+function atualizarValorTotal() {
+    const valorOriginal = moedaParaCentavos(valorOriginalInput.value);
+    const quantidade = parseInt(quantidadeInput.value, 10) || 0;
+
+    if (valorOriginal > 0 && quantidade > 0) {
+        valorTotalInput.value = centavosParaMoeda(valorOriginal * quantidade)
+            .replace("R$", "")
+            .trim();
+    } else {
+        valorTotalInput.value = "";
+    }
+}
+
+// Atualiza em tempo real
+valorOriginalInput.addEventListener("input", atualizarValorTotal);
+quantidadeInput.addEventListener("input", atualizarValorTotal);
+
 function formatarData(timestamp) {
     const data = new Date(Number(timestamp));
 
@@ -123,6 +138,12 @@ function formatarData(timestamp) {
         dateStyle: "short",
         timeStyle: "short"
     });
+}
+
+function valorOuTraco(valor) {
+    if (valor === null || valor === undefined) return "--";
+    const texto = String(valor).trim();
+    return texto === "" ? "--" : texto;
 }
 
 
@@ -168,60 +189,38 @@ function calcularDivergencia() {
  * ========================================================= */
 
 function salvarDivergencia() {
+    const valorOriginal    = moedaParaCentavos(valorOriginalInput.value);
+    const quantidade       = parseInt(quantidadeInput.value, 10);
+    const valorPromocional = moedaParaCentavos(valorPromocionalInput.value);
+    const divergencia      = calcularDivergencia();
 
-    const valorOriginal =
-        moedaParaCentavos(valorOriginalInput.value);
-
-    const quantidade =
-        parseInt(quantidadeInput.value, 10);
-
-    const valorPromocional =
-        moedaParaCentavos(valorPromocionalInput.value);
-
-    const divergencia =
-        calcularDivergencia();
-
-
-    if (
-        valorOriginal <= 0 ||
-        !quantidade ||
-        quantidade <= 0 ||
-        valorPromocional <= 0 ||
-        divergencia === null
-    ) {
-        alert("Preencha todos os campos corretamente.");
+    if (valorOriginal <= 0 || !quantidade || quantidade <= 0 || valorPromocional <= 0 || divergencia === null) {
+        alert("Preencha todos os campos obrigatórios corretamente.");
         return;
     }
 
+    const codigoProduto = valorOuTraco(codigoProdutoInput?.value);
+    const pdv           = valorOuTraco(pdvInput?.value);
+    const descricao     = valorOuTraco(descricaoInput?.value);
+    const motivo        = valorOuTraco(motivoInput?.value);
 
     const id = Android.salvar(
+        codigoProduto,
+        pdv,
+        descricao,
         valorOriginal,
         quantidade,
         valorPromocional,
-        divergencia
+        divergencia,
+        motivo
     );
-
-
-    console.log(
-        "Registro salvo. ID:",
-        id
-    );
-
 
     if (Number(id) > 0) {
-
-        resultado.textContent =
-            centavosParaMoeda(divergencia);
-
+        resultado.textContent = centavosParaMoeda(divergencia);
         limparFormulario();
-
         carregarHistorico();
-
     } else {
-
-        alert(
-            "Não foi possível salvar a divergência."
-        );
+        alert("Não foi possível salvar a divergência.");
     }
 }
 
@@ -231,67 +230,41 @@ function salvarDivergencia() {
  * ========================================================= */
 
 function atualizarDivergencia() {
+    const valorOriginal    = moedaParaCentavos(valorOriginalInput.value);
+    const quantidade       = parseInt(quantidadeInput.value, 10);
+    const valorPromocional = moedaParaCentavos(valorPromocionalInput.value);
+    const divergencia      = calcularDivergencia();
 
-    const valorOriginal =
-        moedaParaCentavos(valorOriginalInput.value);
-
-    const quantidade =
-        parseInt(quantidadeInput.value, 10);
-
-    const valorPromocional =
-        moedaParaCentavos(valorPromocionalInput.value);
-
-    const divergencia =
-        calcularDivergencia();
-
-
-    if (
-        valorOriginal <= 0 ||
-        !quantidade ||
-        quantidade <= 0 ||
-        valorPromocional <= 0 ||
-        divergencia === null
-    ) {
-        alert("Preencha todos os campos corretamente.");
+    if (valorOriginal <= 0 || !quantidade || quantidade <= 0 || valorPromocional <= 0 || divergencia === null) {
+        alert("Preencha todos os campos obrigatórios corretamente.");
         return;
     }
 
+    const codigoProduto = valorOuTraco(codigoProdutoInput?.value);
+    const pdv           = valorOuTraco(pdvInput?.value);
+    const descricao     = valorOuTraco(descricaoInput?.value);
+    const motivo        = valorOuTraco(motivoInput?.value);
 
-    const resultadoUpdate =
-        Android.atualizar(
-            String(divergenciaEditando),
-            valorOriginal,
-            quantidade,
-            valorPromocional,
-            divergencia
-        );
-
-
-    console.log(
-        "Resultado UPDATE:",
-        resultadoUpdate
+    const resultadoUpdate = Android.atualizar(
+        String(divergenciaEditando),
+        codigoProduto,
+        pdv,
+        descricao,
+        valorOriginal,
+        quantidade,
+        valorPromocional,
+        divergencia,
+        motivo
     );
 
-
     if (Number(resultadoUpdate) > 0) {
-
-        resultado.textContent =
-            centavosParaMoeda(divergencia);
-
+        resultado.textContent = centavosParaMoeda(divergencia);
         divergenciaEditando = null;
-
-        botaoSubmit.textContent =
-            "Calcular divergência";
-
+        botaoSubmit.textContent = "Calcular divergência";
         limparFormulario();
-
         carregarHistorico();
-
     } else {
-
-        alert(
-            "Não foi possível atualizar a divergência."
-        );
+        alert("Não foi possível atualizar a divergência.");
     }
 }
 
@@ -299,203 +272,6 @@ function atualizarDivergencia() {
 /* =========================================================
  * READ
  * ========================================================= */
-
-// function carregarHistorico() {
-
-//     const historico =
-//         document.getElementById("historico");
-
-
-//     let json;
-
-//     try {
-
-//         json = Android.listar();
-
-//     } catch (error) {
-
-//         console.error(
-//             "Erro ao acessar SQLite:",
-//             error
-//         );
-
-//         historico.innerHTML = `
-//             <div class="alert alert-danger">
-//                 Não foi possível carregar o histórico.
-//             </div>
-//         `;
-
-//         return;
-//     }
-
-
-//     let divergencias;
-
-//     try {
-
-//         divergencias =
-//             JSON.parse(json);
-
-//     } catch (error) {
-
-//         console.error(
-//             "JSON inválido:",
-//             json
-//         );
-
-//         console.error(error);
-
-//         return;
-//     }
-
-
-//     historico.innerHTML = "";
-
-
-//     if (
-//         !Array.isArray(divergencias) ||
-//         divergencias.length === 0
-//     ) {
-
-//         historico.innerHTML = `
-//             <div class="text-muted text-center py-3">
-//                 Nenhuma divergência registrada.
-//             </div>
-//         `;
-
-//         return;
-//     }
-
-
-//     divergencias.forEach(function(item) {
-
-//         const card =
-//             document.createElement("div");
-
-
-//         card.className =
-//             "card mb-3";
-
-
-//         card.innerHTML = `
-
-//             <div class="card-body">
-
-//                 <div
-//                     class="d-flex
-//                            justify-content-between
-//                            align-items-center
-//                            mb-3"
-//                 >
-
-//                     <strong>
-//                         Divergência #${item.id}
-//                     </strong>
-
-//                     <small class="text-muted">
-//                         ${formatarData(item.dataHora)}
-//                     </small>
-
-//                 </div>
-
-
-//                 <div class="row">
-
-//                     <div class="col-md-6 mb-2">
-
-//                         <strong>
-//                             Valor original:
-//                         </strong>
-
-//                         <br>
-
-//                         ${centavosParaMoeda(
-//                             item.valorOriginal
-//                         )}
-
-//                     </div>
-
-
-//                     <div class="col-md-6 mb-2">
-
-//                         <strong>
-//                             Quantidade:
-//                         </strong>
-
-//                         <br>
-
-//                         ${item.quantidade}
-
-//                     </div>
-
-
-//                     <div class="col-md-6 mb-2">
-
-//                         <strong>
-//                             Valor promocional:
-//                         </strong>
-
-//                         <br>
-
-//                         ${centavosParaMoeda(
-//                             item.valorPromocional
-//                         )}
-
-//                     </div>
-
-
-//                     <div class="col-md-6 mb-2">
-
-//                         <strong>
-//                             Divergência:
-//                         </strong>
-
-//                         <br>
-
-//                         <span class="text-danger fw-bold">
-
-//                             ${centavosParaMoeda(
-//                                 item.divergencia
-//                             )}
-
-//                         </span>
-
-//                     </div>
-
-//                 </div>
-
-
-//                 <hr>
-
-
-//                 <div class="d-flex gap-2">
-
-//                     <button
-//                         type="button"
-//                         class="btn btn-outline-primary btn-sm"
-//                         onclick="editarDivergencia('${item.id}')"
-//                     >
-//                         Editar
-//                     </button>
-
-
-//                     <button
-//                         type="button"
-//                         class="btn btn-outline-danger btn-sm"
-//                         onclick="excluirDivergencia('${item.id}')"
-//                     >
-//                         Excluir
-//                     </button>
-
-//                 </div>
-
-//             </div>
-//         `;
-
-
-//         historico.appendChild(card);
-//     });
-// }
 
 function carregarHistorico() {
     const json = Android.listar();
@@ -579,79 +355,41 @@ function renderizarHistorico() {
  * ========================================================= */
 
 function editarDivergencia(id) {
-
-    let divergencias;
-
-
+    let lista;
     try {
-
-        divergencias =
-            JSON.parse(Android.listar());
-
+        lista = JSON.parse(Android.listar());
     } catch (error) {
-
         console.error(error);
-
-        alert(
-            "Não foi possível carregar a divergência."
-        );
-
+        alert("Não foi possível carregar a divergência.");
         return;
     }
 
-
-    const item =
-        divergencias.find(function(d) {
-
-            return String(d.id) === String(id);
-
-        });
-
-
+    const item = lista.find(d => String(d.id) === String(id));
     if (!item) {
-
-        alert(
-            "Divergência não encontrada."
-        );
-
+        alert("Divergência não encontrada.");
         return;
     }
 
+    divergenciaEditando = String(item.id);
 
-    divergenciaEditando =
-        String(item.id);
+    if (codigoProdutoInput) codigoProdutoInput.value = item.codigoProduto === "--" ? "" : (item.codigoProduto || "");
+    if (pdvInput)           pdvInput.value           = item.pdv === "--" ? "" : (item.pdv || "");
+    if (descricaoInput)     descricaoInput.value     = item.descricao === "--" ? "" : (item.descricao || "");
+    if (motivoInput)        motivoInput.value        = item.motivo === "--" ? "" : (item.motivo || "");
 
+    valorOriginalInput.value = (Number(item.valorOriginal) / 100).toFixed(2).replace(".", ",");
+    quantidadeInput.value    = item.quantidade;
+    valorPromocionalInput.value = (Number(item.valorPromocional) / 100).toFixed(2).replace(".", ",");
 
-    valorOriginalInput.value =
-        (Number(item.valorOriginal) / 100)
-            .toFixed(2)
-            .replace(".", ",");
+    resultado.textContent = centavosParaMoeda(item.divergencia);
+    botaoSubmit.textContent = "Salvar alterações";
 
+    // Atualiza o valor total se existir
+    if (typeof atualizarValorTotal === "function") {
+        atualizarValorTotal();
+    }
 
-    quantidadeInput.value =
-        item.quantidade;
-
-
-    valorPromocionalInput.value =
-        (Number(item.valorPromocional) / 100)
-            .toFixed(2)
-            .replace(".", ",");
-
-
-    resultado.textContent =
-        centavosParaMoeda(
-            item.divergencia
-        );
-
-
-    botaoSubmit.textContent =
-        "Salvar alterações";
-
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 
@@ -708,12 +446,42 @@ function confirmarExclusao() {
  * ========================================================= */
 
 function limparFormulario() {
+    if (codigoProdutoInput) codigoProdutoInput.value = "";
+    if (pdvInput)           pdvInput.value = "";
+    if (descricaoInput)     descricaoInput.value = "";
+    if (motivoInput)        motivoInput.value = "";
+    if (valorTotalInput)    valorTotalInput.value = "";
 
     valorOriginalInput.value = "";
-
     quantidadeInput.value = "";
-
     valorPromocionalInput.value = "";
+}
+
+/* =========================================================
+ * CONFIGURAÇÕES DA INTERFACE (localStorage)
+ * ========================================================= */
+
+function aplicarConfiguracoesInterface() {
+    const raw = localStorage.getItem("divergencias_config");
+    if (!raw) return;
+
+    try {
+        const config = JSON.parse(raw).interface;
+
+        const mostrar = (id, visivel) => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = visivel ? "" : "none";
+        };
+
+        mostrar("campoCodigoProduto", config.codigoProduto);
+        mostrar("campoPdv",           config.pdv);
+        mostrar("campoDescricao",     config.descricao);
+        mostrar("campoValorTotal",    config.valorTotal);
+        mostrar("campoMotivo",        config.motivo);
+
+    } catch (e) {
+        console.error("Erro ao aplicar configurações:", e);
+    }
 }
 
 
@@ -761,6 +529,6 @@ document.addEventListener(
     function() {
 
         carregarHistorico();
-
+        aplicarConfiguracoesInterface();
     }
 );
