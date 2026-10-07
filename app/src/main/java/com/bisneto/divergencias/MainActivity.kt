@@ -14,31 +14,36 @@ import androidx.core.content.ContextCompat
 class MainActivity : ComponentActivity() {
 
     private lateinit var database: DatabaseHelper
+    private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         database = DatabaseHelper(this)
 
-        val webView = WebView(this)
+        webView = WebView(this).apply {
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            webViewClient = WebViewClient()
+            webChromeClient = WebChromeClient()
+        }
 
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
+        val bridge = DivergenciaBridge(this, database) { sucesso, mensagem ->
+            runOnUiThread {
+                val msgSegura = mensagem
+                    .replace("\\", "\\\\")
+                    .replace("'", "\\'")
+                    .replace("\n", "\\n")
+                    .replace("\r", "")
+                val js = "window.onEmailResult && window.onEmailResult($sucesso, '$msgSegura');"
+                webView.evaluateJavascript(js, null)
+            }
+        }
 
-        webView.webViewClient = WebViewClient()
-        webView.webChromeClient = WebChromeClient()
-
-        // Passa Context + DatabaseHelper
-        webView.addJavascriptInterface(
-            DivergenciaBridge(this, database),
-            "Android"
-        )
-
+        webView.addJavascriptInterface(bridge, "Android")
         webView.loadUrl("file:///android_asset/index.html")
-
         setContentView(webView)
 
-        // Solicita permissão de armazenamento em Android 6 até 9
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
             if (ContextCompat.checkSelfPermission(
                     this,

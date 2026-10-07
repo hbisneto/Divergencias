@@ -3,6 +3,9 @@ package com.bisneto.divergencias
 import android.content.Context
 import android.os.Environment
 import android.webkit.JavascriptInterface
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -11,11 +14,15 @@ import java.nio.charset.Charset
 
 class DivergenciaBridge(
     private val context: Context,
-    private val database: DatabaseHelper
+    private val database: DatabaseHelper,
+    private val onEmailResult: (sucesso: Boolean, mensagem: String) -> Unit
 ) {
+    private val credentialsStore = EmailCredentialsStore(context)
+    private val sender = GmailSmtpSender()
+    private val scope = CoroutineScope(Dispatchers.Main)
 
     /* =========================================================
-     * CRUD (já existente – atualizado com os novos campos)
+     * CRUD
      * ========================================================= */
 
     @JavascriptInterface
@@ -98,52 +105,31 @@ class DivergenciaBridge(
     }
 
     /* =========================================================
-     * EXPORTAÇÃO NATIVA
+     * EXPORTAÇÃO NATIVA (CSV)
      * ========================================================= */
 
-    /**
-     * Salva um arquivo de texto/CSV na pasta:
-     * /Documents/Divergencias/
-     *
-     * @param nomeArquivo  Ex: "divergencias_2026-10-06.csv"
-     * @param conteudo     Conteúdo completo do arquivo (já com BOM se for CSV)
-     * @return Caminho completo do arquivo salvo, ou string vazia em caso de erro
-     */
     @JavascriptInterface
     fun salvarArquivo(nomeArquivo: String, conteudo: String): String {
         return try {
-            // 1. Obtém a pasta Documents pública
             val documentsDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOCUMENTS
             )
-
-            // 2. Cria a subpasta "Divergencias" se não existir
             val pastaApp = File(documentsDir, "Divergencias")
             if (!pastaApp.exists()) {
                 pastaApp.mkdirs()
             }
-
-            // 3. Arquivo final
             val arquivo = File(pastaApp, nomeArquivo)
-
-            // 4. Escreve o conteúdo (UTF-8)
             FileOutputStream(arquivo).use { fos ->
                 fos.write(conteudo.toByteArray(Charset.forName("UTF-8")))
                 fos.flush()
             }
-
-            // 5. Retorna o caminho completo para o JavaScript
             arquivo.absolutePath
-
         } catch (e: Exception) {
             e.printStackTrace()
-            "" // string vazia = erro
+            ""
         }
     }
 
-    /**
-     * Retorna o caminho da pasta Divergencias (útil para mostrar ao usuário)
-     */
     @JavascriptInterface
     fun obterCaminhoPasta(): String {
         return try {
@@ -157,6 +143,79 @@ class DivergenciaBridge(
             pastaApp.absolutePath
         } catch (e: Exception) {
             ""
+        }
+    }
+
+    /* =========================================================
+     * E-MAIL (SMTP + App Password)
+     * ========================================================= */
+
+    @JavascriptInterface
+    fun emailEstaConfigurado(): Boolean {
+        return credentialsStore.estaConfigurado()
+    }
+
+    @JavascriptInterface
+    fun salvarCredenciaisEmail(email: String, appPassword: String): Boolean {
+        return try {
+            if (email.isBlank() || appPassword.isBlank()) return false
+            credentialsStore.salvar(email, appPassword)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    @JavascriptInterface
+    fun limparCredenciaisEmail() {
+        credentialsStore.limpar()
+    }
+
+    @JavascriptInterface
+    fun obterEmailSalvo(): String {
+        return credentialsStore.obterEmail() ?: ""
+    }
+
+    @JavascriptInterface
+    fun obterUltimoDestinatario(): String {
+        return credentialsStore.obterUltimoDestinatario()
+    }
+
+    /**
+     * Envia e-mail HTML formatado.
+     * Resultado chega em: window.onEmailResult(sucesso, mensagem)
+     */
+    @JavascriptInterface
+    fun enviarEmail(destinatario: String, assunto: String, htmlBody: String) {
+        val email = credentialsStore.obterEmail()
+        val password = credentialsStore.obterAppPassword()
+
+        if (email.isNullOrBlank() || password.isNullOrBlank()) {
+            onEmailResult(false, "Configure o e-mail e a senha de app primeiro")
+            return
+        }
+
+        if (destinatario.isBlank()) {
+            onEmailResult(false, "Informe o e-mail do destinatário")
+            return
+        }
+
+        if (htmlBody.isBlank()) {
+            onEmailResult(false, "Conteúdo do e-mail está vazio")
+            return
+        }
+
+        credentialsStore.salvarUltimoDestinatario(destinatario)
+
+        scope.launch {
+            val resultado = sender.enviar(
+                remetenteEmail = email,
+                appPassword = password,
+                destinatario = destinatario,
+                assunto = if (assunto.isBlank()) "Divergências do dia" else assunto,
+                htmlBody = htmlBody
+            )
+            onEmailResult(resultado.sucesso, resultado.mensagem)
         }
     }
 }

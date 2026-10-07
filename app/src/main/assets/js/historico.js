@@ -267,6 +267,213 @@ function exportarCsvNativo(conteudo, nomeArquivo) {
 }
 
 /* =========================================================
+ * COMPARTILHAR POR E-MAIL (HTML do dia)
+ * ========================================================= */
+
+function obterInicioDoDia() {
+    const agora = new Date();
+    agora.setHours(0, 0, 0, 0);
+    return agora.getTime();
+}
+
+function obterFimDoDia() {
+    const agora = new Date();
+    agora.setHours(23, 59, 59, 999);
+    return agora.getTime();
+}
+
+function filtrarDivergenciasDoDia(lista) {
+    const inicio = obterInicioDoDia();
+    const fim = obterFimDoDia();
+
+    return lista.filter(item => {
+        const ts = Number(item.dataHora);
+        return ts >= inicio && ts <= fim;
+    });
+}
+
+function formatarDataCompleta(timestamp) {
+    const data = new Date(Number(timestamp));
+    return data.toLocaleDateString("pt-BR", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+}
+
+function gerarHtmlEmail(divergenciasDoDia) {
+    const dataHoje = formatarDataCompleta(Date.now());
+    const totalGeral = divergenciasDoDia.reduce(
+        (acc, item) => acc + Number(item.divergencia),
+        0
+    );
+
+    // Linhas da tabela
+    let linhasTabela = "";
+
+    if (divergenciasDoDia.length === 0) {
+        linhasTabela = `
+            <tr>
+                <td colspan="6" style="padding: 24px; text-align: center; color: #666;">
+                    Nenhuma divergência registrada hoje.
+                </td>
+            </tr>
+        `;
+    } else {
+        linhasTabela = divergenciasDoDia.map((item, index) => `
+            <tr style="background-color: ${index % 2 === 0 ? "#ffffff" : "#f8f9fa"};">
+                <td style="padding: 10px 12px; border-bottom: 1px solid #e9ecef; font-size: 13px;">
+                    ${valorOuTraco(item.codigoProduto)}
+                </td>
+                <td style="padding: 10px 12px; border-bottom: 1px solid #e9ecef; font-size: 13px;">
+                    ${valorOuTraco(item.descricao)}
+                </td>
+                <td style="padding: 10px 12px; border-bottom: 1px solid #e9ecef; font-size: 13px; text-align: right;">
+                    ${centavosParaMoeda(item.valorOriginal)}
+                </td>
+                <td style="padding: 10px 12px; border-bottom: 1px solid #e9ecef; font-size: 13px; text-align: center;">
+                    ${item.quantidade}
+                </td>
+                <td style="padding: 10px 12px; border-bottom: 1px solid #e9ecef; font-size: 13px; text-align: right;">
+                    ${centavosParaMoeda(item.valorPromocional)}
+                </td>
+                <td style="padding: 10px 12px; border-bottom: 1px solid #e9ecef; font-size: 13px; text-align: right; font-weight: 600; color: #b6202f;">
+                    ${centavosParaMoeda(item.divergencia)}
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    // Template HTML (estilo newsletter – CSS inline)
+    return `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divergências do dia</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f0f2f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f0f2f5; padding: 32px 16px;">
+        <tr>
+            <td align="center">
+
+                <!-- Container principal -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 640px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background-color: #b6202f; padding: 28px 32px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; letter-spacing: -0.3px;">
+                                Divergências
+                            </h1>
+                            <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 14px;">
+                                Relatório do dia
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Data -->
+                    <tr>
+                        <td style="padding: 24px 32px 8px;">
+                            <p style="margin: 0; color: #666; font-size: 14px;">
+                                ${dataHoje}
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Tabela -->
+                    <tr>
+                        <td style="padding: 16px 24px 8px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background-color: #f8f9fa;">
+                                        <th style="padding: 10px 12px; text-align: left; font-size: 12px; color: #666; font-weight: 600; border-bottom: 2px solid #dee2e6;">Código</th>
+                                        <th style="padding: 10px 12px; text-align: left; font-size: 12px; color: #666; font-weight: 600; border-bottom: 2px solid #dee2e6;">Descrição</th>
+                                        <th style="padding: 10px 12px; text-align: right; font-size: 12px; color: #666; font-weight: 600; border-bottom: 2px solid #dee2e6;">Original</th>
+                                        <th style="padding: 10px 12px; text-align: center; font-size: 12px; color: #666; font-weight: 600; border-bottom: 2px solid #dee2e6;">Qtd</th>
+                                        <th style="padding: 10px 12px; text-align: right; font-size: 12px; color: #666; font-weight: 600; border-bottom: 2px solid #dee2e6;">Promocional</th>
+                                        <th style="padding: 10px 12px; text-align: right; font-size: 12px; color: #666; font-weight: 600; border-bottom: 2px solid #dee2e6;">Divergência</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${linhasTabela}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Total -->
+                    <tr>
+                        <td style="padding: 20px 32px 28px;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="background-color: #fff5f5; border-radius: 8px; padding: 16px 20px;">
+                                        <table width="100%" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td style="font-size: 14px; color: #666; font-weight: 500;">
+                                                    Total de divergências do dia
+                                                </td>
+                                                <td style="text-align: right; font-size: 20px; font-weight: 700; color: #b6202f;">
+                                                    ${centavosParaMoeda(totalGeral)}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="padding-top: 6px; font-size: 12px; color: #999;">
+                                                    ${divergenciasDoDia.length} registro(s)
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 20px 32px; text-align: center; border-top: 1px solid #e9ecef;">
+                            <p style="margin: 0; font-size: 12px; color: #999;">
+                                Gerado pelo aplicativo <strong style="color: #b6202f;">Divergências</strong><br>
+                                Bisneto Inc. · ${new Date().getFullYear()}
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
+`.trim();
+}
+
+function compartilharPorEmail() {
+    const divergenciasDoDia = filtrarDivergenciasDoDia(listaCompleta);
+
+    const html = gerarHtmlEmail(divergenciasDoDia);
+    const dataCurta = new Date().toLocaleDateString("pt-BR");
+    const assunto = `Divergências do dia – ${dataCurta}`;
+
+    if (typeof Android !== "undefined" && Android.compartilharPorEmail) {
+        const resultado = Android.compartilharPorEmail(html, assunto);
+
+        if (resultado !== "ok") {
+            alert("Não foi possível abrir o cliente de e-mail.\n" + resultado);
+        }
+    } else {
+        // Fallback para navegador (abre mailto – HTML limitado)
+        console.warn("Android.compartilharPorEmail não disponível");
+        alert("Compartilhamento por e-mail disponível apenas no aplicativo Android.");
+    }
+}
+
+/* =========================================================
  * EVENTOS DOS BOTÕES
  * ========================================================= */
 
@@ -316,9 +523,180 @@ document.getElementById("btnCompartilharItem").addEventListener("click", async (
 });
 
 /* =========================================================
+ * E-MAIL — divergências do dia (HTML formatado)
+ * ========================================================= */
+
+const modalEmailDia = new bootstrap.Modal(document.getElementById("modalEmailDia"));
+
+function isMesmoDia(timestampMs) {
+    const d = new Date(Number(timestampMs));
+    const hoje = new Date();
+    return d.getFullYear() === hoje.getFullYear()
+        && d.getMonth() === hoje.getMonth()
+        && d.getDate() === hoje.getDate();
+}
+
+function filtrarDivergenciasDoDia(lista) {
+    return (lista || []).filter(item => isMesmoDia(item.dataHora));
+}
+
+function escaparHtml(texto) {
+    return String(texto ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+function gerarHtmlDivergenciasDoDia(lista) {
+    const itens = filtrarDivergenciasDoDia(lista);
+    const dataStr = new Date().toLocaleDateString("pt-BR");
+
+    let linhas = "";
+    let totalCentavos = 0;
+
+    if (itens.length === 0) {
+        linhas = `
+            <tr>
+                <td colspan="6" style="padding:12px;text-align:center;color:#666;">
+                    Nenhuma divergência registrada hoje.
+                </td>
+            </tr>`;
+    } else {
+        itens.forEach(item => {
+            totalCentavos += Number(item.divergencia) || 0;
+            linhas += `
+            <tr style="border-bottom:1px solid #eee;">
+                <td style="padding:8px;">${escaparHtml(valorOuTraco(item.codigoProduto))}</td>
+                <td style="padding:8px;">${escaparHtml(valorOuTraco(item.descricao))}</td>
+                <td style="padding:8px;">${centavosParaMoeda(item.valorOriginal)}</td>
+                <td style="padding:8px;text-align:center;">${item.quantidade}</td>
+                <td style="padding:8px;">${centavosParaMoeda(item.valorPromocional)}</td>
+                <td style="padding:8px;font-weight:bold;">${centavosParaMoeda(item.divergencia)}</td>
+            </tr>`;
+        });
+    }
+
+    return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;margin:0;">
+  <div style="max-width:640px;margin:0 auto;background:#fff;border-radius:8px;padding:24px;">
+    <h2 style="color:#b6202f;margin-top:0;">Divergências do dia</h2>
+    <p style="color:#666;margin:0 0 16px 0;">Data: <strong>${dataStr}</strong> · ${itens.length} registro(s)</p>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr style="background:#b6202f;color:#fff;">
+          <th style="padding:10px;text-align:left;">Código</th>
+          <th style="padding:10px;text-align:left;">Descrição</th>
+          <th style="padding:10px;text-align:left;">Original</th>
+          <th style="padding:10px;text-align:center;">Qtd</th>
+          <th style="padding:10px;text-align:left;">Promo</th>
+          <th style="padding:10px;text-align:left;">Divergência</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${linhas}
+      </tbody>
+    </table>
+    <p style="margin-top:20px;font-size:18px;font-weight:bold;color:#333;">
+      Total: ${centavosParaMoeda(totalCentavos)}
+    </p>
+    <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+    <p style="color:#999;font-size:12px;margin:0;">Enviado pelo app Divergências</p>
+  </div>
+</body>
+</html>`;
+}
+
+function atualizarUiCredenciaisEmail() {
+    const configurado = typeof Android !== "undefined" && Android.emailEstaConfigurado();
+    const aviso = document.getElementById("emailConfigAviso");
+    const bloco = document.getElementById("blocoCredenciais");
+
+    if (configurado) {
+        aviso.classList.add("d-none");
+        bloco.classList.add("d-none");
+        const ultimo = Android.obterUltimoDestinatario();
+        if (ultimo) {
+            document.getElementById("emailDestinatario").value = ultimo;
+        }
+    } else {
+        aviso.classList.remove("d-none");
+        bloco.classList.remove("d-none");
+    }
+}
+
+document.getElementById("btnEmailDia").addEventListener("click", () => {
+    if (!listaCompleta || filtrarDivergenciasDoDia(listaCompleta).length === 0) {
+        alert("Não há divergências do dia para enviar.");
+        return;
+    }
+    document.getElementById("emailStatus").textContent = "";
+    atualizarUiCredenciaisEmail();
+    modalEmailDia.show();
+});
+
+document.getElementById("btnSalvarCredenciais").addEventListener("click", () => {
+    const email = document.getElementById("cfgEmailRemetente").value.trim();
+    const senha = document.getElementById("cfgAppPassword").value.trim();
+
+    if (!email || !senha) {
+        alert("Preencha e-mail e senha de app.");
+        return;
+    }
+
+    if (typeof Android === "undefined" || !Android.salvarCredenciaisEmail(email, senha)) {
+        alert("Não foi possível salvar as credenciais.");
+        return;
+    }
+
+    alert("Credenciais salvas!");
+    atualizarUiCredenciaisEmail();
+});
+
+document.getElementById("btnConfirmarEmail").addEventListener("click", () => {
+    if (typeof Android === "undefined") {
+        alert("Disponível apenas no aplicativo Android.");
+        return;
+    }
+
+    if (!Android.emailEstaConfigurado()) {
+        alert("Salve o e-mail e a senha de app primeiro.");
+        return;
+    }
+
+    const destinatario = document.getElementById("emailDestinatario").value.trim();
+    const assunto = document.getElementById("emailAssunto").value.trim() || "Divergências do dia";
+    const html = gerarHtmlDivergenciasDoDia(listaCompleta);
+
+    document.getElementById("emailStatus").textContent = "Enviando...";
+    document.getElementById("btnConfirmarEmail").disabled = true;
+
+    Android.enviarEmail(destinatario, assunto, html);
+});
+
+window.onEmailResult = function (sucesso, mensagem) {
+    document.getElementById("btnConfirmarEmail").disabled = false;
+    document.getElementById("emailStatus").textContent = mensagem;
+
+    if (sucesso) {
+        alert("E-mail enviado com sucesso!");
+        modalEmailDia.hide();
+    } else {
+        alert("Erro: " + mensagem);
+    }
+};
+
+/* =========================================================
  * INICIALIZAÇÃO
  * ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarHistorico();
+});
+
+// Compartilhar por E-mail (HTML do dia)
+document.getElementById("btnCompartilharEmail").addEventListener("click", () => {
+    compartilharPorEmail();
 });

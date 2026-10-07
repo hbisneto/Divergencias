@@ -172,6 +172,18 @@
                             Exportar tudo (CSV)
                         </button>
                     </li>
+                    
+                    <li>
+                        <button class="dropdown-item" type="button" id="btnEmailDia">
+                            Enviar divergências do dia (e-mail)
+                        </button>
+                    </li>
+                    
+                    <li>
+                        <button class="dropdown-item" type="button" id="btnCompartilharEmail">
+                            Compartilhar por E-mail
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -224,10 +236,53 @@
         </div>
     </div>
 
+    <!-- Modal enviar e-mail do dia -->
+    <div class="modal fade" id="modalEmailDia" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #b6202f;">
+                    <h5 class="modal-title text-white">Enviar por e-mail</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="emailConfigAviso" class="alert alert-warning d-none">
+                        Configure o e-mail e a senha de app abaixo (só uma vez).
+                    </div>
+
+                    <div id="blocoCredenciais" class="d-none mb-3">
+                        <div class="mb-2">
+                            <label class="form-label">Seu Gmail</label>
+                            <input type="email" class="form-control" id="cfgEmailRemetente" placeholder="seu@gmail.com">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Senha de app</label>
+                            <input type="password" class="form-control" id="cfgAppPassword" placeholder="xxxx xxxx xxxx xxxx">
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnSalvarCredenciais">
+                            Salvar credenciais
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Destinatário</label>
+                        <input type="email" class="form-control" id="emailDestinatario" placeholder="destino@email.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assunto</label>
+                        <input type="text" class="form-control" id="emailAssunto" value="Divergências do dia">
+                    </div>
+                    <div id="emailStatus" class="small text-muted"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmarEmail">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/historico.js"></script>
 
 </body>
-
 </html>
