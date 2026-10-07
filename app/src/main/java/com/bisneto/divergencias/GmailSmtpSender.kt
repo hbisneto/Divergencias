@@ -2,14 +2,19 @@ package com.bisneto.divergencias
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.Properties
+import javax.activation.DataHandler
+import javax.activation.FileDataSource
 import javax.mail.Authenticator
 import javax.mail.Message
 import javax.mail.PasswordAuthentication
 import javax.mail.Session
 import javax.mail.Transport
 import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeBodyPart
 import javax.mail.internet.MimeMessage
+import javax.mail.internet.MimeMultipart
 
 class GmailSmtpSender {
 
@@ -20,7 +25,8 @@ class GmailSmtpSender {
         appPassword: String,
         destinatario: String,
         assunto: String,
-        htmlBody: String
+        htmlBody: String,
+        arquivoAnexo: File? = null
     ): Resultado = withContext(Dispatchers.IO) {
         try {
             val props = Properties().apply {
@@ -44,7 +50,25 @@ class GmailSmtpSender {
                     InternetAddress.parse(destinatario.trim())
                 )
                 subject = assunto
-                setContent(htmlBody, "text/html; charset=utf-8")
+            }
+
+            if (arquivoAnexo != null && arquivoAnexo.exists()) {
+                val multipart = MimeMultipart()
+
+                val htmlPart = MimeBodyPart().apply {
+                    setContent(htmlBody, "text/html; charset=utf-8")
+                }
+                multipart.addBodyPart(htmlPart)
+
+                val attachPart = MimeBodyPart().apply {
+                    dataHandler = DataHandler(FileDataSource(arquivoAnexo))
+                    fileName = arquivoAnexo.name
+                }
+                multipart.addBodyPart(attachPart)
+
+                message.setContent(multipart)
+            } else {
+                message.setContent(htmlBody, "text/html; charset=utf-8")
             }
 
             Transport.send(message)

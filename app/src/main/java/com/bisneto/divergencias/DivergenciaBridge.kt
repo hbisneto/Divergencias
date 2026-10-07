@@ -185,8 +185,18 @@ class DivergenciaBridge(
      * Envia e-mail HTML formatado.
      * Resultado chega em: window.onEmailResult(sucesso, mensagem)
      */
+        /**
+     * @param nomeAnexo      ex: "divergencias_2026-09-01_2026-10-07.csv" (vazio = sem anexo)
+     * @param conteudoAnexo  texto do CSV/HTML (vazio = sem anexo)
+     */
     @JavascriptInterface
-    fun enviarEmail(destinatario: String, assunto: String, htmlBody: String) {
+    fun enviarEmail(
+        destinatario: String,
+        assunto: String,
+        htmlBody: String,
+        nomeAnexo: String,
+        conteudoAnexo: String
+    ) {
         val email = credentialsStore.obterEmail()
         val password = credentialsStore.obterAppPassword()
 
@@ -194,12 +204,10 @@ class DivergenciaBridge(
             onEmailResult(false, "Configure o e-mail e a senha de app primeiro")
             return
         }
-
         if (destinatario.isBlank()) {
             onEmailResult(false, "Informe o e-mail do destinatário")
             return
         }
-
         if (htmlBody.isBlank()) {
             onEmailResult(false, "Conteúdo do e-mail está vazio")
             return
@@ -208,14 +216,33 @@ class DivergenciaBridge(
         credentialsStore.salvarUltimoDestinatario(destinatario)
 
         scope.launch {
-            val resultado = sender.enviar(
-                remetenteEmail = email,
-                appPassword = password,
-                destinatario = destinatario,
-                assunto = if (assunto.isBlank()) "Divergências do dia" else assunto,
-                htmlBody = htmlBody
-            )
-            onEmailResult(resultado.sucesso, resultado.mensagem)
+            var anexoTemp: java.io.File? = null
+            try {
+                if (nomeAnexo.isNotBlank() && conteudoAnexo.isNotBlank()) {
+                    anexoTemp = java.io.File(context.cacheDir, nomeAnexo)
+                    anexoTemp.writeText(conteudoAnexo, Charsets.UTF_8)
+                }
+
+                val resultado = sender.enviar(
+                    remetenteEmail = email,
+                    appPassword = password,
+                    destinatario = destinatario,
+                    assunto = if (assunto.isBlank()) "Divergências" else assunto,
+                    htmlBody = htmlBody,
+                    arquivoAnexo = anexoTemp
+                )
+                onEmailResult(resultado.sucesso, resultado.mensagem)
+            } catch (e: Exception) {
+                onEmailResult(false, e.message ?: "Erro ao preparar anexo")
+            } finally {
+                anexoTemp?.delete()
+            }
         }
+    }
+
+    // Compatibilidade com chamadas antigas (só corpo HTML)
+    @JavascriptInterface
+    fun enviarEmail(destinatario: String, assunto: String, htmlBody: String) {
+        enviarEmail(destinatario, assunto, htmlBody, "", "")
     }
 }

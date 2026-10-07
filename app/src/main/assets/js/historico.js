@@ -673,20 +673,309 @@ document.getElementById("btnConfirmarEmail").addEventListener("click", () => {
     document.getElementById("emailStatus").textContent = "Enviando...";
     document.getElementById("btnConfirmarEmail").disabled = true;
 
-    Android.enviarEmail(destinatario, assunto, html);
+    Android.enviarEmail(destinatario, assunto, html, "", "");
 });
 
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+ * E-MAIL POR PERÍODO (máx. 90 dias + limite de legibilidade)
+ * ========================================================= */
+
+const MAX_DIAS_PERIODO = 90;
+const MAX_LINHAS_CORPO_EMAIL = 40; // legível no celular
+
+const modalEmailPeriodoEl = document.getElementById("modalEmailPeriodo");
+const modalEmailPeriodo = modalEmailPeriodoEl
+    ? new bootstrap.Modal(modalEmailPeriodoEl)
+    : null;
+
+function inicioDoDia(dateObj) {
+    const d = new Date(dateObj);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+}
+
+function fimDoDia(dateObj) {
+    const d = new Date(dateObj);
+    d.setHours(23, 59, 59, 999);
+    return d.getTime();
+}
+
+function diasEntre(tsInicio, tsFim) {
+    return Math.floor((tsFim - tsInicio) / (1000 * 60 * 60 * 24)) + 1;
+}
+
+function filtrarPorPeriodo(lista, tsInicio, tsFim) {
+    return (lista || []).filter(item => {
+        const ts = Number(item.dataHora);
+        return ts >= tsInicio && ts <= tsFim;
+    });
+}
+
+function dataInputParaLabel(yyyyMmDd) {
+    if (!yyyyMmDd) return "";
+    const [y, m, d] = yyyyMmDd.split("-");
+    return `${d}/${m}/${y}`;
+}
+
+/** HTML legível: se total > MAX, mostra só as primeiras N + aviso de anexo */
+function gerarHtmlEmailPeriodo(divergencias, labelInicio, labelFim, comAnexoCompleto) {
+    const totalGeral = divergencias.reduce((acc, i) => acc + Number(i.divergencia), 0);
+    const exibidas = comAnexoCompleto
+        ? divergencias.slice(0, MAX_LINHAS_CORPO_EMAIL)
+        : divergencias;
+
+    let linhas = "";
+    if (exibidas.length === 0) {
+        linhas = `<tr><td colspan="6" style="padding:16px;text-align:center;color:#666;">Nenhum registro no período.</td></tr>`;
+    } else {
+        linhas = exibidas.map((item, index) => `
+            <tr style="background:${index % 2 === 0 ? "#fff" : "#f8f9fa"};">
+                <td style="padding:8px;border-bottom:1px solid #eee;font-size:13px;">${valorOuTraco(item.codigoProduto)}</td>
+                <td style="padding:8px;border-bottom:1px solid #eee;font-size:13px;">${valorOuTraco(item.descricao)}</td>
+                <td style="padding:8px;border-bottom:1px solid #eee;font-size:13px;text-align:right;">${centavosParaMoeda(item.valorOriginal)}</td>
+                <td style="padding:8px;border-bottom:1px solid #eee;font-size:13px;text-align:center;">${item.quantidade}</td>
+                <td style="padding:8px;border-bottom:1px solid #eee;font-size:13px;text-align:right;">${centavosParaMoeda(item.valorPromocional)}</td>
+                <td style="padding:8px;border-bottom:1px solid #eee;font-size:13px;font-weight:bold;">${centavosParaMoeda(item.divergencia)}</td>
+            </tr>
+        `).join("");
+    }
+
+    const avisoAnexo = comAnexoCompleto ? `
+        <p style="margin-top:16px;padding:12px;background:#fff3cd;border-radius:6px;font-size:13px;color:#856404;">
+            Foram encontrados <strong>${divergencias.length}</strong> registros.
+            O corpo mostra os primeiros <strong>${MAX_LINHAS_CORPO_EMAIL}</strong>.
+            A lista completa está no <strong>anexo</strong>.
+        </p>` : "";
+
+    return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;margin:0;">
+  <div style="max-width:640px;margin:0 auto;background:#fff;border-radius:8px;padding:24px;">
+    <h2 style="color:#b6202f;margin-top:0;">Divergências por período</h2>
+    <p style="color:#666;">Período: <strong>${labelInicio}</strong> a <strong>${labelFim}</strong></p>
+    <p style="color:#666;">Registros: <strong>${divergencias.length}</strong></p>
+    ${avisoAnexo}
+    <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+      <thead>
+        <tr style="background:#b6202f;color:#fff;">
+          <th style="padding:10px;text-align:left;">Código</th>
+          <th style="padding:10px;text-align:left;">Descrição</th>
+          <th style="padding:10px;text-align:right;">Original</th>
+          <th style="padding:10px;text-align:center;">Qtd</th>
+          <th style="padding:10px;text-align:right;">Promo</th>
+          <th style="padding:10px;text-align:left;">Divergência</th>
+        </tr>
+      </thead>
+      <tbody>${linhas}</tbody>
+    </table>
+    <p style="margin-top:20px;font-size:18px;font-weight:bold;">Total: ${centavosParaMoeda(totalGeral)}</p>
+    <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+    <p style="color:#999;font-size:12px;">Enviado pelo app Divergências</p>
+  </div>
+</body></html>`;
+}
+
+function gerarAnexoHtmlCompleto(divergencias, labelInicio, labelFim) {
+    // Reusa o gerador sem cortar linhas
+    return gerarHtmlEmailPeriodo(divergencias, labelInicio, labelFim, false)
+        .replace(
+            `Registros: <strong>${divergencias.length}</strong>`,
+            `Registros (lista completa): <strong>${divergencias.length}</strong>`
+        );
+}
+
+document.getElementById("btnEmailPeriodo")?.addEventListener("click", () => {
+    if (typeof Android === "undefined" || !Android.emailEstaConfigurado()) {
+        alert("Configure o e-mail e a senha de app antes de enviar.");
+        return;
+    }
+
+    const hoje = new Date();
+    const fim = hoje.toISOString().slice(0, 10);
+    const inicioDate = new Date(hoje);
+    inicioDate.setDate(inicioDate.getDate() - 29); // padrão: últimos 30 dias
+    const inicio = inicioDate.toISOString().slice(0, 10);
+
+    document.getElementById("emailDataInicio").value = inicio;
+    document.getElementById("emailDataFim").value = fim;
+    document.getElementById("emailPeriodoDestinatario").value =
+        Android.obterUltimoDestinatario() || "";
+    document.getElementById("emailPeriodoAssunto").value =
+        `Divergências – ${dataInputParaLabel(inicio)} a ${dataInputParaLabel(fim)}`;
+    document.getElementById("emailPeriodoStatus").textContent = "";
+
+    modalEmailPeriodo?.show();
+});
+
+// Atualiza assunto ao mudar datas
+["emailDataInicio", "emailDataFim"].forEach(id => {
+    document.getElementById(id)?.addEventListener("change", () => {
+        const i = document.getElementById("emailDataInicio").value;
+        const f = document.getElementById("emailDataFim").value;
+        if (i && f) {
+            document.getElementById("emailPeriodoAssunto").value =
+                `Divergências – ${dataInputParaLabel(i)} a ${dataInputParaLabel(f)}`;
+        }
+    });
+});
+
+document.getElementById("btnConfirmarEmailPeriodo")?.addEventListener("click", () => {
+    const inicioStr = document.getElementById("emailDataInicio").value;
+    const fimStr = document.getElementById("emailDataFim").value;
+    const destinatario = document.getElementById("emailPeriodoDestinatario").value.trim();
+    const assunto = document.getElementById("emailPeriodoAssunto").value.trim();
+    const formatoAnexo = document.getElementById("emailFormatoAnexo").value; // csv | html
+
+    if (!inicioStr || !fimStr) {
+        alert("Informe data início e data fim.");
+        return;
+    }
+
+    const tsInicio = inicioDoDia(new Date(inicioStr + "T00:00:00"));
+    const tsFim = fimDoDia(new Date(fimStr + "T00:00:00"));
+
+    if (tsFim < tsInicio) {
+        alert("A data fim deve ser maior ou igual à data início.");
+        return;
+    }
+
+    const qtdDias = diasEntre(tsInicio, tsFim);
+    if (qtdDias > MAX_DIAS_PERIODO) {
+        alert(`O período máximo é de ${MAX_DIAS_PERIODO} dias. Você selecionou ${qtdDias} dias.`);
+        return;
+    }
+
+    if (!destinatario) {
+        alert("Informe o destinatário.");
+        return;
+    }
+
+    const filtradas = filtrarPorPeriodo(listaCompleta, tsInicio, tsFim);
+    if (filtradas.length === 0) {
+        alert("Não há divergências nesse período.");
+        return;
+    }
+
+    const labelI = dataInputParaLabel(inicioStr);
+    const labelF = dataInputParaLabel(fimStr);
+    const precisaAnexo = filtradas.length > MAX_LINHAS_CORPO_EMAIL;
+
+    const htmlCorpo = gerarHtmlEmailPeriodo(filtradas, labelI, labelF, precisaAnexo);
+
+    let nomeAnexo = "";
+    let conteudoAnexo = "";
+
+    if (precisaAnexo) {
+        if (formatoAnexo === "html") {
+            nomeAnexo = `divergencias_${inicioStr}_${fimStr}.html`;
+            conteudoAnexo = gerarAnexoHtmlCompleto(filtradas, labelI, labelF);
+        } else {
+            nomeAnexo = `divergencias_${inicioStr}_${fimStr}.csv`;
+            // Reusa o gerador de CSV que você já tem
+            conteudoAnexo = "\uFEFF" + gerarCsvCompleto(filtradas);
+        }
+    }
+
+    const status = document.getElementById("emailPeriodoStatus");
+    const btn = document.getElementById("btnConfirmarEmailPeriodo");
+    status.textContent = precisaAnexo
+        ? `Enviando resumo + anexo (${filtradas.length} registros)...`
+        : `Enviando ${filtradas.length} registro(s)...`;
+    btn.disabled = true;
+
+    // Uma única assinatura de 5 parâmetros no bridge
+    Android.enviarEmail(
+        destinatario,
+        assunto || `Divergências – ${labelI} a ${labelF}`,
+        htmlCorpo,
+        nomeAnexo,
+        conteudoAnexo
+    );
+});
+
+// Se ainda não existir, unifique o callback:
+// window.onEmailResult = function (sucesso, mensagem) {
+//     const btnDia = document.getElementById("btnConfirmarEmail");
+//     const btnPeriodo = document.getElementById("btnConfirmarEmailPeriodo");
+//     if (btnDia) btnDia.disabled = false;
+//     if (btnPeriodo) btnPeriodo.disabled = false;
+
+//     const statusPeriodo = document.getElementById("emailPeriodoStatus");
+//     if (statusPeriodo) statusPeriodo.textContent = mensagem;
+
+//     if (sucesso) {
+//         alert("E-mail enviado com sucesso!");
+//         modalEmailPeriodo?.hide();
+//         // se tiver modal do dia:
+//         // modalEmailDia?.hide();
+//     } else {
+//         alert("Erro: " + mensagem);
+//     }
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 window.onEmailResult = function (sucesso, mensagem) {
-    document.getElementById("btnConfirmarEmail").disabled = false;
-    document.getElementById("emailStatus").textContent = mensagem;
+    const btnDia = document.getElementById("btnConfirmarEmail");
+    const btnPeriodo = document.getElementById("btnConfirmarEmailPeriodo");
+    if (btnDia) btnDia.disabled = false;
+    if (btnPeriodo) btnPeriodo.disabled = false;
+
+    const statusPeriodo = document.getElementById("emailPeriodoStatus");
+    if (statusPeriodo) statusPeriodo.textContent = mensagem;
 
     if (sucesso) {
         alert("E-mail enviado com sucesso!");
-        modalEmailDia.hide();
+        modalEmailPeriodo?.hide();
+        // se tiver modal do dia:
+        // modalEmailDia?.hide();
     } else {
         alert("Erro: " + mensagem);
     }
 };
+
+
+
+// window.onEmailResult = function (sucesso, mensagem) {
+//     document.getElementById("btnConfirmarEmail").disabled = false;
+//     document.getElementById("emailStatus").textContent = mensagem;
+
+//     if (sucesso) {
+//         alert("E-mail enviado com sucesso!");
+//         modalEmailDia.hide();
+//     } else {
+//         alert("Erro: " + mensagem);
+//     }
+// };
 
 /* =========================================================
  * INICIALIZAÇÃO
