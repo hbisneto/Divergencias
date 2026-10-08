@@ -150,18 +150,12 @@
                 </div>
             </a>
 
-            <!-- <a
-                href="sobre.html"
-                class="list-group-item list-group-item-action py-3"
-            >
-                <strong>Sobre o app</strong>
-                <div class="small text-muted">
-                    Versão e informações
-                </div>
-            </a> -->
+            <a href="configuracoes.html" class="list-group-item list-group-item-action py-3">
+                <strong>Configurações</strong>
+                <div class="small text-muted">Preferências do aplicativo</div>
+            </a>
 
         </div>
-
     </div>
 </div>
 
@@ -174,67 +168,135 @@
             <h3 class="mb-4">Sistema de Divergências</h3>
 
             <form id="formDivergencia">
+                <!-- Código do produto (controlado por config) -->
+                <div class="mb-3" id="campoCodigoProduto" style="display: none;">
+                    <label for="codigoProduto" class="form-label">
+                        Código do produto
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="codigoProduto"
+                        placeholder="Ex: 7891234567890"
+                        inputmode="numeric"
+                    >
+                </div>
 
-                <!-- Valor original -->
+                <!-- PDV (controlado por config) -->
+                <div class="mb-3" id="campoPdv" style="display: none;">
+                    <label for="pdv" class="form-label">
+                        PDV
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="pdv"
+                        placeholder="Ex: 12"
+                        inputmode="numeric"
+                    >
+                </div>
+
+                <!-- Descrição (controlado por config) -->
+                <div class="mb-3" id="campoDescricao" style="display: none;">
+                    <label for="descricao" class="form-label">
+                        Descrição do produto
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="descricao"
+                        placeholder="Ex: Arroz 5kg"
+                    >
+                </div>
+
+                <!-- Valor unitário original (sempre visível) -->
                 <div class="mb-3">
                     <label for="valorOriginal" class="form-label">
                         Valor unitário original
                     </label>
-
                     <div class="input-group">
                         <span class="input-group-text">R$</span>
-
                         <input
-                                type="text"
-                                class="form-control"
-                                id="valorOriginal"
-                                placeholder="0,00"
-                                inputmode="decimal"
-                                required
+                            type="text"
+                            class="form-control"
+                            id="valorOriginal"
+                            placeholder="0,00"
+                            inputmode="decimal"
+                            required
                         >
                     </div>
                 </div>
 
-                <!-- Quantidade -->
+                <!-- Quantidade (sempre visível) -->
                 <div class="mb-3">
                     <label for="quantidade" class="form-label">
                         Quantidade
                     </label>
-
                     <input
-                            type="number"
-                            class="form-control"
-                            id="quantidade"
-                            min="1"
-                            placeholder="0"
-                            required
+                        type="number"
+                        class="form-control"
+                        id="quantidade"
+                        min="1"
+                        placeholder="0"
+                        required
                     >
                 </div>
 
-                <!-- Valor promocional -->
-                <div class="mb-4">
+                <!-- Valor promocional unitário (sempre visível) -->
+                <div class="mb-3">
                     <label for="valorPromocional" class="form-label">
                         Valor promocional unitário
                     </label>
-
                     <div class="input-group">
                         <span class="input-group-text">R$</span>
-
                         <input
-                                type="text"
-                                class="form-control"
-                                id="valorPromocional"
-                                placeholder="0,00"
-                                inputmode="decimal"
-                                required
+                            type="text"
+                            class="form-control"
+                            id="valorPromocional"
+                            placeholder="0,00"
+                            inputmode="decimal"
+                            required
                         >
                     </div>
                 </div>
 
-                <button
-                        type="submit"
-                        class="btn btn-danger w-100"
-                >
+                <!-- Valor Total (controlado por config) -->
+                <div class="mb-3" id="campoValorTotal" style="display: none;">
+                    <label class="form-label">
+                        Valor Total
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">R$</span>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="valorTotal"
+                            placeholder="0,00"
+                            readonly
+                        >
+                    </div>
+                    <div class="form-text">
+                        Calculado automaticamente (Valor unitário × Quantidade)
+                    </div>
+                </div>
+
+                <!-- Motivo (controlado por config) -->
+                <div class="mb-4" id="campoMotivo" style="display: none;">
+                    <label for="motivo" class="form-label">
+                        Motivo da divergência
+                    </label>
+                    <select class="form-select" id="motivo">
+                        <option value="" selected disabled>Selecione o motivo</option>
+                        <option value="etiqueta_pdv">Etiqueta × PDV</option>
+                        <option value="etiqueta_tabloide">Etiqueta × Tabloide</option>
+                        <option value="tabloide_pdv">Tabloide × PDV</option>
+                        <option value="pc_virtual">PC Virtual / LMPM</option>
+                        <option value="ofertas_exclusivas">Ofertas Exclusivas</option>
+                        <option value="oferta_combinada">Oferta Combinada</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-danger w-100">
                     Calcular divergência
                 </button>
 
@@ -272,50 +334,6 @@
         </div>
     </div>
 </div>
-
-<!-- <script>
-    const form = document.getElementById("formDivergencia");
-    const resultado = document.getElementById("resultado");
-
-    function moedaParaNumero(valor) {
-        return parseFloat(
-            valor
-                .replace(/\./g, "")
-                .replace(",", ".")
-        );
-    }
-
-    form.addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const valorOriginal = moedaParaNumero(
-            document.getElementById("valorOriginal").value
-        );
-
-        const quantidade = parseInt(
-            document.getElementById("quantidade").value
-        );
-
-        const valorPromocional = moedaParaNumero(
-            document.getElementById("valorPromocional").value
-        );
-
-        const valorSemPromocao =
-            valorOriginal * quantidade;
-
-        const valorComPromocao =
-            valorPromocional * quantidade;
-
-        const divergencia =
-            valorSemPromocao - valorComPromocao;
-
-        resultado.textContent =
-            divergencia.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL"
-            });
-    });
-</script> -->
 
 <!-- =========================================================
      MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
