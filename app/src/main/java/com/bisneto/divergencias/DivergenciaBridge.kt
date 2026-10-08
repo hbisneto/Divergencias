@@ -11,6 +11,15 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.charset.Charset
+import androidx.core.content.FileProvider
+import android.content.ClipData
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Handler
+import android.os.Looper
+import android.util.Base64
+
 
 class DivergenciaBridge(
     private val context: Context,
@@ -244,5 +253,60 @@ class DivergenciaBridge(
     @JavascriptInterface
     fun enviarEmail(destinatario: String, assunto: String, htmlBody: String) {
         enviarEmail(destinatario, assunto, htmlBody, "", "")
+    }
+
+    private val shareHelper = ShareHelper(context)
+
+    /**
+     * Compartilha PNG (WhatsApp, etc.)
+     * base64Png pode vir com data:image/png;base64,...
+     */
+    @JavascriptInterface
+    fun compartilharImagemBase64(base64Png: String, nomeArquivo: String): String {
+        if (base64Png.isBlank()) return "Imagem vazia"
+        return shareHelper.compartilharImagemPng(base64Png, nomeArquivo.ifBlank { "divergencia.png" })
+    }
+
+    /**
+     * Fallback: CSV ou HTML como arquivo
+     * mimeType: "text/csv" | "text/html" | "text/plain"
+     */
+    @JavascriptInterface
+    fun compartilharArquivoTexto(
+        nomeArquivo: String,
+        conteudo: String,
+        mimeType: String
+    ): String {
+        if (conteudo.isBlank()) return "Conteúdo vazio"
+        val mime = mimeType.ifBlank { "text/plain" }
+        return shareHelper.compartilharArquivoTexto(
+            nomeArquivo.ifBlank { "divergencias.txt" },
+            conteudo,
+            mime
+        )
+    }
+
+    private fun abrirShare(file: File, mimeType: String, tituloChooser: String) {
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = mimeType
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            clipData = android.content.ClipData.newRawUri("", uri)
+        }
+
+        val chooser = Intent.createChooser(intent, tituloChooser).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        // Garante UI thread
+        android.os.Handler(android.os.Looper.getMainLooper()).post {
+            context.startActivity(chooser)
+        }
     }
 }

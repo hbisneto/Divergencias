@@ -497,29 +497,57 @@ document.getElementById("btnExportarItem").addEventListener("click", () => {
     exportarCsvNativo(csv, `divergencia_${divergenciaAtual.id}.csv`);
 });
 
-// Compartilhar ITEM (texto) – continua usando navigator.share
+function compartilharImagemQuandoPronta(dataUrl, nomeArquivo) {
+    return new Promise((resolve) => {
+        // Garante que o bitmap foi “commitado” no WebView
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const r = Android.compartilharImagemBase64(dataUrl, nomeArquivo);
+                    resolve(r);
+                }, 120); // 100–200ms costuma bastar
+            });
+        });
+    });
+}
+
 document.getElementById("btnCompartilharItem").addEventListener("click", async () => {
     if (!divergenciaAtual) return;
 
-    const texto = gerarTextoDivergencia(divergenciaAtual);
-
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                title: `Divergência #${divergenciaAtual.id}`,
-                text: texto
-            });
-        } catch (e) {
-            // cancelado
-        }
-    } else {
-        try {
-            await navigator.clipboard.writeText(texto);
-            alert("Texto copiado para a área de transferência!");
-        } catch (e) {
-            alert("Não foi possível compartilhar.");
-        }
+    if (typeof Android === "undefined" || !Android.compartilharImagemBase64) {
+        alert("Disponível apenas no app Android.");
+        return;
     }
+
+    const btn = document.getElementById("btnCompartilharItem");
+    const textoOriginal = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Gerando imagem...";
+
+    try {
+        // Pequena pausa antes de desenhar (opcional, ajuda em aparelhos lentos)
+        await new Promise(r => setTimeout(r, 50));
+
+        const dataUrl = gerarImagemItem(divergenciaAtual);
+        const nome = `divergencia_${divergenciaAtual.id}.png`;
+
+        const resultado = await compartilharImagemQuandoPronta(dataUrl, nome);
+
+        if (resultado !== "ok") {
+            alert(resultado || "Não foi possível compartilhar a imagem.");
+        }
+    } catch (e) {
+        alert("Erro ao gerar imagem: " + (e.message || e));
+    } finally {
+        btn.disabled = false;
+        btn.textContent = textoOriginal;
+    }
+});
+
+document.getElementById("btnWhatsAppResumo")?.addEventListener("click", () => {
+    // Ex.: 30 mais recentes
+    const lista = (listaCompleta || []).slice(0, 50); // pode ter mais → fallback
+    compartilharListaWhatsApp(lista, "csv");
 });
 
 /* =========================================================
@@ -675,17 +703,6 @@ document.getElementById("btnConfirmarEmail").addEventListener("click", () => {
 
     Android.enviarEmail(destinatario, assunto, html, "", "");
 });
-
-
-
-
-
-
-
-
-
-
-
 
 /* =========================================================
  * E-MAIL POR PERÍODO (máx. 90 dias + limite de legibilidade)
@@ -904,46 +921,6 @@ document.getElementById("btnConfirmarEmailPeriodo")?.addEventListener("click", (
     );
 });
 
-// Se ainda não existir, unifique o callback:
-// window.onEmailResult = function (sucesso, mensagem) {
-//     const btnDia = document.getElementById("btnConfirmarEmail");
-//     const btnPeriodo = document.getElementById("btnConfirmarEmailPeriodo");
-//     if (btnDia) btnDia.disabled = false;
-//     if (btnPeriodo) btnPeriodo.disabled = false;
-
-//     const statusPeriodo = document.getElementById("emailPeriodoStatus");
-//     if (statusPeriodo) statusPeriodo.textContent = mensagem;
-
-//     if (sucesso) {
-//         alert("E-mail enviado com sucesso!");
-//         modalEmailPeriodo?.hide();
-//         // se tiver modal do dia:
-//         // modalEmailDia?.hide();
-//     } else {
-//         alert("Erro: " + mensagem);
-//     }
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 window.onEmailResult = function (sucesso, mensagem) {
     const btnDia = document.getElementById("btnConfirmarEmail");
     const btnPeriodo = document.getElementById("btnConfirmarEmailPeriodo");
@@ -963,19 +940,301 @@ window.onEmailResult = function (sucesso, mensagem) {
     }
 };
 
+/* =========================================================
+ * IMAGEM / WHATSAPP
+ * ========================================================= */
 
+const LIMITES = {
+    maxItensImagem: 30,
+    // resolução boa para celular / WhatsApp
+    imgWidth: 1080,
+    scale: 2 // canvas interno 2x para nitidez
+};
 
-// window.onEmailResult = function (sucesso, mensagem) {
-//     document.getElementById("btnConfirmarEmail").disabled = false;
-//     document.getElementById("emailStatus").textContent = mensagem;
+function gerarImagemItem(item) {
+    const scale = 2;          // nitidez
+    const W = 1080;           // largura lógica
+    const margin = 36;
+    const padX = 32;
+    const headerH = 88;
+    const lineGap = 52;
+    const footerH = 56;
 
-//     if (sucesso) {
-//         alert("E-mail enviado com sucesso!");
-//         modalEmailDia.hide();
-//     } else {
-//         alert("Erro: " + mensagem);
-//     }
-// };
+    const linhas = [
+        ["Data", formatarData(item.dataHora)],
+        ["Código", valorOuTraco(item.codigoProduto)],
+        ["PDV", valorOuTraco(item.pdv)],
+        ["Descrição", valorOuTraco(item.descricao)],
+        ["Original", centavosParaMoeda(item.valorOriginal)],
+        ["Quantidade", String(item.quantidade)],
+        ["Promocional", centavosParaMoeda(item.valorPromocional)],
+        ["Divergência", centavosParaMoeda(item.divergencia)],
+        ["Motivo", traduzirMotivo(item.motivo)]
+    ];
+
+    // Altura dinâmica (sem sobra enorme embaixo)
+    const contentTop = margin + headerH + 28;
+    const cssH = contentTop + linhas.length * lineGap + footerH + margin;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(W * scale);
+    canvas.height = Math.round(cssH * scale);
+
+    const ctx = canvas.getContext("2d");
+    ctx.scale(scale, scale);
+
+    // Fundo cinza
+    ctx.fillStyle = "#f0f0f0";
+    ctx.fillRect(0, 0, W, cssH);
+
+    const cardX = margin;
+    const cardY = margin;
+    const cardW = W - margin * 2;
+    const cardH = cssH - margin * 2;
+    const radius = 20;
+
+    // Sombra leve
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.12)";
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 6;
+    roundRectPath(ctx, cardX, cardY, cardW, cardH, radius);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.restore();
+
+    // Clip no card para nada “vazar”
+    ctx.save();
+    roundRectPath(ctx, cardX, cardY, cardW, cardH, radius);
+    ctx.clip();
+
+    // ===== Cabeçalho vermelho (inteiro, sem cortar o título) =====
+    ctx.fillStyle = "#b6202f";
+    ctx.fillRect(cardX, cardY, cardW, headerH);
+
+    // Título centralizado verticalmente na barra
+    const titulo = "Divergência #" + item.id;
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 30px Arial, sans-serif";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    ctx.fillText(titulo, cardX + padX, cardY + headerH / 2);
+
+    // ===== Linhas de dados =====
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+
+    let y = contentTop;
+    const labelX = cardX + padX;
+    const valueX = cardX + 280;
+    const maxValueW = cardW - 280 - padX;
+
+    linhas.forEach(([label, valor]) => {
+        ctx.font = "20px Arial, sans-serif";
+        ctx.fillStyle = "#888888";
+        ctx.fillText(label, labelX, y);
+
+        ctx.font = "bold 22px Arial, sans-serif";
+        ctx.fillStyle = "#1a1a1a";
+        const texto = ellipsis(ctx, String(valor), maxValueW);
+        ctx.fillText(texto, valueX, y);
+
+        y += lineGap;
+    });
+
+    // Rodapé
+    ctx.font = "16px Arial, sans-serif";
+    ctx.fillStyle = "#aaaaaa";
+    ctx.fillText("App Divergências", labelX, cardY + cardH - 22);
+
+    ctx.restore(); // fim do clip
+
+    return canvas.toDataURL("image/png");
+}
+
+/** Path de retângulo arredondado (só path, sem fill) */
+function roundRectPath(ctx, x, y, w, h, r) {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    ctx.arcTo(x + w, y + h, x, y + h, radius);
+    ctx.arcTo(x, y + h, x, y, radius);
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
+}
+
+function ellipsis(ctx, text, maxWidth) {
+    if (ctx.measureText(text).width <= maxWidth) return text;
+    let s = String(text);
+    while (s.length > 0 && ctx.measureText(s + "…").width > maxWidth) {
+        s = s.slice(0, -1);
+    }
+    return s + "…";
+}
+
+/**
+ * Resumo de até 30 itens. Se lista.length > 30, o chamador deve usar fallback.
+ */
+function gerarImagemResumo(lista) {
+    const itens = lista.slice(0, LIMITES.maxItensImagem);
+    const W = LIMITES.imgWidth;
+    const scale = LIMITES.scale;
+    const rowH = 36;
+    const headerH = 140;
+    const footerH = 80;
+    const cssH = headerH + 40 + itens.length * rowH + footerH;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = W * scale;
+    canvas.height = cssH * scale;
+    const ctx = canvas.getContext("2d");
+    ctx.scale(scale, scale);
+
+    ctx.fillStyle = "#f4f4f4";
+    ctx.fillRect(0, 0, W, cssH);
+
+    const margin = 32;
+    roundRect(ctx, margin, margin, W - margin * 2, cssH - margin * 2, 16);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+
+    ctx.fillStyle = "#b6202f";
+    ctx.fillRect(margin, margin, W - margin * 2, 70);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 26px Arial";
+    ctx.fillText("Resumo de divergências", margin + 20, margin + 44);
+
+    ctx.fillStyle = "#666";
+    ctx.font = "18px Arial";
+    ctx.fillText(
+        new Date().toLocaleString("pt-BR") + " · " + itens.length + " item(ns)",
+        margin + 20,
+        margin + 100
+    );
+
+    let y = headerH;
+    ctx.font = "bold 16px Arial";
+    ctx.fillStyle = "#b6202f";
+    ctx.fillText("Cód.", margin + 20, y);
+    ctx.fillText("Qtd", margin + 160, y);
+    ctx.fillText("Divergência", margin + 240, y);
+    ctx.fillText("Descrição", margin + 420, y);
+    y += 12;
+    ctx.strokeStyle = "#eee";
+    ctx.beginPath();
+    ctx.moveTo(margin + 16, y);
+    ctx.lineTo(W - margin - 16, y);
+    ctx.stroke();
+    y += 28;
+
+    const total = itens.reduce((a, i) => a + Number(i.divergencia), 0);
+
+    itens.forEach((item, idx) => {
+        ctx.fillStyle = idx % 2 === 0 ? "#fafafa" : "#ffffff";
+        ctx.fillRect(margin + 8, y - 22, W - margin * 2 - 16, rowH);
+
+        ctx.fillStyle = "#333";
+        ctx.font = "15px Arial";
+        ctx.fillText(ellipsis(ctx, valorOuTraco(item.codigoProduto), 130), margin + 20, y);
+        ctx.fillText(String(item.quantidade), margin + 160, y);
+        ctx.font = "bold 15px Arial";
+        ctx.fillText(centavosParaMoeda(item.divergencia), margin + 240, y);
+        ctx.font = "15px Arial";
+        ctx.fillText(ellipsis(ctx, valorOuTraco(item.descricao), 400), margin + 420, y);
+        y += rowH;
+    });
+
+    y += 20;
+    ctx.fillStyle = "#222";
+    ctx.font = "bold 22px Arial";
+    ctx.fillText("Total: " + centavosParaMoeda(total), margin + 20, y);
+
+    ctx.fillStyle = "#999";
+    ctx.font = "14px Arial";
+    ctx.fillText("App Divergências", margin + 20, cssH - margin - 16);
+
+    return canvas.toDataURL("image/png");
+}
+
+function roundRect(ctx, x, y, w, h, r, topOnly) {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    if (topOnly) {
+        ctx.lineTo(x + w, y + h);
+        ctx.lineTo(x, y + h);
+        ctx.lineTo(x, y + radius);
+    } else {
+        ctx.arcTo(x + w, y + h, x, y + h, radius);
+        ctx.arcTo(x, y + h, x, y, radius);
+    }
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
+}
+
+function ellipsis(ctx, text, maxWidth) {
+    if (ctx.measureText(text).width <= maxWidth) return text;
+    let s = text;
+    while (s.length > 0 && ctx.measureText(s + "…").width > maxWidth) {
+        s = s.slice(0, -1);
+    }
+    return s + "…";
+}
+
+/**
+ * Compartilha lista: imagem se <= 30; senão arquivo CSV/HTML.
+ * formatoFallback: "csv" | "html"
+ */
+function compartilharListaWhatsApp(lista, formatoFallback) {
+    if (!lista || lista.length === 0) {
+        alert("Nada para compartilhar.");
+        return;
+    }
+
+    if (typeof Android === "undefined") {
+        alert("Disponível apenas no app Android.");
+        return;
+    }
+
+    if (lista.length > LIMITES.maxItensImagem) {
+        const usarHtml = formatoFallback === "html";
+        const nome = usarHtml
+            ? `divergencias_${Date.now()}.html`
+            : `divergencias_${Date.now()}.csv`;
+        const conteudo = usarHtml
+            ? gerarHtmlEmailPeriodo(
+                lista,
+                "Lista",
+                lista.length + " registros",
+                false
+              )
+            : "\uFEFF" + gerarCsvCompleto(lista);
+        const mime = usarHtml ? "text/html" : "text/csv";
+
+        const r = Android.compartilharArquivoTexto(nome, conteudo, mime);
+        if (r !== "ok") alert(r);
+        else {
+            alert(
+                `Há ${lista.length} registros (máx. ${LIMITES.maxItensImagem} na imagem). ` +
+                `Compartilhando arquivo ${usarHtml ? "HTML" : "CSV"}.`
+            );
+        }
+        return;
+    }
+
+    const dataUrl = lista.length === 1
+        ? gerarImagemItem(lista[0])
+        : gerarImagemResumo(lista);
+
+    const nome = lista.length === 1
+        ? `divergencia_${lista[0].id}.png`
+        : `resumo_divergencias_${Date.now()}.png`;
+
+    const r = Android.compartilharImagemBase64(dataUrl, nome);
+    if (r !== "ok") alert(r);
+}
 
 /* =========================================================
  * INICIALIZAÇÃO
