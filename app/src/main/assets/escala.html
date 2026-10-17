@@ -92,74 +92,55 @@
         </div>
 
         <div class="offcanvas-body p-0">
-
             <div class="list-group list-group-flush">
-
-                <a
-                    href="sobre.html"
-                    class="list-group-item list-group-item-action py-3"
-                >
+                <a href="sobre.html" class="list-group-item list-group-item-action py-3">
                     <strong>Sobre o app</strong>
                     <div class="small text-muted">
                         Versão e informações
                     </div>
                 </a>
 
-                <a
-                    href="index.html"
-                    class="list-group-item list-group-item-action py-3"
-                >
-                    <strong>Calcular divergência</strong>
-                    <div class="small text-muted">
-                        Registrar nova divergência
-                    </div>
+                <a href="funcionarios.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Funcionários</strong>
+                    <div class="small text-muted">Cadastro de colaboradores</div>
                 </a>
 
-                <a
-                    href="historico.html"
-                    class="list-group-item list-group-item-action py-3"
-                >
-                    <strong>Histórico</strong>
-                    <div class="small text-muted">
-                        Ver divergências registradas
-                    </div>
-                </a>
-
-                <a
-                    href="notas.html"
-                    class="list-group-item list-group-item-action py-3"
-                >
-                    <strong>Contagem de notas</strong>
-                    <div class="small text-muted">
-                        Contar cédulas e moedas
-                    </div>
-                </a>
-
-                <a
-                    href="escala.html"
-                    class="list-group-item list-group-item-action py-3 active"
-                    aria-current="page"
-                >
+                <a href="escala.html" class="list-group-item list-group-item-action py-3 active" aria-current="page">
                     <strong>Escala de funcionários</strong>
                     <div class="small">
                         Criar e compartilhar escalas
                     </div>
                 </a>
 
-                <a
-                    href="configuracoes.html"
-                    class="list-group-item list-group-item-action py-3"
-                >
+                <a href="index.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Calcular divergência</strong>
+                    <div class="small text-muted">
+                        Registrar nova divergência
+                    </div>
+                </a>
+
+                <a href="historico.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Histórico</strong>
+                    <div class="small text-muted">
+                        Ver divergências registradas
+                    </div>
+                </a>
+
+                <a href="notas.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Contagem de notas</strong>
+                    <div class="small text-muted">
+                        Contar cédulas e moedas
+                    </div>
+                </a>        
+
+                <a href="configuracoes.html" class="list-group-item list-group-item-action py-3">
                     <strong>Configurações</strong>
                     <div class="small text-muted">
                         Preferências do aplicativo
                     </div>
                 </a>
-
             </div>
-
         </div>
-
     </div>
 
 
@@ -252,23 +233,16 @@
 
                 <section class="mb-4">
 
-                    <div
-                        class="d-flex justify-content-between
-                               align-items-center gap-2 mb-3"
-                    >
-
-                        <h5 class="mb-0">
-                            2. Funcionários
-                        </h5>
-
-                        <button
-                            type="button"
-                            class="btn btn-outline-danger btn-sm"
-                            id="adicionarFuncionario"
-                        >
-                            + Adicionar
-                        </button>
-
+                   <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+                        <h5 class="mb-0">2. Funcionários</h5>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="adicionarCadastrado">
+                                + Cadastrado
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" id="adicionarFuncionario">
+                                + Avulso
+                            </button>
+                        </div>
                     </div>
 
                     <div
@@ -456,6 +430,24 @@
 
             </div>
 
+        </div>
+    </div>
+
+    <!-- Modal seleção de funcionário cadastrado -->
+    <div class="modal fade" id="modalSelecionarFuncionario" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Selecionar funcionário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="listaSelecaoFuncionarios">
+                    <div class="text-muted text-center py-3">Carregando...</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
         </div>
     </div>
 

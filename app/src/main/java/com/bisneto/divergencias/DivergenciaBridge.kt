@@ -309,4 +309,59 @@ class DivergenciaBridge(
             context.startActivity(chooser)
         }
     }
+
+        /* =========================================================
+     * FUNCIONÁRIOS
+     * ========================================================= */
+
+    @JavascriptInterface
+    fun listarFuncionarios(): String {
+        val lista = database.listarFuncionarios()
+        val jsonArray = JSONArray()
+        for (item in lista) {
+            val json = JSONObject()
+            json.put("cracha", item["cracha"] ?: "")
+            json.put("nome", item["nome"] ?: "")
+            json.put("cargo", item["cargo"] ?: "")
+            jsonArray.put(json)
+        }
+        return jsonArray.toString()
+    }
+
+    @JavascriptInterface
+    fun salvarFuncionario(cracha: String, nome: String, cargo: String): String {
+        if (cracha.isBlank() || nome.isBlank() || cargo.isBlank()) {
+            return "{\"ok\":false,\"erro\":\"Preencha todos os campos\"}"
+        }
+        val ok = database.inserirFuncionario(cracha, nome, cargo)
+        return if (ok) {
+            "{\"ok\":true}"
+        } else {
+            "{\"ok\":false,\"erro\":\"Não foi possível salvar\"}"
+        }
+    }
+
+    @JavascriptInterface
+    fun excluirFuncionario(cracha: String): String {
+        val qtd = database.excluirFuncionario(cracha)
+        return if (qtd > 0) {
+            "{\"ok\":true}"
+        } else {
+            "{\"ok\":false,\"erro\":\"Funcionário não encontrado\"}"
+        }
+    }
+
+    @JavascriptInterface
+    fun buscarFuncionarioPorCracha(cracha: String): String {
+        val item = database.buscarFuncionarioPorCracha(cracha)
+        return if (item != null) {
+            val json = JSONObject()
+            json.put("cracha", item["cracha"] ?: "")
+            json.put("nome", item["nome"] ?: "")
+            json.put("cargo", item["cargo"] ?: "")
+            json.toString()
+        } else {
+            "{}"
+        }
+    }
 }
