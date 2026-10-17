@@ -1,46 +1,145 @@
 "use strict";
 
 /* =========================================================
-   CONFIGURAÇÕES
+   CONFIG
    ========================================================= */
 
-const CHAVE_ESCALAS = "divergencias_escalas_funcionarios_v1";
+const CHAVE_ESCALAS = "divergencias_escalas_funcionarios_v2";
 const CHAVE_FUNCIONARIOS = "divergencias_funcionarios_v1";
-
 const MAX_DIAS = 14;
 const MAX_FUNCIONARIOS = 100;
 
 const dataInicialInput = document.getElementById("dataInicial");
 const dataFinalInput = document.getElementById("dataFinal");
-const listaFuncionarios = document.getElementById("listaFuncionarios");
 const periodoInfo = document.getElementById("periodoInfo");
-const resumoEscala = document.getElementById("resumoEscala");
+const resumoMontar = document.getElementById("resumoMontar");
+const badgeQtdFunc = document.getElementById("badgeQtdFunc");
+const listaCards = document.getElementById("listaCardsFuncionarios");
 const escalasSalvas = document.getElementById("escalasSalvas");
 const mensagemEscala = document.getElementById("mensagemEscala");
 
-const botaoAdicionar = document.getElementById("adicionarFuncionario");
-const botaoAdicionarCadastrado = document.getElementById("adicionarCadastrado");
-const botaoSalvar = document.getElementById("salvarEscala");
-const botaoLimpar = document.getElementById("limparEscala");
-const botaoGerarImagem = document.getElementById("gerarImagem");
+const btnAbrirModalAdicionar = document.getElementById("btnAbrirModalAdicionar");
+const btnConfirmarAdicionar = document.getElementById("btnConfirmarAdicionar");
+const btnSalvar = document.getElementById("salvarEscala");
+const btnLimpar = document.getElementById("limparEscala");
+const btnGerarImagem = document.getElementById("gerarImagem");
+const btnConfirmarInter = document.getElementById("btnConfirmarInter");
 
-/* =========================================================
-   ESTADO
-   ========================================================= */
+const selectFuncionarioCad = document.getElementById("selectFuncionarioCad");
+const addNome = document.getElementById("addNome");
+const addCracha = document.getElementById("addCracha");
+const addCargo = document.getElementById("addCargo");
+const addEntrada = document.getElementById("addEntrada");
+const addSaida = document.getElementById("addSaida");
+
+const interNomeFunc = document.getElementById("interNomeFunc");
+const interListaDias = document.getElementById("interListaDias");
+const interEntrada = document.getElementById("interEntrada");
+const interSaida = document.getElementById("interSaida");
+
+const modalAdicionar = new bootstrap.Modal(document.getElementById("modalAdicionarFunc"));
+const modalInter = new bootstrap.Modal(document.getElementById("modalInter"));
+const modalConfirmacao = new bootstrap.Modal(document.getElementById("modalConfirmacaoEscala"));
+const mensagemConfirmacao = document.getElementById("mensagemConfirmacaoEscala");
+const botaoConfirmarAcao = document.getElementById("confirmarAcaoEscala");
 
 let funcionarios = [];
 let proximoId = 1;
 let escalaEditandoId = null;
-
-const modalConfirmacaoElemento = document.getElementById("modalConfirmacaoEscala");
-const modalConfirmacao = new bootstrap.Modal(modalConfirmacaoElemento);
-const mensagemConfirmacao = document.getElementById("mensagemConfirmacaoEscala");
-const botaoConfirmarAcao = document.getElementById("confirmarAcaoEscala");
 let acaoConfirmacaoPendente = null;
+let idFuncInterAtual = null;
 
-const modalSelecaoEl = document.getElementById("modalSelecionarFuncionario");
-const modalSelecao = modalSelecaoEl ? new bootstrap.Modal(modalSelecaoEl) : null;
-const listaSelecao = document.getElementById("listaSelecaoFuncionarios");
+/* =========================================================
+   UTILITÁRIOS DE DATA
+   ========================================================= */
+
+function dataLocalISO(data) {
+    const y = data.getFullYear();
+    const m = String(data.getMonth() + 1).padStart(2, "0");
+    const d = String(data.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+}
+
+function dataDeISO(valor) {
+    const p = valor.split("-").map(Number);
+    if (p.length !== 3 || p.some(Number.isNaN)) return null;
+    const [y, m, d] = p;
+    const dt = new Date(y, m - 1, d);
+    if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+    return dt;
+}
+
+function formatarData(valor, comSemana = false) {
+    const dt = dataDeISO(valor);
+    if (!dt) return valor;
+    const op = comSemana
+        ? { weekday: "short", day: "2-digit", month: "2-digit" }
+        : { day: "2-digit", month: "2-digit", year: "numeric" };
+    return dt.toLocaleDateString("pt-BR", op);
+}
+
+function obterDatas() {
+    const ini = dataInicialInput.value;
+    const fim = dataFinalInput.value;
+    if (!ini || !fim) return [];
+    const dIni = dataDeISO(ini);
+    const dFim = dataDeISO(fim);
+    if (!dIni || !dFim || dFim < dIni) return [];
+    const diff = Math.round((dFim - dIni) / 86400000) + 1;
+    if (diff > MAX_DIAS) return [];
+    const datas = [];
+    const c = new Date(dIni.getFullYear(), dIni.getMonth(), dIni.getDate());
+    while (c <= dFim) {
+        datas.push(dataLocalISO(c));
+        c.setDate(c.getDate() + 1);
+    }
+    return datas;
+}
+
+function validarPeriodo(mostrarErro = false) {
+    const ini = dataInicialInput.value;
+    const fim = dataFinalInput.value;
+    if (!ini || !fim) {
+        periodoInfo.textContent = "Selecione as datas inicial e final.";
+        if (mostrarErro) mostrarMensagem("Informe a data inicial e a data final.", "warning");
+        return false;
+    }
+    const dIni = dataDeISO(ini);
+    const dFim = dataDeISO(fim);
+    if (!dIni || !dFim) {
+        periodoInfo.textContent = "Informe datas válidas.";
+        if (mostrarErro) mostrarMensagem("Uma das datas é inválida.", "warning");
+        return false;
+    }
+    if (dFim < dIni) {
+        periodoInfo.textContent = "A data final precisa ser igual ou posterior à inicial.";
+        if (mostrarErro) mostrarMensagem("Data final não pode ser anterior à inicial.", "warning");
+        return false;
+    }
+    const diff = Math.round((dFim - dIni) / 86400000) + 1;
+    if (diff > MAX_DIAS) {
+        periodoInfo.textContent = `O período máximo é de ${MAX_DIAS} dias.`;
+        if (mostrarErro) mostrarMensagem(`Selecione no máximo ${MAX_DIAS} dias.`, "warning");
+        return false;
+    }
+    periodoInfo.textContent = `${diff} dia(s) selecionado(s).`;
+    return true;
+}
+
+/* =========================================================
+   MENSAGENS / CONFIRMAÇÃO
+   ========================================================= */
+
+function mostrarMensagem(texto, tipo = "success") {
+    mensagemEscala.textContent = texto;
+    mensagemEscala.className = `alert alert-${tipo} mt-4`;
+    mensagemEscala.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function limparMensagem() {
+    mensagemEscala.textContent = "";
+    mensagemEscala.className = "alert d-none mt-4";
+}
 
 function solicitarConfirmacao(mensagem, acao) {
     mensagemConfirmacao.textContent = mensagem;
@@ -55,106 +154,12 @@ botaoConfirmarAcao.addEventListener("click", () => {
     if (typeof acao === "function") acao();
 });
 
-modalConfirmacaoElemento.addEventListener("hidden.bs.modal", () => {
+document.getElementById("modalConfirmacaoEscala").addEventListener("hidden.bs.modal", () => {
     acaoConfirmacaoPendente = null;
 });
 
 /* =========================================================
-   DATA LOCAL
-   ========================================================= */
-
-function dataLocalISO(data) {
-    const ano = data.getFullYear();
-    const mes = String(data.getMonth() + 1).padStart(2, "0");
-    const dia = String(data.getDate()).padStart(2, "0");
-    return `${ano}-${mes}-${dia}`;
-}
-
-function dataDeISO(valor) {
-    const partes = valor.split("-").map(Number);
-    if (partes.length !== 3 || partes.some(Number.isNaN)) return null;
-    const [ano, mes, dia] = partes;
-    const data = new Date(ano, mes - 1, dia);
-    if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) {
-        return null;
-    }
-    return data;
-}
-
-function formatarData(valor, incluirDiaSemana = false) {
-    const data = dataDeISO(valor);
-    if (!data) return valor;
-    const opcoes = incluirDiaSemana
-        ? { weekday: "short", day: "2-digit", month: "2-digit" }
-        : { day: "2-digit", month: "2-digit", year: "numeric" };
-    return data.toLocaleDateString("pt-BR", opcoes);
-}
-
-function obterDatas() {
-    const inicio = dataInicialInput.value;
-    const fim = dataFinalInput.value;
-    if (!inicio || !fim) return [];
-    const dataInicio = dataDeISO(inicio);
-    const dataFim = dataDeISO(fim);
-    if (!dataInicio || !dataFim || dataFim < dataInicio) return [];
-    const diferenca = Math.round((dataFim - dataInicio) / 86400000);
-    if (diferenca + 1 > MAX_DIAS) return [];
-    const datas = [];
-    const cursor = new Date(dataInicio.getFullYear(), dataInicio.getMonth(), dataInicio.getDate());
-    while (cursor <= dataFim) {
-        datas.push(dataLocalISO(cursor));
-        cursor.setDate(cursor.getDate() + 1);
-    }
-    return datas;
-}
-
-/* =========================================================
-   MENSAGENS / VALIDAÇÃO PERÍODO
-   ========================================================= */
-
-function mostrarMensagem(texto, tipo = "success") {
-    mensagemEscala.textContent = texto;
-    mensagemEscala.className = `alert alert-${tipo} mt-4`;
-    mensagemEscala.scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
-
-function limparMensagem() {
-    mensagemEscala.textContent = "";
-    mensagemEscala.className = "alert d-none mt-4";
-}
-
-function validarPeriodo(mostrarErro = false) {
-    const inicio = dataInicialInput.value;
-    const fim = dataFinalInput.value;
-    if (!inicio || !fim) {
-        periodoInfo.textContent = "Selecione as datas inicial e final.";
-        if (mostrarErro) mostrarMensagem("Informe a data inicial e a data final.", "warning");
-        return false;
-    }
-    const dataInicio = dataDeISO(inicio);
-    const dataFim = dataDeISO(fim);
-    if (!dataInicio || !dataFim) {
-        periodoInfo.textContent = "Informe datas válidas.";
-        if (mostrarErro) mostrarMensagem("Uma das datas informadas é inválida.", "warning");
-        return false;
-    }
-    if (dataFim < dataInicio) {
-        periodoInfo.textContent = "A data final precisa ser igual ou posterior à inicial.";
-        if (mostrarErro) mostrarMensagem("A data final não pode ser anterior à data inicial.", "warning");
-        return false;
-    }
-    const diferenca = Math.round((dataFim - dataInicio) / 86400000) + 1;
-    if (diferenca > MAX_DIAS) {
-        periodoInfo.textContent = `O período máximo é de ${MAX_DIAS} dias.`;
-        if (mostrarErro) mostrarMensagem(`Selecione no máximo ${MAX_DIAS} dias.`, "warning");
-        return false;
-    }
-    periodoInfo.textContent = `${diferenca} dia(s) selecionado(s).`;
-    return true;
-}
-
-/* =========================================================
-   CADASTRO DE FUNCIONÁRIOS (leitura)
+   FUNCIONÁRIOS CADASTRADOS (leitura)
    ========================================================= */
 
 function temAndroidFunc() {
@@ -167,363 +172,342 @@ function carregarFuncionariosCadastrados() {
             const raw = Android.listarFuncionarios();
             const dados = JSON.parse(raw || "[]");
             return Array.isArray(dados) ? dados : [];
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
     }
     try {
         const txt = localStorage.getItem(CHAVE_FUNCIONARIOS);
         if (!txt) return [];
         const dados = JSON.parse(txt);
         return Array.isArray(dados) ? dados : [];
-    } catch (e) {
-        return [];
-    }
+    } catch (e) { return []; }
 }
 
+function popularSelectCadastrados() {
+    const lista = carregarFuncionariosCadastrados();
+    selectFuncionarioCad.innerHTML = '<option value="">— Digitar avulso / escolher —</option>';
+    lista.forEach(f => {
+        const opt = document.createElement("option");
+        opt.value = f.cracha;
+        opt.textContent = `${f.nome} (${f.cracha}) · ${f.cargo}`;
+        opt.dataset.nome = f.nome;
+        opt.dataset.cargo = f.cargo;
+        selectFuncionarioCad.appendChild(opt);
+    });
+}
+
+selectFuncionarioCad.addEventListener("change", () => {
+    const opt = selectFuncionarioCad.selectedOptions[0];
+    if (!opt || !opt.value) return;
+    addNome.value = opt.dataset.nome || "";
+    addCracha.value = opt.value;
+    addCargo.value = opt.dataset.cargo || "";
+});
+
 /* =========================================================
-   FUNCIONÁRIOS DA ESCALA
+   MODELO DA ESCALA
    ========================================================= */
 
-function criarFuncionario(dados = {}) {
+function criarDiasComHorarioPadrao(datas, entrada, saida) {
+    const dias = {};
+    datas.forEach(d => {
+        dias[d] = { tipo: "normal", entrada, saida };
+    });
+    return dias;
+}
+
+function criarFuncionario({ cracha = "", nome = "", cargo = "", entrada = "08:00", saida = "16:20" } = {}) {
+    const datas = obterDatas();
     return {
         id: proximoId++,
-        cracha: dados.cracha || "",
-        nome: dados.nome || "",
-        cargo: dados.cargo || "",
-        horarios: {},
-        intermediario: false,
-        dataInicioInter: "",
-        quantidadeDiasInter: 2,
-        diasInter: [],
-        entradaInter: "09:00",
-        saidaInter: "17:20"
+        cracha: String(cracha || "").trim(),
+        nome: String(nome || "").trim(),
+        cargo: String(cargo || "").trim(),
+        dias: criarDiasComHorarioPadrao(datas, entrada, saida)
     };
 }
 
-function recalcularDiasInter(funcionario, datas) {
-    if (!funcionario.intermediario || !funcionario.dataInicioInter) {
-        funcionario.diasInter = [];
+/* =========================================================
+   RESUMO + BADGE
+   ========================================================= */
+
+function atualizarResumo() {
+    const n = funcionarios.length;
+    badgeQtdFunc.textContent = String(n);
+    if (n === 0) {
+        resumoMontar.textContent = "Nenhum funcionário na escala ainda.";
         return;
     }
-    const qtd = Number(funcionario.quantidadeDiasInter) || 2;
-    const idx = datas.indexOf(funcionario.dataInicioInter);
-    if (idx < 0) {
-        funcionario.diasInter = [];
-        return;
-    }
-    funcionario.diasInter = datas.slice(idx, idx + qtd);
-}
-
-function adicionarFuncionario(dados = {}) {
-    if (!validarPeriodo(true)) return;
-    if (funcionarios.length >= MAX_FUNCIONARIOS) {
-        mostrarMensagem(`O limite é de ${MAX_FUNCIONARIOS} funcionários.`, "warning");
-        return;
-    }
-    funcionarios.push(criarFuncionario(dados));
-    renderizarFuncionarios();
-    atualizarResumo();
-}
-
-function removerFuncionario(id) {
-    funcionarios = funcionarios.filter(f => f.id !== id);
-    renderizarFuncionarios();
-    atualizarResumo();
-    limparMensagem();
-}
-
-function criarElemento(tag, classe, texto = "") {
-    const el = document.createElement(tag);
-    if (classe) el.className = classe;
-    if (texto) el.textContent = texto;
-    return el;
+    const nomes = funcionarios.map(f => f.nome || "(sem nome)").join(", ");
+    resumoMontar.innerHTML = `<strong>${n} funcionário(s)</strong> na escala atual.<br>
+        <span class="text-muted">${nomes}</span><br>
+        <span class="small">Vá na aba <strong>Visualizar</strong> para editar dias, folgas e intermediário.</span>`;
 }
 
 /* =========================================================
-   RENDERIZAÇÃO
+   ABA VISUALIZAR – CARDS
    ========================================================= */
 
-function renderizarFuncionarios() {
+function renderizarCards() {
     const datas = obterDatas();
-    listaFuncionarios.replaceChildren();
+    listaCards.replaceChildren();
 
-    if (datas.length === 0) {
-        listaFuncionarios.appendChild(
-            criarElemento("div", "text-muted text-center py-3", "Selecione um período válido.")
-        );
+    if (funcionarios.length === 0) {
+        listaCards.innerHTML = `
+            <div class="text-muted text-center py-4">
+                Nenhum funcionário. Vá na aba Montar e adicione.
+            </div>`;
         atualizarResumo();
         return;
     }
 
-    funcionarios.forEach((funcionario, indice) => {
-        recalcularDiasInter(funcionario, datas);
-
-        const card = criarElemento("div", "funcionario-card");
-        const cabecalho = criarElemento("div", "funcionario-cabecalho");
-
-        let tituloTexto = `Funcionário ${indice + 1}`;
-        if (funcionario.nome) tituloTexto = funcionario.nome;
-        if (funcionario.cargo) tituloTexto += ` · ${funcionario.cargo}`;
-
-        const titulo = criarElemento("h6", "funcionario-titulo", tituloTexto);
-        const botaoRemover = criarElemento("button", "btn btn-outline-danger btn-sm", "Remover");
-        botaoRemover.type = "button";
-        botaoRemover.addEventListener("click", () => removerFuncionario(funcionario.id));
-        cabecalho.append(titulo, botaoRemover);
-
-        const campos = criarElemento("div", "funcionario-campos");
-
-        // Nome
-        const grupoNome = criarElemento("div", "funcionario-nome");
-        const labelNome = criarElemento("label", "form-label", "Nome do funcionário");
-        labelNome.htmlFor = `funcionario-${funcionario.id}`;
-        const inputNome = criarElemento("input", "form-control");
-        inputNome.type = "text";
-        inputNome.id = `funcionario-${funcionario.id}`;
-        inputNome.placeholder = "Ex.: Maria";
-        inputNome.maxLength = 80;
-        inputNome.value = funcionario.nome;
-        inputNome.addEventListener("input", () => {
-            funcionario.nome = inputNome.value;
-            atualizarResumo();
-        });
-        grupoNome.append(labelNome, inputNome);
-
-        // Crachá (somente leitura se veio do cadastro)
-        if (funcionario.cracha) {
-            const infoCracha = criarElemento("div", "small text-muted mb-2");
-            infoCracha.textContent = `Crachá: ${funcionario.cracha}`;
-            grupoNome.appendChild(infoCracha);
-        }
-
-        // ---- Inter ----
-        const interConfiguracao = criarElemento("div", "inter-configuracao");
-        const interLabel = criarElemento("label", "inter-checkbox");
-        const interCheckbox = document.createElement("input");
-        interCheckbox.type = "checkbox";
-        interCheckbox.checked = funcionario.intermediario;
-        const interTexto = criarElemento("span", "", "Trabalha no intermediário (Inter)");
-        interLabel.append(interCheckbox, interTexto);
-
-        const interCampos = criarElemento("div", "inter-campos");
-        interCampos.hidden = !funcionario.intermediario;
-
-        const grupoDataInicio = criarElemento("div", "inter-grupo");
-        const labelDataInicio = criarElemento("label", "", "Começa o Inter em");
-        const dataInicio = criarElemento("input", "form-control");
-        dataInicio.type = "date";
-        dataInicio.min = datas[0] || "";
-        dataInicio.max = datas[datas.length - 1] || "";
-        dataInicio.value = funcionario.dataInicioInter || "";
-        dataInicio.addEventListener("change", () => {
-            funcionario.dataInicioInter = dataInicio.value;
-            recalcularDiasInter(funcionario, datas);
-            renderizarFuncionarios();
-            atualizarResumo();
-        });
-        grupoDataInicio.append(labelDataInicio, dataInicio);
-
-        const grupoQtd = criarElemento("div", "inter-grupo");
-        const labelQtd = criarElemento("label", "", "Quantidade de dias de Inter");
-        const selectQtd = criarElemento("select", "form-select");
-        [1, 2, 3, 4].forEach(n => {
-            const opt = document.createElement("option");
-            opt.value = String(n);
-            opt.textContent = n === 1 ? "1 dia" : `${n} dias`;
-            if (n === (funcionario.quantidadeDiasInter || 2)) opt.selected = true;
-            selectQtd.appendChild(opt);
-        });
-        selectQtd.addEventListener("change", () => {
-            funcionario.quantidadeDiasInter = Number(selectQtd.value);
-            recalcularDiasInter(funcionario, datas);
-            renderizarFuncionarios();
-            atualizarResumo();
-        });
-        grupoQtd.append(labelQtd, selectQtd);
-
-        const grupoEntrada = criarElemento("div", "inter-grupo");
-        const labelEntrada = criarElemento("label", "", "Entrada Inter");
-        const inputEntrada = criarElemento("input", "form-control");
-        inputEntrada.type = "time";
-        inputEntrada.value = funcionario.entradaInter || "09:00";
-        inputEntrada.addEventListener("change", () => {
-            funcionario.entradaInter = inputEntrada.value;
-            atualizarResumo();
-        });
-        grupoEntrada.append(labelEntrada, inputEntrada);
-
-        const grupoSaida = criarElemento("div", "inter-grupo");
-        const labelSaida = criarElemento("label", "", "Saída Inter");
-        const inputSaida = criarElemento("input", "form-control");
-        inputSaida.type = "time";
-        inputSaida.value = funcionario.saidaInter || "17:20";
-        inputSaida.addEventListener("change", () => {
-            funcionario.saidaInter = inputSaida.value;
-            atualizarResumo();
-        });
-        grupoSaida.append(labelSaida, inputSaida);
-
-        interCampos.append(grupoDataInicio, grupoQtd, grupoEntrada, grupoSaida);
-
-        const ajuda = criarElemento("div", "inter-ajuda");
-        if (funcionario.intermediario && funcionario.diasInter.length > 0) {
-            const listaDias = funcionario.diasInter.map(d => formatarData(d, true)).join(", ");
-            ajuda.textContent = `Dias de Inter: ${listaDias}. Nesses dias, se o horário estiver em branco, a imagem usará o Inter automaticamente.`;
-        } else if (funcionario.intermediario) {
-            ajuda.textContent = "Escolha a data de início e a quantidade de dias (1 a 4).";
-        }
-
-        interCheckbox.addEventListener("change", () => {
-            funcionario.intermediario = interCheckbox.checked;
-            if (funcionario.intermediario) {
-                if (!funcionario.dataInicioInter) funcionario.dataInicioInter = datas[0] || "";
-                if (!funcionario.quantidadeDiasInter) funcionario.quantidadeDiasInter = 2;
-            } else {
-                funcionario.diasInter = [];
+    funcionarios.forEach(func => {
+        // sincroniza dias se o período mudou
+        datas.forEach(d => {
+            if (!func.dias[d]) {
+                func.dias[d] = { tipo: "normal", entrada: "08:00", saida: "16:20" };
             }
-            recalcularDiasInter(funcionario, datas);
-            renderizarFuncionarios();
-            atualizarResumo();
+        });
+        // remove dias fora do período
+        Object.keys(func.dias).forEach(d => {
+            if (!datas.includes(d)) delete func.dias[d];
         });
 
-        interConfiguracao.append(interLabel, interCampos, ajuda);
+        const card = document.createElement("div");
+        card.className = "card card-func-escala mb-3 shadow-sm";
 
-        // Horários por dia
-        const grupoHorarios = criarElemento("div", "funcionario-horarios");
+        const header = document.createElement("div");
+        header.className = "card-header d-flex justify-content-between align-items-start gap-2 bg-white";
+        const titulo = document.createElement("div");
+        titulo.innerHTML = `<strong>${func.nome || "Sem nome"}</strong>
+            ${func.cargo ? `<span class="badge text-bg-dark ms-1">${func.cargo}</span>` : ""}
+            ${func.cracha ? `<div class="small text-muted">Crachá ${func.cracha}</div>` : ""}`;
+
+        const acoes = document.createElement("div");
+        acoes.className = "d-flex flex-wrap gap-1";
+
+        const btnInter = document.createElement("button");
+        btnInter.type = "button";
+        btnInter.className = "btn btn-outline-warning btn-sm";
+        btnInter.textContent = "Inter";
+        btnInter.addEventListener("click", () => abrirModalInter(func.id));
+
+        const btnRemover = document.createElement("button");
+        btnRemover.type = "button";
+        btnRemover.className = "btn btn-outline-danger btn-sm";
+        btnRemover.textContent = "Remover";
+        btnRemover.addEventListener("click", () => {
+            solicitarConfirmacao(`Remover ${func.nome} desta escala?`, () => {
+                funcionarios = funcionarios.filter(f => f.id !== func.id);
+                renderizarCards();
+                atualizarResumo();
+            });
+        });
+
+        acoes.append(btnInter, btnRemover);
+        header.append(titulo, acoes);
+
+        const body = document.createElement("div");
+        body.className = "card-body py-2";
+
         datas.forEach(data => {
-            const dia = criarElemento("div", "horario-dia");
-            const ehDiaInter = funcionario.intermediario &&
-                Array.isArray(funcionario.diasInter) &&
-                funcionario.diasInter.includes(data);
-            if (ehDiaInter) dia.classList.add("horario-dia-inter");
+            const info = func.dias[data] || { tipo: "normal", entrada: "08:00", saida: "16:20" };
+            const linha = document.createElement("div");
+            linha.className = "dia-linha";
 
-            const labelDia = criarElemento("label", "", formatarData(data, true));
-            if (ehDiaInter) {
-                const badge = criarElemento("span", "badge-inter", " INTER");
-                labelDia.appendChild(badge);
-            }
+            const label = document.createElement("div");
+            label.className = "small fw-semibold";
+            label.style.minWidth = "90px";
+            label.textContent = formatarData(data, true);
 
-            const inputHorario = criarElemento("input", "form-control");
-            inputHorario.type = "text";
-            inputHorario.placeholder = ehDiaInter
-                ? `Inter ${funcionario.entradaInter}–${funcionario.saidaInter}`
-                : "Ex.: 08:00–16:20 ou Folga";
-            inputHorario.maxLength = 40;
-            inputHorario.value = funcionario.horarios[data] || "";
-            inputHorario.addEventListener("input", () => {
-                funcionario.horarios[data] = inputHorario.value;
-                atualizarResumo();
+            const badge = document.createElement("span");
+            badge.className = "badge " + (
+                info.tipo === "folga" ? "badge-tipo-folga" :
+                info.tipo === "inter" ? "badge-tipo-inter" : "badge-tipo-normal"
+            );
+            badge.textContent = info.tipo === "folga" ? "FOLGA" :
+                info.tipo === "inter" ? "INTER" : "NORMAL";
+
+            const selTipo = document.createElement("select");
+            selTipo.className = "form-select form-select-sm";
+            selTipo.style.maxWidth = "110px";
+            ["normal", "folga", "inter"].forEach(t => {
+                const o = document.createElement("option");
+                o.value = t;
+                o.textContent = t === "normal" ? "Normal" : t === "folga" ? "Folga" : "Inter";
+                if (t === info.tipo) o.selected = true;
+                selTipo.appendChild(o);
             });
 
-            const botaoFolga = criarElemento("button", "btn btn-outline-secondary btn-sm btn-folga", "Folga");
-            botaoFolga.type = "button";
-            botaoFolga.addEventListener("click", () => {
-                inputHorario.value = "Folga";
-                funcionario.horarios[data] = "Folga";
-                atualizarResumo();
-            });
+            const inpEnt = document.createElement("input");
+            inpEnt.type = "time";
+            inpEnt.className = "form-control form-control-sm input-time-sm";
+            inpEnt.value = info.entrada || "08:00";
+            inpEnt.disabled = info.tipo === "folga";
 
-            dia.append(labelDia, inputHorario, botaoFolga);
-            grupoHorarios.appendChild(dia);
+            const inpSai = document.createElement("input");
+            inpSai.type = "time";
+            inpSai.className = "form-control form-control-sm input-time-sm";
+            inpSai.value = info.saida || "16:20";
+            inpSai.disabled = info.tipo === "folga";
+
+            const atualizar = () => {
+                const tipo = selTipo.value;
+                func.dias[data] = {
+                    tipo,
+                    entrada: inpEnt.value || "08:00",
+                    saida: inpSai.value || "16:20"
+                };
+                badge.className = "badge " + (
+                    tipo === "folga" ? "badge-tipo-folga" :
+                    tipo === "inter" ? "badge-tipo-inter" : "badge-tipo-normal"
+                );
+                badge.textContent = tipo === "folga" ? "FOLGA" : tipo === "inter" ? "INTER" : "NORMAL";
+                inpEnt.disabled = tipo === "folga";
+                inpSai.disabled = tipo === "folga";
+            };
+
+            selTipo.addEventListener("change", atualizar);
+            inpEnt.addEventListener("change", atualizar);
+            inpSai.addEventListener("change", atualizar);
+
+            linha.append(label, badge, selTipo, inpEnt, inpSai);
+            body.appendChild(linha);
         });
 
-        campos.append(grupoNome, interConfiguracao, grupoHorarios);
-        card.append(cabecalho, campos);
-        listaFuncionarios.appendChild(card);
+        card.append(header, body);
+        listaCards.appendChild(card);
     });
 
     atualizarResumo();
 }
 
-function atualizarResumo() {
-    const datas = obterDatas();
-    resumoEscala.replaceChildren();
-    if (datas.length === 0) {
-        resumoEscala.textContent = "Nenhuma escala montada.";
-        return;
-    }
-    resumoEscala.append(
-        criarElemento("div", "resumo-titulo", "Escala de Funcionários"),
-        criarElemento("div", "resumo-periodo",
-            `${formatarData(datas[0])} a ${formatarData(datas[datas.length - 1])}`),
-        criarElemento("div", "resumo-quantidade",
-            `${funcionarios.length} funcionário(s) · ${datas.length} dia(s)`)
-    );
-}
-
 /* =========================================================
-   SELEÇÃO DE CADASTRADOS
+   MODAL ADICIONAR
    ========================================================= */
 
-function abrirSelecaoCadastrados() {
+btnAbrirModalAdicionar.addEventListener("click", () => {
     if (!validarPeriodo(true)) return;
-    if (!modalSelecao || !listaSelecao) {
-        mostrarMensagem("Modal de seleção não encontrado.", "warning");
+    popularSelectCadastrados();
+    selectFuncionarioCad.value = "";
+    addNome.value = "";
+    addCracha.value = "";
+    addCargo.value = "";
+    addEntrada.value = "08:00";
+    addSaida.value = "16:20";
+    modalAdicionar.show();
+});
+
+btnConfirmarAdicionar.addEventListener("click", () => {
+    limparMensagem();
+    if (!validarPeriodo(true)) return;
+
+    const nome = addNome.value.trim();
+    if (!nome) {
+        mostrarMensagem("Informe o nome do funcionário.", "warning");
+        return;
+    }
+    if (funcionarios.length >= MAX_FUNCIONARIOS) {
+        mostrarMensagem(`Limite de ${MAX_FUNCIONARIOS} funcionários.`, "warning");
         return;
     }
 
-    const cadastrados = carregarFuncionariosCadastrados();
-    listaSelecao.replaceChildren();
-
-    if (cadastrados.length === 0) {
-        listaSelecao.appendChild(
-            criarElemento("div", "text-muted text-center py-3",
-                "Nenhum funcionário cadastrado. Vá em Funcionários e cadastre primeiro.")
-        );
-        modalSelecao.show();
+    const entrada = addEntrada.value || "08:00";
+    const saida = addSaida.value || "16:20";
+    if (entrada === saida) {
+        mostrarMensagem("Entrada e saída não podem ser iguais.", "warning");
         return;
     }
 
-    cadastrados.forEach(func => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "list-group-item list-group-item-action text-start";
-        btn.innerHTML = `<strong>${func.nome}</strong><br>
-            <small class="text-muted">Crachá ${func.cracha} · ${func.cargo}</small>`;
-        btn.addEventListener("click", () => {
-            // evita duplicar o mesmo crachá na escala atual
-            if (func.cracha && funcionarios.some(f => f.cracha === func.cracha)) {
-                mostrarMensagem(`${func.nome} já está nesta escala.`, "warning");
-                return;
-            }
-            adicionarFuncionario({
-                cracha: func.cracha,
-                nome: func.nome,
-                cargo: func.cargo
-            });
-            modalSelecao.hide();
-            mostrarMensagem(`${func.nome} adicionado à escala.`, "success");
-        });
-        listaSelecao.appendChild(btn);
+    const cracha = addCracha.value.trim();
+    if (cracha && funcionarios.some(f => f.cracha === cracha)) {
+        mostrarMensagem("Este crachá já está na escala.", "warning");
+        return;
+    }
+
+    funcionarios.push(criarFuncionario({
+        cracha,
+        nome,
+        cargo: addCargo.value,
+        entrada,
+        saida
+    }));
+
+    modalAdicionar.hide();
+    renderizarCards();
+    atualizarResumo();
+    mostrarMensagem(`${nome} adicionado. Vá em Visualizar para ajustar dias.`, "success");
+
+    // opcional: já muda para a aba visualizar
+    const tabVis = document.getElementById("tab-visualizar");
+    if (tabVis) bootstrap.Tab.getOrCreateInstance(tabVis).show();
+});
+
+/* =========================================================
+   MODAL INTERMEDIÁRIO
+   ========================================================= */
+
+function abrirModalInter(idFunc) {
+    const func = funcionarios.find(f => f.id === idFunc);
+    if (!func) return;
+    idFuncInterAtual = idFunc;
+    interNomeFunc.textContent = `Funcionário: ${func.nome}`;
+    interEntrada.value = "09:00";
+    interSaida.value = "17:20";
+
+    const datas = obterDatas();
+    interListaDias.replaceChildren();
+    datas.forEach(d => {
+        const wrap = document.createElement("div");
+        wrap.className = "form-check";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.className = "form-check-input";
+        cb.value = d;
+        cb.id = `inter-dia-${d}`;
+        // pré-marca se já for inter
+        if (func.dias[d] && func.dias[d].tipo === "inter") cb.checked = true;
+        const lab = document.createElement("label");
+        lab.className = "form-check-label";
+        lab.htmlFor = cb.id;
+        lab.textContent = formatarData(d, true);
+        wrap.append(cb, lab);
+        interListaDias.appendChild(wrap);
     });
 
-    modalSelecao.show();
+    modalInter.show();
 }
+
+btnConfirmarInter.addEventListener("click", () => {
+    const func = funcionarios.find(f => f.id === idFuncInterAtual);
+    if (!func) return;
+
+    const entrada = interEntrada.value || "09:00";
+    const saida = interSaida.value || "17:20";
+    if (entrada === saida) {
+        mostrarMensagem("Entrada e saída do Inter não podem ser iguais.", "warning");
+        return;
+    }
+
+    const marcados = [...interListaDias.querySelectorAll("input[type=checkbox]:checked")]
+        .map(cb => cb.value);
+
+    if (marcados.length === 0) {
+        mostrarMensagem("Marque pelo menos um dia para o Inter.", "warning");
+        return;
+    }
+
+    marcados.forEach(d => {
+        func.dias[d] = { tipo: "inter", entrada, saida };
+    });
+
+    modalInter.hide();
+    renderizarCards();
+    mostrarMensagem(`Inter aplicado em ${marcados.length} dia(s) para ${func.nome}.`, "success");
+});
 
 /* =========================================================
-   SERIALIZAÇÃO / VALIDAÇÃO
+   VALIDAÇÃO / SALVAR / CARREGAR
    ========================================================= */
-
-function criarDadosEscala() {
-    return {
-        id: escalaEditandoId || ("escala-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8)),
-        dataInicial: dataInicialInput.value,
-        dataFinal: dataFinalInput.value,
-        funcionarios: funcionarios.map(f => ({
-            cracha: f.cracha || "",
-            nome: f.nome.trim(),
-            cargo: f.cargo || "",
-            horarios: { ...f.horarios },
-            intermediario: f.intermediario,
-            dataInicioInter: f.dataInicioInter || "",
-            quantidadeDiasInter: f.quantidadeDiasInter || 2,
-            entradaInter: f.entradaInter,
-            saidaInter: f.saidaInter
-        })),
-        atualizadoEm: new Date().toISOString()
-    };
-}
 
 function validarEscala() {
     if (!validarPeriodo(true)) return false;
@@ -531,135 +515,127 @@ function validarEscala() {
         mostrarMensagem("Adicione pelo menos um funcionário.", "warning");
         return false;
     }
-    const nomes = funcionarios.map(f => f.nome.trim());
-    if (nomes.some(n => n.length === 0)) {
-        mostrarMensagem("Preencha o nome de todos os funcionários.", "warning");
-        return false;
-    }
     for (const f of funcionarios) {
-        if (!f.intermediario) continue;
-        if (!f.entradaInter || !f.saidaInter) {
-            mostrarMensagem(`Preencha a entrada e a saída do Inter para ${f.nome}.`, "warning");
+        if (!f.nome.trim()) {
+            mostrarMensagem("Todos os funcionários precisam de nome.", "warning");
             return false;
         }
-        if (f.entradaInter === f.saidaInter) {
-            mostrarMensagem(`Entrada e saída do Inter não podem ser iguais para ${f.nome}.`, "warning");
-            return false;
-        }
-    }
-    const normalizados = nomes.map(n => n.toLocaleLowerCase("pt-BR"));
-    if (new Set(normalizados).size !== normalizados.length) {
-        mostrarMensagem("Existem funcionários com nomes repetidos.", "warning");
-        return false;
     }
     return true;
 }
 
-/* =========================================================
-   ARMAZENAMENTO ESCALAS
-   ========================================================= */
+function criarDadosEscala() {
+    return {
+        id: escalaEditandoId || ("escala-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8)),
+        dataInicial: dataInicialInput.value,
+        dataFinal: dataFinalInput.value,
+        funcionarios: funcionarios.map(f => ({
+            cracha: f.cracha,
+            nome: f.nome.trim(),
+            cargo: f.cargo,
+            dias: { ...f.dias }
+        })),
+        atualizadoEm: new Date().toISOString()
+    };
+}
 
 function carregarTodasEscalas() {
     try {
-        const texto = localStorage.getItem(CHAVE_ESCALAS);
-        if (!texto) return [];
-        const dados = JSON.parse(texto);
-        return Array.isArray(dados) ? dados : [];
-    } catch (e) {
-        return [];
-    }
+        const t = localStorage.getItem(CHAVE_ESCALAS);
+        if (!t) return [];
+        const d = JSON.parse(t);
+        return Array.isArray(d) ? d : [];
+    } catch (e) { return []; }
 }
 
-function gravarTodasEscalas(escalas) {
+function gravarTodasEscalas(lista) {
     try {
-        localStorage.setItem(CHAVE_ESCALAS, JSON.stringify(escalas));
+        localStorage.setItem(CHAVE_ESCALAS, JSON.stringify(lista));
         return true;
-    } catch (e) {
-        return false;
-    }
+    } catch (e) { return false; }
 }
 
 function salvarEscala() {
     limparMensagem();
     if (!validarEscala()) return;
-    const novaEscala = criarDadosEscala();
-    const escalas = carregarTodasEscalas();
-    const indice = escalas.findIndex(e => String(e.id) === String(novaEscala.id));
-    if (indice >= 0) escalas[indice] = novaEscala;
-    else escalas.unshift(novaEscala);
-    if (!gravarTodasEscalas(escalas)) {
+    const nova = criarDadosEscala();
+    const todas = carregarTodasEscalas();
+    const idx = todas.findIndex(e => String(e.id) === String(nova.id));
+    if (idx >= 0) todas[idx] = nova;
+    else todas.unshift(nova);
+    if (!gravarTodasEscalas(todas)) {
         mostrarMensagem("Não foi possível salvar.", "danger");
         return;
     }
-    escalaEditandoId = novaEscala.id;
+    escalaEditandoId = nova.id;
     renderizarEscalasSalvas();
-    mostrarMensagem("Escala salva com sucesso no dispositivo.", "success");
+    mostrarMensagem("Escala salva com sucesso.", "success");
 }
 
 function renderizarEscalasSalvas() {
-    const escalas = carregarTodasEscalas();
+    const todas = carregarTodasEscalas();
     escalasSalvas.replaceChildren();
-    if (escalas.length === 0) {
-        escalasSalvas.appendChild(criarElemento("div", "text-muted small", "Nenhuma escala salva."));
+    if (todas.length === 0) {
+        escalasSalvas.innerHTML = '<div class="text-muted small">Nenhuma escala salva.</div>';
         return;
     }
-    escalas.forEach(escala => {
-        const card = criarElemento("div", "escala-salva");
-        card.append(
-            criarElemento("div", "escala-salva-titulo", "Escala de Funcionários"),
-            criarElemento("div", "escala-salva-periodo",
-                `${formatarData(escala.dataInicial)} a ${formatarData(escala.dataFinal)}`),
-            criarElemento("div", "small text-muted mt-1",
-                `${escala.funcionarios.length} funcionário(s)`)
-        );
-        const acoes = criarElemento("div", "escala-salva-acoes");
-        const btnAbrir = criarElemento("button", "btn btn-outline-primary btn-sm", "Abrir");
-        btnAbrir.type = "button";
-        btnAbrir.addEventListener("click", () => carregarEscala(escala.id));
-        const btnExcluir = criarElemento("button", "btn btn-outline-danger btn-sm", "Excluir");
-        btnExcluir.type = "button";
-        btnExcluir.addEventListener("click", () => excluirEscala(escala.id));
-        acoes.append(btnAbrir, btnExcluir);
-        card.appendChild(acoes);
+    todas.forEach(esc => {
+        const card = document.createElement("div");
+        card.className = "escala-salva";
+        card.innerHTML = `
+            <div class="escala-salva-titulo">Escala de Funcionários</div>
+            <div class="escala-salva-periodo">${formatarData(esc.dataInicial)} a ${formatarData(esc.dataFinal)}</div>
+            <div class="small text-muted mt-1">${esc.funcionarios.length} funcionário(s)</div>
+            <div class="escala-salva-acoes mt-2"></div>`;
+        const acoes = card.querySelector(".escala-salva-acoes");
+        const bAbrir = document.createElement("button");
+        bAbrir.type = "button";
+        bAbrir.className = "btn btn-outline-primary btn-sm";
+        bAbrir.textContent = "Abrir";
+        bAbrir.addEventListener("click", () => carregarEscala(esc.id));
+        const bExc = document.createElement("button");
+        bExc.type = "button";
+        bExc.className = "btn btn-outline-danger btn-sm";
+        bExc.textContent = "Excluir";
+        bExc.addEventListener("click", () => excluirEscala(esc.id));
+        acoes.append(bAbrir, bExc);
         escalasSalvas.appendChild(card);
     });
 }
 
 function carregarEscala(id) {
-    const escalas = carregarTodasEscalas();
-    const escala = escalas.find(e => String(e.id) === String(id));
-    if (!escala) {
+    const esc = carregarTodasEscalas().find(e => String(e.id) === String(id));
+    if (!esc) {
         mostrarMensagem("Escala não encontrada.", "warning");
         return;
     }
-    dataInicialInput.value = escala.dataInicial;
-    dataFinalInput.value = escala.dataFinal;
-    funcionarios = escala.funcionarios.map(f => ({
+    dataInicialInput.value = esc.dataInicial;
+    dataFinalInput.value = esc.dataFinal;
+    funcionarios = (esc.funcionarios || []).map(f => ({
         id: proximoId++,
         cracha: f.cracha || "",
         nome: f.nome || "",
         cargo: f.cargo || "",
-        horarios: { ...(f.horarios || {}) },
-        intermediario: f.intermediario === true,
-        dataInicioInter: f.dataInicioInter || "",
-        quantidadeDiasInter: f.quantidadeDiasInter || 2,
-        diasInter: [],
-        entradaInter: f.entradaInter || "09:00",
-        saidaInter: f.saidaInter || "17:20"
+        dias: f.dias ? { ...f.dias } : {}
     }));
-    escalaEditandoId = escala.id;
-    renderizarFuncionarios();
-    mostrarMensagem("Escala carregada. Você pode editar e salvar novamente.", "info");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // compatibilidade com formato antigo (horarios texto)
+    funcionarios.forEach(f => {
+        if (!f.dias || Object.keys(f.dias).length === 0) {
+            f.dias = criarDiasComHorarioPadrao(obterDatas(), "08:00", "16:20");
+        }
+    });
+    escalaEditandoId = esc.id;
+    validarPeriodo(false);
+    renderizarCards();
+    atualizarResumo();
+    mostrarMensagem("Escala carregada. Ajuste na aba Visualizar se precisar.", "info");
+    bootstrap.Tab.getOrCreateInstance(document.getElementById("tab-visualizar")).show();
 }
 
 function excluirEscala(id) {
-    solicitarConfirmacao("Deseja realmente excluir esta escala salva?", () => {
-        const escalas = carregarTodasEscalas().filter(e => String(e.id) !== String(id));
-        if (!gravarTodasEscalas(escalas)) {
-            mostrarMensagem("Não foi possível excluir.", "danger");
-            return;
-        }
+    solicitarConfirmacao("Excluir esta escala salva?", () => {
+        const resto = carregarTodasEscalas().filter(e => String(e.id) !== String(id));
+        gravarTodasEscalas(resto);
         if (String(escalaEditandoId) === String(id)) escalaEditandoId = null;
         renderizarEscalasSalvas();
         mostrarMensagem("Escala excluída.", "success");
@@ -667,63 +643,78 @@ function excluirEscala(id) {
 }
 
 function limparFormulario() {
-    solicitarConfirmacao(
-        "Deseja limpar o formulário atual? As alterações não salvas serão perdidas.",
-        () => {
-            funcionarios = [];
-            escalaEditandoId = null;
-            const hoje = new Date();
-            const fim = new Date(hoje);
-            fim.setDate(fim.getDate() + 6);
-            dataInicialInput.value = dataLocalISO(hoje);
-            dataFinalInput.value = dataLocalISO(fim);
-            funcionarios = [criarFuncionario()];
-            renderizarFuncionarios();
-            limparMensagem();
-        }
-    );
+    solicitarConfirmacao("Limpar a escala atual? Alterações não salvas serão perdidas.", () => {
+        funcionarios = [];
+        escalaEditandoId = null;
+        const hoje = new Date();
+        const fim = new Date(hoje);
+        fim.setDate(fim.getDate() + 6);
+        dataInicialInput.value = dataLocalISO(hoje);
+        dataFinalInput.value = dataLocalISO(fim);
+        validarPeriodo(false);
+        renderizarCards();
+        atualizarResumo();
+        limparMensagem();
+    });
 }
 
 /* =========================================================
-   GERAÇÃO DA IMAGEM (mantida + cargo no nome)
+   GERAÇÃO DE IMAGEM
    ========================================================= */
+
+function escreverTextoQuebrado(ctx, texto, x, y, larguraMax, alturaLinha, maxLinhas = 3, align = "left") {
+    const palavras = String(texto).split(/\s+/);
+    const linhas = [];
+    let atual = "";
+    for (const p of palavras) {
+        const t = atual ? `${atual} ${p}` : p;
+        if (ctx.measureText(t).width <= larguraMax || !atual) atual = t;
+        else { linhas.push(atual); atual = p; }
+    }
+    if (atual) linhas.push(atual);
+    const vis = linhas.slice(0, maxLinhas);
+    if (linhas.length > maxLinhas) {
+        let u = vis[vis.length - 1];
+        while (u.length && ctx.measureText(u + "…").width > larguraMax) u = u.slice(0, -1);
+        vis[vis.length - 1] = u + "…";
+    }
+    ctx.textAlign = align;
+    vis.forEach((l, i) => ctx.fillText(l, x, y + i * alturaLinha));
+}
 
 function gerarCanvasEscala(dados) {
     const datas = [];
-    const inicio = dataDeISO(dados.dataInicial);
+    const ini = dataDeISO(dados.dataInicial);
     const fim = dataDeISO(dados.dataFinal);
-    if (!inicio || !fim) throw new Error("O período da escala é inválido.");
-    const cursor = new Date(inicio);
-    while (cursor <= fim) {
-        datas.push(dataLocalISO(cursor));
-        cursor.setDate(cursor.getDate() + 1);
+    if (!ini || !fim) throw new Error("Período inválido.");
+    const c = new Date(ini);
+    while (c <= fim) {
+        datas.push(dataLocalISO(c));
+        c.setDate(c.getDate() + 1);
     }
-    if (datas.length === 0 || datas.length > MAX_DIAS) {
-        throw new Error("O período da escala é inválido.");
-    }
+    if (!datas.length || datas.length > MAX_DIAS) throw new Error("Período inválido.");
 
     const margem = 36;
     const larguraNome = 280;
     const larguraDia = 140;
     const largura = Math.max(1400, margem * 2 + larguraNome + datas.length * larguraDia);
-    const alturaCabecalho = 175;
-    const alturaLinha = 76;
-    const alturaRodape = 100;
-    const altura = margem + alturaCabecalho + dados.funcionarios.length * alturaLinha + alturaRodape;
+    const altCab = 175;
+    const altLinha = 76;
+    const altRodape = 100;
+    const altura = margem + altCab + dados.funcionarios.length * altLinha + altRodape;
 
     const canvas = document.createElement("canvas");
     canvas.width = largura;
     canvas.height = altura;
     const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("Não foi possível criar a imagem.");
+    if (!ctx) throw new Error("Canvas indisponível.");
 
     ctx.fillStyle = "#f3f5f7";
     ctx.fillRect(0, 0, largura, altura);
-
     ctx.fillStyle = "#b6202f";
-    ctx.fillRect(0, 0, largura, margem + alturaCabecalho - 18);
+    ctx.fillRect(0, 0, largura, margem + altCab - 18);
 
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = "#fff";
     ctx.font = "bold 38px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("ESCALA DE FUNCIONÁRIOS", largura / 2, 65);
@@ -732,173 +723,131 @@ function gerarCanvasEscala(dados) {
     ctx.font = "17px sans-serif";
     ctx.fillText(`${dados.funcionarios.length} funcionário(s)`, largura / 2, 137);
 
-    const tabelaX = margem;
-    const tabelaY = margem + alturaCabecalho - 18;
-    const larguraTabela = largura - margem * 2;
+    const tx = margem;
+    const ty = margem + altCab - 18;
+    const tw = largura - margem * 2;
 
     ctx.fillStyle = "#263746";
-    ctx.fillRect(tabelaX, tabelaY, larguraTabela, 58);
-
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(tx, ty, tw, 58);
+    ctx.fillStyle = "#fff";
     ctx.font = "bold 18px sans-serif";
-    ctx.fillText("FUNCIONÁRIO", tabelaX + 14, tabelaY + 35);
+    ctx.textAlign = "left";
+    ctx.fillText("FUNCIONÁRIO", tx + 14, ty + 35);
 
-    datas.forEach((data, indice) => {
-        const x = tabelaX + larguraNome + indice * larguraDia;
-        const dataObj = dataDeISO(data);
-        const diaSemana = dataObj.toLocaleDateString("pt-BR", { weekday: "short" })
-            .replace(".", "").toUpperCase();
-        const diaMes = dataObj.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+    datas.forEach((data, i) => {
+        const x = tx + larguraNome + i * larguraDia;
+        const dt = dataDeISO(data);
+        const sem = dt.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "").toUpperCase();
+        const dm = dt.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
         ctx.textAlign = "center";
         ctx.font = "bold 15px sans-serif";
-        ctx.fillText(diaSemana, x + larguraDia / 2, tabelaY + 24);
+        ctx.fillText(sem, x + larguraDia / 2, ty + 24);
         ctx.font = "14px sans-serif";
-        ctx.fillText(diaMes, x + larguraDia / 2, tabelaY + 44);
+        ctx.fillText(dm, x + larguraDia / 2, ty + 44);
     });
 
-    dados.funcionarios.forEach((funcionario, indiceFuncionario) => {
-        const y = tabelaY + 58 + indiceFuncionario * alturaLinha;
-        ctx.fillStyle = indiceFuncionario % 2 === 0 ? "#ffffff" : "#edf1f4";
-        ctx.fillRect(tabelaX, y, larguraTabela, alturaLinha);
+    dados.funcionarios.forEach((func, fi) => {
+        const y = ty + 58 + fi * altLinha;
+        ctx.fillStyle = fi % 2 === 0 ? "#fff" : "#edf1f4";
+        ctx.fillRect(tx, y, tw, altLinha);
 
-        const nomeExibicao = funcionario.cargo
-            ? `${funcionario.nome} (${funcionario.cargo})`
-            : funcionario.nome;
-
+        const nomeEx = func.cargo ? `${func.nome} (${func.cargo})` : func.nome;
         ctx.fillStyle = "#263746";
         ctx.font = "bold 15px sans-serif";
         ctx.textAlign = "left";
-        escreverTextoQuebrado(ctx, nomeExibicao, tabelaX + 14, y + 27, larguraNome - 24, 18, 2);
+        escreverTextoQuebrado(ctx, nomeEx, tx + 14, y + 27, larguraNome - 24, 18, 2);
 
-        datas.forEach((data, indiceData) => {
-            const x = tabelaX + larguraNome + indiceData * larguraDia;
-            const horarioInformado = funcionario.horarios[data] || "";
-            const normalizado = horarioInformado.trim().toLocaleLowerCase("pt-BR");
-            const estaDeFolga = normalizado === "folga";
-            const ehInterAutomatico = funcionario.intermediario && horarioInformado.trim() === "";
+        datas.forEach((data, di) => {
+            const x = tx + larguraNome + di * larguraDia;
+            const info = (func.dias && func.dias[data]) || { tipo: "normal", entrada: "", saida: "" };
+            const tipo = info.tipo || "normal";
 
-            let texto;
-            if (estaDeFolga) texto = "FOLGA";
-            else if (ehInterAutomatico) texto = `INTER\n${funcionario.entradaInter}–${funcionario.saidaInter}`;
-            else texto = horarioInformado.trim() || "—";
-
-            if (estaDeFolga) ctx.fillStyle = "#fde8e8";
-            else if (ehInterAutomatico) ctx.fillStyle = "#ffe0b2";
-            else if (horarioInformado.trim() === "") ctx.fillStyle = "#f5f6f7";
-            else if (normalizado.includes("22:") || normalizado.includes("noite")) ctx.fillStyle = "#e5e7fb";
+            if (tipo === "folga") ctx.fillStyle = "#fde8e8";
+            else if (tipo === "inter") ctx.fillStyle = "#ffe0b2";
             else ctx.fillStyle = "#e3f4e8";
+            ctx.fillRect(x + 2, y + 2, larguraDia - 4, altLinha - 4);
 
-            ctx.fillRect(x + 2, y + 2, larguraDia - 4, alturaLinha - 4);
             ctx.textAlign = "center";
-
-            if (ehInterAutomatico) {
+            if (tipo === "folga") {
+                ctx.fillStyle = "#9b1c1c";
+                ctx.font = "bold 15px sans-serif";
+                ctx.fillText("FOLGA", x + larguraDia / 2, y + 42);
+            } else if (tipo === "inter") {
                 ctx.fillStyle = "#9a4d00";
                 ctx.font = "bold 15px sans-serif";
-                ctx.fillText("INTER", x + larguraDia / 2, y + 25);
+                ctx.fillText("INTER", x + larguraDia / 2, y + 28);
                 ctx.font = "14px sans-serif";
-                ctx.fillText(`${funcionario.entradaInter}–${funcionario.saidaInter}`, x + larguraDia / 2, y + 48);
+                ctx.fillText(`${info.entrada || "—"}–${info.saida || "—"}`, x + larguraDia / 2, y + 50);
             } else {
-                ctx.fillStyle = estaDeFolga ? "#9b1c1c" : "#263746";
-                ctx.font = estaDeFolga ? "bold 15px sans-serif" : "14px sans-serif";
-                escreverTextoQuebrado(ctx, texto, x + larguraDia / 2, y + 30, larguraDia - 12, 18, 3, "center");
+                ctx.fillStyle = "#263746";
+                ctx.font = "14px sans-serif";
+                const txt = (info.entrada && info.saida)
+                    ? `${info.entrada}–${info.saida}`
+                    : "—";
+                ctx.fillText(txt, x + larguraDia / 2, y + 42);
             }
         });
 
         ctx.strokeStyle = "#d5dce2";
-        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(tabelaX, y + alturaLinha);
-        ctx.lineTo(tabelaX + larguraTabela, y + alturaLinha);
+        ctx.moveTo(tx, y + altLinha);
+        ctx.lineTo(tx + tw, y + altLinha);
         ctx.stroke();
     });
 
-    const legendaY = tabelaY + 58 + dados.funcionarios.length * alturaLinha + 18;
-    const itensLegenda = [
-        { cor: "#e3f4e8", texto: "Manhã" },
-        { cor: "#ffe0b2", texto: "Inter" },
-        { cor: "#e5e7fb", texto: "Noite" },
-        { cor: "#fde8e8", texto: "Folga" }
+    const legY = ty + 58 + dados.funcionarios.length * altLinha + 18;
+    const itens = [
+        { cor: "#e3f4e8", t: "Normal" },
+        { cor: "#ffe0b2", t: "Inter" },
+        { cor: "#fde8e8", t: "Folga" }
     ];
     ctx.font = "14px sans-serif";
     ctx.textAlign = "left";
-    const larguraItem = 150;
-    const legendaInicioX = (largura - itensLegenda.length * larguraItem) / 2;
-    itensLegenda.forEach((item, i) => {
-        const x = legendaInicioX + i * larguraItem;
-        ctx.fillStyle = item.cor;
-        ctx.fillRect(x, legendaY, 20, 20);
+    const wItem = 150;
+    const startX = (largura - itens.length * wItem) / 2;
+    itens.forEach((it, i) => {
+        const x = startX + i * wItem;
+        ctx.fillStyle = it.cor;
+        ctx.fillRect(x, legY, 20, 20);
         ctx.fillStyle = "#263746";
-        ctx.fillText(item.texto, x + 28, legendaY + 15);
+        ctx.fillText(it.t, x + 28, legY + 15);
     });
 
-    const rodapeY = tabelaY + 58 + dados.funcionarios.length * alturaLinha + 24;
     ctx.fillStyle = "#5f6b76";
     ctx.font = "14px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Gerado pelo aplicativo Divergências", largura / 2, rodapeY);
+    ctx.fillText("Gerado pelo aplicativo Divergências", largura / 2, legY + 40);
 
     return canvas;
 }
 
-function escreverTextoQuebrado(ctx, texto, x, y, larguraMaxima, alturaLinha, maxLinhas = 3, alinhamento = "left") {
-    const palavras = String(texto).split(/\s+/);
-    const linhas = [];
-    let linhaAtual = "";
-    for (const palavra of palavras) {
-        const teste = linhaAtual ? `${linhaAtual} ${palavra}` : palavra;
-        if (ctx.measureText(teste).width <= larguraMaxima || linhaAtual === "") {
-            linhaAtual = teste;
-        } else {
-            linhas.push(linhaAtual);
-            linhaAtual = palavra;
-        }
-    }
-    if (linhaAtual) linhas.push(linhaAtual);
-    const linhasVisiveis = linhas.slice(0, maxLinhas);
-    if (linhas.length > maxLinhas) {
-        let ultima = linhasVisiveis[linhasVisiveis.length - 1];
-        while (ultima.length > 0 && ctx.measureText(ultima + "…").width > larguraMaxima) {
-            ultima = ultima.slice(0, -1);
-        }
-        linhasVisiveis[linhasVisiveis.length - 1] = ultima + "…";
-    }
-    ctx.textAlign = alinhamento;
-    linhasVisiveis.forEach((linha, i) => {
-        ctx.fillText(linha, x, y + i * alturaLinha);
-    });
-}
-
 function compartilharCanvas(canvas, dados) {
     let dataUrl;
-    try {
-        dataUrl = canvas.toDataURL("image/png");
-    } catch (e) {
+    try { dataUrl = canvas.toDataURL("image/png"); }
+    catch (e) {
         mostrarMensagem("Não foi possível gerar a imagem PNG.", "danger");
         return;
     }
-    const nomeArquivo = `escala_${dados.dataInicial}_${dados.dataFinal}.png`;
+    const nome = `escala_${dados.dataInicial}_${dados.dataFinal}.png`;
 
     if (typeof Android !== "undefined" && typeof Android.compartilharImagemBase64 === "function") {
         try {
-            const resultado = Android.compartilharImagemBase64(dataUrl, nomeArquivo);
-            if (resultado !== "ok") {
-                mostrarMensagem(resultado || "Não foi possível compartilhar a imagem.", "danger");
-            }
+            const r = Android.compartilharImagemBase64(dataUrl, nome);
+            if (r !== "ok") mostrarMensagem(r || "Falha ao compartilhar.", "danger");
             return;
         } catch (e) {
-            mostrarMensagem("Erro ao abrir o compartilhamento do Android.", "danger");
+            mostrarMensagem("Erro no compartilhamento Android.", "danger");
             return;
         }
     }
 
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = nomeArquivo;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    mostrarMensagem("Imagem gerada. O download foi iniciado.", "success");
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = nome;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    mostrarMensagem("Imagem gerada. Download iniciado.", "success");
 }
 
 function gerarImagem() {
@@ -908,9 +857,9 @@ function gerarImagem() {
     try {
         const canvas = gerarCanvasEscala(dados);
         compartilharCanvas(canvas, dados);
-    } catch (erro) {
-        console.error(erro);
-        mostrarMensagem(erro.message || "Erro ao gerar a imagem.", "danger");
+    } catch (e) {
+        console.error(e);
+        mostrarMensagem(e.message || "Erro ao gerar imagem.", "danger");
     }
 }
 
@@ -918,36 +867,40 @@ function gerarImagem() {
    EVENTOS + INIT
    ========================================================= */
 
-function alterarPeriodo() {
+function aoMudarPeriodo() {
     limparMensagem();
-    if (!validarPeriodo(false)) {
-        renderizarFuncionarios();
-        return;
-    }
-    renderizarFuncionarios();
+    validarPeriodo(false);
+    // reajusta dias dos funcionários já adicionados
+    const datas = obterDatas();
+    funcionarios.forEach(f => {
+        datas.forEach(d => {
+            if (!f.dias[d]) f.dias[d] = { tipo: "normal", entrada: "08:00", saida: "16:20" };
+        });
+        Object.keys(f.dias).forEach(d => {
+            if (!datas.includes(d)) delete f.dias[d];
+        });
+    });
+    renderizarCards();
+    atualizarResumo();
 }
 
-if (botaoAdicionar) {
-    botaoAdicionar.addEventListener("click", () => adicionarFuncionario());
-}
-if (botaoAdicionarCadastrado) {
-    botaoAdicionarCadastrado.addEventListener("click", abrirSelecaoCadastrados);
-}
-botaoSalvar.addEventListener("click", salvarEscala);
-botaoLimpar.addEventListener("click", limparFormulario);
-botaoGerarImagem.addEventListener("click", gerarImagem);
-dataInicialInput.addEventListener("change", alterarPeriodo);
-dataFinalInput.addEventListener("change", alterarPeriodo);
+dataInicialInput.addEventListener("change", aoMudarPeriodo);
+dataFinalInput.addEventListener("change", aoMudarPeriodo);
+btnSalvar.addEventListener("click", salvarEscala);
+btnLimpar.addEventListener("click", limparFormulario);
+btnGerarImagem.addEventListener("click", gerarImagem);
 
-function inicializarEscala() {
+function inicializar() {
     const hoje = new Date();
     const fim = new Date(hoje);
     fim.setDate(fim.getDate() + 6);
     dataInicialInput.value = dataLocalISO(hoje);
     dataFinalInput.value = dataLocalISO(fim);
-    funcionarios = [criarFuncionario()];
-    renderizarFuncionarios();
+    validarPeriodo(false);
+    funcionarios = [];
+    renderizarCards();
+    atualizarResumo();
     renderizarEscalasSalvas();
 }
 
-document.addEventListener("DOMContentLoaded", inicializarEscala);
+document.addEventListener("DOMContentLoaded", inicializar);

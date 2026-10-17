@@ -3,463 +3,303 @@
 
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Escala de Funcionários</title>
-
-    <link
-        href="css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-
-    <link
-        href="css/escala.css"
-        rel="stylesheet"
-    >
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/escala.css" rel="stylesheet">
+    <style>
+        .nav-tabs .nav-link { color: #263746; font-weight: 600; }
+        .nav-tabs .nav-link.active { color: #b6202f; border-color: #dee2e6 #dee2e6 #fff; }
+        .card-func-escala { border: 1px solid #dee2e6; border-radius: 10px; }
+        .card-func-escala .dia-linha {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+            padding: 8px 0; border-bottom: 1px solid #f0f0f0;
+        }
+        .card-func-escala .dia-linha:last-child { border-bottom: 0; }
+        .badge-tipo-normal { background: #e3f4e8; color: #1b5e20; }
+        .badge-tipo-folga  { background: #fde8e8; color: #9b1c1c; }
+        .badge-tipo-inter  { background: #ffe0b2; color: #9a4d00; }
+        .input-time-sm { max-width: 110px; }
+    </style>
 </head>
 
 <body>
 
-    <!-- =====================================================
-         NAVEGAÇÃO
-         ===================================================== -->
-
-    <nav
-        class="navbar"
-        style="background-color: #b6202f;"
-        data-bs-theme="dark"
-    >
+    <!-- NAV -->
+    <nav class="navbar" style="background-color: #b6202f;" data-bs-theme="dark">
         <div class="container-fluid">
-
-            <button
-                class="navbar-toggler border-0"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#menuLateral"
-                aria-controls="menuLateral"
-                aria-label="Abrir menu"
-            >
+            <button class="navbar-toggler border-0" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
+                    aria-controls="menuLateral" aria-label="Abrir menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <a
-                class="navbar-brand fw-bold mx-auto"
-                href="index.html"
-            >
-                Divergências
-            </a>
-
+            <a class="navbar-brand fw-bold mx-auto" href="index.html">Divergências</a>
             <div style="width: 40px;"></div>
-
         </div>
     </nav>
 
-
-    <!-- =====================================================
-         MENU LATERAL
-         ===================================================== -->
-
-    <div
-        class="offcanvas offcanvas-start"
-        tabindex="-1"
-        id="menuLateral"
-        aria-labelledby="menuLateralLabel"
-    >
-
-        <div
-            class="offcanvas-header"
-            style="background-color: #b6202f;"
-        >
-
-            <h5
-                class="offcanvas-title text-white fw-bold"
-                id="menuLateralLabel"
-            >
-                Divergências
-            </h5>
-
-            <button
-                type="button"
-                class="btn-close btn-close-white"
-                data-bs-dismiss="offcanvas"
-                aria-label="Fechar"
-            ></button>
-
+    <!-- MENU LATERAL -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+        <div class="offcanvas-header" style="background-color: #b6202f;">
+            <h5 class="offcanvas-title text-white fw-bold" id="menuLateralLabel">Divergências</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
         </div>
-
         <div class="offcanvas-body p-0">
             <div class="list-group list-group-flush">
                 <a href="sobre.html" class="list-group-item list-group-item-action py-3">
                     <strong>Sobre o app</strong>
-                    <div class="small text-muted">
-                        Versão e informações
-                    </div>
+                    <div class="small text-muted">Versão e informações</div>
                 </a>
-
                 <a href="funcionarios.html" class="list-group-item list-group-item-action py-3">
                     <strong>Funcionários</strong>
                     <div class="small text-muted">Cadastro de colaboradores</div>
                 </a>
-
                 <a href="escala.html" class="list-group-item list-group-item-action py-3 active" aria-current="page">
                     <strong>Escala de funcionários</strong>
-                    <div class="small">
-                        Criar e compartilhar escalas
-                    </div>
+                    <div class="small">Criar e compartilhar escalas</div>
                 </a>
-
                 <a href="index.html" class="list-group-item list-group-item-action py-3">
                     <strong>Calcular divergência</strong>
-                    <div class="small text-muted">
-                        Registrar nova divergência
-                    </div>
+                    <div class="small text-muted">Registrar nova divergência</div>
                 </a>
-
                 <a href="historico.html" class="list-group-item list-group-item-action py-3">
                     <strong>Histórico</strong>
-                    <div class="small text-muted">
-                        Ver divergências registradas
-                    </div>
+                    <div class="small text-muted">Ver divergências registradas</div>
                 </a>
-
                 <a href="notas.html" class="list-group-item list-group-item-action py-3">
                     <strong>Contagem de notas</strong>
-                    <div class="small text-muted">
-                        Contar cédulas e moedas
-                    </div>
-                </a>        
-
+                    <div class="small text-muted">Contar cédulas e moedas</div>
+                </a>
                 <a href="configuracoes.html" class="list-group-item list-group-item-action py-3">
                     <strong>Configurações</strong>
-                    <div class="small text-muted">
-                        Preferências do aplicativo
-                    </div>
+                    <div class="small text-muted">Preferências do aplicativo</div>
                 </a>
             </div>
         </div>
     </div>
 
-
-    <!-- =====================================================
-         CONTEÚDO PRINCIPAL
-         ===================================================== -->
-
     <main class="container escala-container">
-
         <div class="card shadow-sm">
-
             <div class="card-body p-3 p-md-4">
 
-                <h3 class="mb-2">
-                    Escala de Funcionários
-                </h3>
-
-                <p class="text-muted mb-4">
-                    Organize os horários de trabalho e gere
-                    uma imagem pronta para compartilhar.
+                <h3 class="mb-1">Escala de Funcionários</h3>
+                <p class="text-muted mb-3">
+                    Monte a escala, visualize os cards e gere a imagem para compartilhar.
                 </p>
 
-
-                <!-- =========================================
-                     PERÍODO
-                     ========================================= -->
-
-                <section class="mb-4">
-
-                    <h5 class="mb-3">
-                        1. Período da escala
-                    </h5>
-
+                <!-- PERÍODO (sempre visível) -->
+                <section class="mb-3">
+                    <h5 class="mb-3">Período da escala</h5>
                     <div class="row g-3">
-
                         <div class="col-12 col-md-6">
-
-                            <label
-                                for="dataInicial"
-                                class="form-label"
-                            >
-                                Data inicial
-                            </label>
-
-                            <input
-                                type="date"
-                                class="form-control"
-                                id="dataInicial"
-                                required
-                            >
-
+                            <label for="dataInicial" class="form-label">Data inicial</label>
+                            <input type="date" class="form-control" id="dataInicial" required>
                         </div>
-
                         <div class="col-12 col-md-6">
-
-                            <label
-                                for="dataFinal"
-                                class="form-label"
-                            >
-                                Data final
-                            </label>
-
-                            <input
-                                type="date"
-                                class="form-control"
-                                id="dataFinal"
-                                required
-                            >
-
+                            <label for="dataFinal" class="form-label">Data final</label>
+                            <input type="date" class="form-control" id="dataFinal" required>
                         </div>
-
                     </div>
-
-                    <div
-                        class="form-text mt-2"
-                        id="periodoInfo"
-                    >
+                    <div class="form-text mt-2" id="periodoInfo">
                         Selecione o período para montar a escala.
                     </div>
-
                 </section>
 
+                <!-- ABAS -->
+                <ul class="nav nav-tabs mb-3" id="abasEscala" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="tab-montar" data-bs-toggle="tab"
+                                data-bs-target="#painel-montar" type="button" role="tab">
+                            Montar
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-visualizar" data-bs-toggle="tab"
+                                data-bs-target="#painel-visualizar" type="button" role="tab">
+                            Visualizar
+                            <span class="badge text-bg-secondary ms-1" id="badgeQtdFunc">0</span>
+                        </button>
+                    </li>
+                </ul>
 
-                <hr>
+                <div class="tab-content" id="conteudoAbas">
 
+                    <!-- ========== ABA MONTAR ========== -->
+                    <div class="tab-pane fade show active" id="painel-montar" role="tabpanel">
 
-                <!-- =========================================
-                     FUNCIONÁRIOS
-                     ========================================= -->
-
-                <section class="mb-4">
-
-                   <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
-                        <h5 class="mb-0">2. Funcionários</h5>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="adicionarCadastrado">
-                                + Cadastrado
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <p class="mb-0 text-muted small">
+                                Adicione funcionários com horário padrão para todos os dias do período.
+                            </p>
+                            <button type="button" class="btn btn-danger btn-sm" id="btnAbrirModalAdicionar">
+                                + Adicionar funcionário
                             </button>
-                            <button type="button" class="btn btn-outline-danger btn-sm" id="adicionarFuncionario">
-                                + Avulso
+                        </div>
+
+                        <div class="alert alert-light border small mb-3" id="resumoMontar">
+                            Nenhum funcionário na escala ainda.
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-danger" id="salvarEscala">
+                                Salvar escala
+                            </button>
+                            <button type="button" class="btn btn-success" id="gerarImagem">
+                                Gerar imagem e compartilhar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="limparEscala">
+                                Limpar formulário
                             </button>
                         </div>
-                    </div>
 
-                    <div
-                        id="listaFuncionarios"
-                        class="lista-funcionarios"
-                    >
+                        <hr class="my-4">
 
-                        <div class="text-muted text-center py-3">
-                            Selecione as datas para começar.
+                        <h5 class="mb-3">Escalas salvas</h5>
+                        <div id="escalasSalvas">
+                            <div class="text-muted small">Nenhuma escala salva.</div>
                         </div>
-
                     </div>
 
-                    <div class="form-text mt-2">
-                        Preencha o horário de cada funcionário
-                        em cada dia. Use "Folga" quando necessário.
-                    </div>
-
-                </section>
-
-
-                <hr>
-
-
-                <!-- =========================================
-                     PRÉVIA
-                     ========================================= -->
-
-                <section class="mb-4">
-
-                    <h5 class="mb-3">
-                        3. Pré-visualização
-                    </h5>
-
-                    <div
-                        class="alert alert-light border small"
-                        role="status"
-                    >
-                        A imagem será gerada separadamente da
-                        tela, com todas as linhas da escala.
-                    </div>
-
-                    <div
-                        id="resumoEscala"
-                        class="resumo-escala"
-                    >
-                        Nenhuma escala montada.
-                    </div>
-
-                </section>
-
-
-                <!-- =========================================
-                     AÇÕES
-                     ========================================= -->
-
-                <section class="d-grid gap-2">
-
-                    <button
-                        type="button"
-                        class="btn btn-danger"
-                        id="salvarEscala"
-                    >
-                        Salvar escala
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        id="limparEscala"
-                    >
-                        Limpar formulário
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-success"
-                        id="gerarImagem"
-                    >
-                        Gerar imagem e compartilhar
-                    </button>
-
-                </section>
-
-
-                <!-- =========================================
-                     ESCALAS SALVAS
-                     ========================================= -->
-
-                <hr class="my-4">
-
-                <section>
-
-                    <h5 class="mb-3">
-                        Escalas salvas
-                    </h5>
-
-                    <div id="escalasSalvas">
-
-                        <div class="text-muted small">
-                            Nenhuma escala salva.
+                    <!-- ========== ABA VISUALIZAR ========== -->
+                    <div class="tab-pane fade" id="painel-visualizar" role="tabpanel">
+                        <p class="text-muted small mb-3">
+                            Edite horários, marque folga ou adicione período intermediário em cada card.
+                        </p>
+                        <div id="listaCardsFuncionarios">
+                            <div class="text-muted text-center py-4">
+                                Nenhum funcionário. Vá na aba Montar e adicione.
+                            </div>
                         </div>
-
                     </div>
+                </div>
 
-                </section>
-
-
-                <!-- =========================================
-                     MENSAGENS
-                     ========================================= -->
-
-                <div
-                    id="mensagemEscala"
-                    class="alert d-none mt-4"
-                    role="status"
-                    aria-live="polite"
-                ></div>
-
+                <div id="mensagemEscala" class="alert d-none mt-4" role="status" aria-live="polite"></div>
             </div>
-
         </div>
-
     </main>
 
     <!-- =====================================================
-     MODAL DE CONFIRMAÇÃO
-     ===================================================== -->
-
-    <div
-        class="modal fade"
-        id="modalConfirmacaoEscala"
-        tabindex="-1"
-        aria-labelledby="modalConfirmacaoEscalaLabel"
-        aria-hidden="true"
-    >
+         MODAL: ADICIONAR FUNCIONÁRIO (preenche todos os dias)
+         ===================================================== -->
+    <div class="modal fade" id="modalAdicionarFunc" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-
             <div class="modal-content">
-
-                <div class="modal-header">
-
-                    <h5
-                        class="modal-title"
-                        id="modalConfirmacaoEscalaLabel"
-                    >
-                        Tem certeza?
-                    </h5>
-
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Fechar"
-                    ></button>
-
+                <div class="modal-header" style="background-color:#b6202f;">
+                    <h5 class="modal-title text-white">Adicionar funcionário</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
+                <div class="modal-body">
+                    <p class="small text-muted mb-3">
+                        O horário abaixo será aplicado a <strong>todos os dias</strong> do período.
+                        Depois você pode editar dia a dia na aba Visualizar.
+                    </p>
 
-                <div
-                    class="modal-body"
-                    id="mensagemConfirmacaoEscala"
-                >
-                    Deseja continuar?
+                    <div class="mb-3">
+                        <label class="form-label">Funcionário cadastrado</label>
+                        <select class="form-select" id="selectFuncionarioCad">
+                            <option value="">— Digitar avulso / escolher —</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="addNome" placeholder="Nome do funcionário" maxlength="80">
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Crachá (opcional)</label>
+                            <input type="text" class="form-control" id="addCracha" placeholder="9059761" maxlength="20">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Cargo (opcional)</label>
+                            <select class="form-select" id="addCargo">
+                                <option value="">—</option>
+                                <option value="Atendente 1">Atendente 1</option>
+                                <option value="Atendente 2">Atendente 2</option>
+                                <option value="Supervisor">Supervisor</option>
+                                <option value="Farmaceutico">Farmacêutico</option>
+                                <option value="Gerente">Gerente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label">Entrada</label>
+                            <input type="time" class="form-control" id="addEntrada" value="08:00">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Saída</label>
+                            <input type="time" class="form-control" id="addSaida" value="16:20">
+                        </div>
+                    </div>
                 </div>
-
                 <div class="modal-footer">
-
-                    <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                    >
-                        Cancelar
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-danger"
-                        id="confirmarAcaoEscala"
-                    >
-                        Confirmar
-                    </button>
-
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarAdicionar">Adicionar à escala</button>
                 </div>
-
             </div>
-
         </div>
     </div>
 
-    <!-- Modal seleção de funcionário cadastrado -->
-    <div class="modal fade" id="modalSelecionarFuncionario" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <!-- =====================================================
+         MODAL: ADICIONAR INTERMEDIÁRIO (independente)
+         ===================================================== -->
+    <div class="modal fade" id="modalInter" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#b6202f;">
+                    <h5 class="modal-title text-white">Adicionar intermediário</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted mb-2" id="interNomeFunc">Funcionário</p>
+
+                    <div class="mb-3">
+                        <label class="form-label">Dias do Inter (marque os que deseja)</label>
+                        <div id="interListaDias" class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                            <!-- checkboxes gerados via JS -->
+                        </div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label">Entrada Inter</label>
+                            <input type="time" class="form-control" id="interEntrada" value="09:00">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Saída Inter</label>
+                            <input type="time" class="form-control" id="interSaida" value="17:20">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" id="btnConfirmarInter">Aplicar Inter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMAÇÃO GENÉRICA -->
+    <div class="modal fade" id="modalConfirmacaoEscala" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Selecionar funcionário</h5>
+                    <h5 class="modal-title">Tem certeza?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="listaSelecaoFuncionarios">
-                    <div class="text-muted text-center py-3">Carregando...</div>
-                </div>
+                <div class="modal-body" id="mensagemConfirmacaoEscala">Deseja continuar?</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmarAcaoEscala">Confirmar</button>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <!-- Bootstrap local do projeto -->
-
     <script src="js/bootstrap.bundle.min.js"></script>
-
-    <!-- Lógica exclusiva da escala -->
-
     <script src="js/escala.js"></script>
-
 </body>
-
 </html>
