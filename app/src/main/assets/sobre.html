@@ -207,17 +207,17 @@
 
                 <div class="info-item">
                     <span class="info-label">Versão</span>
-                    <span class="info-valor" id="appVersao">1.2.0</span>
+                    <span class="info-valor" id="appVersao">...</span>
                 </div>
 
                 <div class="info-item">
                     <span class="info-label">Build</span>
-                    <span class="info-valor" id="appBuild">2026.10.17</span>
+                    <span class="info-valor" id="appBuild">...</span>
                 </div>
 
                 <div class="info-item">
                     <span class="info-label">Última atualização</span>
-                    <span class="info-valor" id="appAtualizacao">17/10/2026</span>
+                    <span class="info-valor" id="appAtualizacao">...</span>
                 </div>
 
                 <div class="info-item">
@@ -269,7 +269,17 @@
 
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (typeof Android !== "undefined") {
+            document.getElementById("appVersao").textContent = Android.getVersionName();
+            document.getElementById("appBuild").textContent = Android.getBuildDate();
+            document.getElementById("appAtualizacao").textContent = Android.getBuildDateBr();
+        }
+    });
+</script>
 
+<script src="js/app.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
 
 </body>

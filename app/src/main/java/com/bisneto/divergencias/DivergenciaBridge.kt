@@ -31,6 +31,24 @@ class DivergenciaBridge(
     private val scope = CoroutineScope(Dispatchers.Main)
 
     /* =========================================================
+     * GET INFO
+     * ========================================================= */
+    @JavascriptInterface
+    fun getBuildDate(): String {
+        return BuildConfig.BUILD_DATE
+    }
+
+    @JavascriptInterface
+    fun getBuildDateBr(): String {
+        return BuildConfig.BUILD_DATE_BR
+    }
+
+    @JavascriptInterface
+    fun getVersionName(): String {
+        return BuildConfig.VERSION_NAME
+    }
+
+    /* =========================================================
      * CRUD
      * ========================================================= */
 
