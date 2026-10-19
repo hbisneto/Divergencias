@@ -253,9 +253,17 @@ function renderizarCards() {
 
     if (funcionarios.length === 0) {
         listaCards.innerHTML = `
-            <div class="text-muted text-center py-4">
-                Nenhum funcionário. Vá na aba Montar e adicione.
+            <div class="text-center py-5">
+                <div class="text-muted mb-3">Nenhum funcionário na escala.</div>
+                <button type="button" class="btn btn-danger" id="btnAdicionarDoVisualizar">
+                    + Adicionar funcionário
+                </button>
             </div>`;
+
+        const btnDoVisualizar = document.getElementById("btnAdicionarDoVisualizar");
+        if (btnDoVisualizar) {
+            btnDoVisualizar.addEventListener("click", abrirModalAdicionarFuncionario);
+        }
         atualizarResumo();
         return;
     }
@@ -385,7 +393,7 @@ function renderizarCards() {
    MODAL ADICIONAR
    ========================================================= */
 
-btnAbrirModalAdicionar.addEventListener("click", () => {
+function abrirModalAdicionarFuncionario() {
     if (!validarPeriodo(true)) return;
     popularSelectCadastrados();
     selectFuncionarioCad.value = "";
@@ -395,7 +403,21 @@ btnAbrirModalAdicionar.addEventListener("click", () => {
     addEntrada.value = "08:00";
     addSaida.value = "16:20";
     modalAdicionar.show();
-});
+}
+
+btnAbrirModalAdicionar.addEventListener("click", abrirModalAdicionarFuncionario);
+
+// btnAbrirModalAdicionar.addEventListener("click", () => {
+//     if (!validarPeriodo(true)) return;
+//     popularSelectCadastrados();
+//     selectFuncionarioCad.value = "";
+//     addNome.value = "";
+//     addCracha.value = "";
+//     addCargo.value = "";
+//     addEntrada.value = "08:00";
+//     addSaida.value = "16:20";
+//     modalAdicionar.show();
+// });
 
 btnConfirmarAdicionar.addEventListener("click", () => {
     limparMensagem();
