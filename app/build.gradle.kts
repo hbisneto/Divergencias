@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.Date
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -15,11 +18,18 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.2.0"
+
+        // Data da build (formato AAAA.MM.DD)
+        val buildDate = SimpleDateFormat("yyyy.MM.dd").format(Date())
+        buildConfigField("String", "BUILD_DATE", "\"$buildDate\"")
+
+        // Data formatada em pt-BR
+        val buildDateBr = SimpleDateFormat("dd/MM/yyyy").format(Date())
+        buildConfigField("String", "BUILD_DATE_BR", "\"$buildDateBr\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -38,6 +48,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {

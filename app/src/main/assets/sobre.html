@@ -127,54 +127,53 @@
     </div>
 
     <div class="offcanvas-body p-0">
-
         <div class="list-group list-group-flush">
-
-            <a
-                href="sobre.html"
-                class="list-group-item list-group-item-action py-3"
-            >
+            <a href="sobre.html" class="list-group-item list-group-item-action py-3 active" aria-current="page">
                 <strong>Sobre o app</strong>
-                <div class="small text-muted">
+                <div class="small">
                     Versão e informações
                 </div>
             </a>
 
-            <a
-                href="index.html"
-                class="list-group-item list-group-item-action py-3"
-            >
+            <a href="funcionarios.html" class="list-group-item list-group-item-action py-3">
+                <strong>Funcionários</strong>
+                <div class="small text-muted">Cadastro de colaboradores</div>
+            </a>
+
+            <a href="escala.html" class="list-group-item list-group-item-action py-3">
+                <strong>Escala de funcionários</strong>
+                <div class="small text-muted">
+                    Criar e compartilhar escalas
+                </div>
+            </a>
+
+            <a href="index.html" class="list-group-item list-group-item-action py-3">
                 <strong>Calcular divergência</strong>
                 <div class="small text-muted">
                     Registrar nova divergência
                 </div>
             </a>
 
-            <a
-                href="historico.html"
-                class="list-group-item list-group-item-action py-3"
-            >
+            <a href="historico.html" class="list-group-item list-group-item-action py-3">
                 <strong>Histórico</strong>
                 <div class="small text-muted">
                     Ver divergências registradas
                 </div>
             </a>
 
-            <a
-                href="notas.html"
-                class="list-group-item list-group-item-action py-3"
-            >
+            <a href="notas.html" class="list-group-item list-group-item-action py-3">
                 <strong>Contagem de notas</strong>
                 <div class="small text-muted">
                     Contar cédulas e moedas
                 </div>
-            </a>
+            </a>        
 
             <a href="configuracoes.html" class="list-group-item list-group-item-action py-3">
                 <strong>Configurações</strong>
-                <div class="small text-muted">Preferências do aplicativo</div>
+                <div class="small text-muted">
+                    Preferências do aplicativo
+                </div>
             </a>
-            
         </div>
     </div>
 </div>
@@ -208,17 +207,17 @@
 
                 <div class="info-item">
                     <span class="info-label">Versão</span>
-                    <span class="info-valor" id="appVersao">1.1.0</span>
+                    <span class="info-valor" id="appVersao">Web</span>
                 </div>
 
                 <div class="info-item">
                     <span class="info-label">Build</span>
-                    <span class="info-valor" id="appBuild">2026.10.7</span>
+                    <span class="info-valor" id="appBuild">2026</span>
                 </div>
 
                 <div class="info-item">
                     <span class="info-label">Última atualização</span>
-                    <span class="info-valor" id="appAtualizacao">07/10/2026</span>
+                    <span class="info-valor" id="appAtualizacao">Recentemente...</span>
                 </div>
 
                 <div class="info-item">
@@ -270,7 +269,17 @@
 
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (typeof Android !== "undefined") {
+            document.getElementById("appVersao").textContent = Android.getVersionName();
+            document.getElementById("appBuild").textContent = Android.getBuildDate();
+            document.getElementById("appAtualizacao").textContent = Android.getBuildDateBr();
+        }
+    });
+</script>
 
+<script src="js/app.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
 
 </body>

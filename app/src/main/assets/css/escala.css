@@ -1,0 +1,289 @@
+/* =========================================================
+   ESTRUTURA
+   ========================================================= */
+
+body {
+    background: #f5f5f5;
+}
+
+.escala-container {
+    max-width: 1100px;
+    margin: 28px auto;
+}
+
+.escala-container .card {
+    border: 0;
+    border-radius: 12px;
+}
+
+.escala-container h3 {
+    font-weight: 700;
+}
+
+.escala-container h5 {
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   LISTA DE FUNCIONÁRIOS
+   ========================================================= */
+
+.lista-funcionarios {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.funcionario-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.funcionario-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.funcionario-titulo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.funcionario-campos {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+}
+
+.funcionario-nome {
+    min-width: 0;
+}
+
+.funcionario-horarios {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.horario-dia {
+    min-width: 0;
+}
+
+.horario-dia label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.horario-dia input {
+    width: 100%;
+    min-width: 0;
+    font-size: 0.85rem;
+}
+
+.btn-folga {
+    margin-top: 5px;
+    width: 100%;
+    font-size: 0.75rem;
+}
+
+
+/* =========================================================
+   RESUMO
+   ========================================================= */
+
+.resumo-escala {
+    padding: 16px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+}
+
+.resumo-titulo {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.resumo-periodo {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.resumo-quantidade {
+    margin-top: 12px;
+    font-size: 0.85rem;
+}
+
+
+/* =========================================================
+   ESCALAS SALVAS
+   ========================================================= */
+
+.escala-salva {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #fff;
+}
+
+.escala-salva-titulo {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.escala-salva-periodo {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.escala-salva-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
+
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid #b6202f;
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   TABLETS E DESKTOPS
+   ========================================================= */
+
+@media (min-width: 768px) {
+
+    .funcionario-campos {
+        grid-template-columns: 240px minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .funcionario-horarios {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================================
+   CELULARES ESTREITOS
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .escala-container {
+        margin: 14px auto;
+    }
+
+    .escala-container .card-body {
+        padding: 14px !important;
+    }
+
+    .funcionario-horarios {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+}
+
+/* =========================================================
+   PERÍODO INTERMEDIÁRIO
+   ========================================================= */
+
+.inter-configuracao {
+    margin-top: 14px;
+    padding: 14px;
+    border: 1px solid #f0b45a;
+    border-left: 5px solid #e58b19;
+    border-radius: 8px;
+    background: #fff8ed;
+}
+
+.inter-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.inter-checkbox input {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    accent-color: #e58b19;
+    flex-shrink: 0;
+}
+
+.inter-campos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.inter-campos[hidden] {
+    display: none !important;
+}
+
+.inter-campos label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.inter-ajuda {
+    color: #80551d;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.inter-grupo label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.horario-dia-inter {
+    border: 1px solid #f0b45a;
+    border-radius: 8px;
+    padding: 8px;
+    background: #fff8ed;
+}
+
+.badge-inter {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #e58b19;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+}
+
+@media (max-width: 360px) {
+    .inter-campos {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
