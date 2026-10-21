@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurações - Divergências</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/themes.css" rel="stylesheet">
     <style>
-        body { background: #f5f5f5; }
+        /* body { background: #f5f5f5; } */
         .config-card {
             max-width: 800px;
             margin: 40px auto;
@@ -24,182 +25,231 @@
             font-weight: 500;
         }
         .nav-tabs .nav-link.active {
-            color: #b6202f;
-            border-bottom-color: #b6202f;
+            /* color: #b6202f; */
+            color: var(--accent);
+            /* border-bottom-color: #b6202f; */
+            border-bottom-color: var(--accent);
             font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar" style="background-color: #b6202f;" data-bs-theme="dark">
-    <div class="container-fluid">
-        <button class="navbar-toggler border-0" type="button"
-                data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
-                aria-controls="menuLateral" aria-label="Abrir menu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <a class="navbar-brand fw-bold mx-auto" href="index.html">Divergências</a>
-        <div style="width: 40px;"></div>
-    </div>
-</nav>
-
-<!-- MENU LATERAL -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
-    <div class="offcanvas-header" style="background-color: #b6202f;">
-        <h5 class="offcanvas-title text-white fw-bold" id="menuLateralLabel">Divergências</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
-    </div>
-    <div class="offcanvas-body p-0">
-        <div class="list-group list-group-flush">
-            <a href="sobre.html" class="list-group-item list-group-item-action py-3">
-                <strong>Sobre o app</strong>
-                <div class="small text-muted">
-                    Versão e informações
-                </div>
-            </a>
-
-            <a href="funcionarios.html" class="list-group-item list-group-item-action py-3">
-                <strong>Funcionários</strong>
-                <div class="small text-muted">Cadastro de colaboradores</div>
-            </a>
-
-            <a href="escala.html" class="list-group-item list-group-item-action py-3">
-                <strong>Escala de funcionários</strong>
-                <div class="small text-muted">
-                    Criar e compartilhar escalas
-                </div>
-            </a>
-
-            <a href="index.html" class="list-group-item list-group-item-action py-3">
-                <strong>Calcular divergência</strong>
-                <div class="small text-muted">
-                    Registrar nova divergência
-                </div>
-            </a>
-
-            <a href="historico.html" class="list-group-item list-group-item-action py-3">
-                <strong>Histórico</strong>
-                <div class="small text-muted">
-                    Ver divergências registradas
-                </div>
-            </a>
-
-            <a href="notas.html" class="list-group-item list-group-item-action py-3">
-                <strong>Contagem de notas</strong>
-                <div class="small text-muted">
-                    Contar cédulas e moedas
-                </div>
-            </a>        
-
-            <a href="configuracoes.html" class="list-group-item list-group-item-action py-3 active" aria-current="page">
-                <strong>Configurações</strong>
-                <div class="small">
-                    Preferências do aplicativo
-                </div>
-            </a>
+    <!-- NAVBAR -->
+    <!-- <nav class="navbar" style="background-color: #b6202f;" data-bs-theme="dark"> -->
+    <nav class="navbar" data-bs-theme="dark">
+        <div class="container-fluid">
+            <button class="navbar-toggler border-0" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
+                    aria-controls="menuLateral" aria-label="Abrir menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand fw-bold mx-auto" href="index.html">Divergências</a>
+            <div style="width: 40px;"></div>
         </div>
-    </div>
-</div>
+    </nav>
 
-<!-- CONTEÚDO -->
-<div class="container">
-    <div class="card shadow-sm config-card">
-        <div class="card-body p-4">
-
-            <h3 class="mb-4">Configurações</h3>
-
-            <!-- TABS -->
-            <ul class="nav nav-tabs mb-4" id="configTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="interface-tab" data-bs-toggle="tab"
-                            data-bs-target="#interface" type="button" role="tab">
-                        Interface
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="motivos-tab" data-bs-toggle="tab"
-                            data-bs-target="#motivos" type="button" role="tab">
-                        Motivos
-                    </button>
-                </li>
-            </ul>
-
-            <div class="tab-content" id="configTabsContent">
-
-                <!-- ===================== TAB INTERFACE ===================== -->
-                <div class="tab-pane fade show active" id="interface" role="tabpanel">
-                    <p class="text-muted mb-3">
-                        Escolha quais informações devem aparecer no formulário principal.
-                    </p>
-
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="cfg_codigoProduto">
-                        <label class="form-check-label" for="cfg_codigoProduto">
-                            Código do produto
-                        </label>
-                    </div>
-
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="cfg_pdv">
-                        <label class="form-check-label" for="cfg_pdv">
-                            PDV
-                        </label>
-                    </div>
-
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="cfg_descricao">
-                        <label class="form-check-label" for="cfg_descricao">
-                            Descrição do produto
-                        </label>
-                    </div>
-
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="cfg_valorTotal">
-                        <label class="form-check-label" for="cfg_valorTotal">
-                            Valor Total
-                        </label>
-                    </div>
-
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="cfg_motivo">
-                        <label class="form-check-label" for="cfg_motivo">
-                            Motivo da divergência
-                        </label>
-                    </div>
-                </div>
-
-                <!-- ===================== TAB MOTIVOS ===================== -->
-                <div class="tab-pane fade" id="motivos" role="tabpanel">
+    <!-- MENU LATERAL -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+        <!-- <div class="offcanvas-header" style="background-color: #b6202f;"> -->
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-white fw-bold" id="menuLateralLabel">Divergências</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div class="list-group list-group-flush">
+                <a href="sobre.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Sobre o app</strong>
                     <div class="small text-muted">
-                        Em breve: Motivos de divergência personalizáveis. 
-                        <br>Por enquanto, os motivos são fixos e não podem ser alterados.
+                        Versão e informações
                     </div>
-                </div>
+                </a>
+
+                <a href="funcionarios.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Funcionários</strong>
+                    <div class="small text-muted">Cadastro de colaboradores</div>
+                </a>
+
+                <a href="escala.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Escala de funcionários</strong>
+                    <div class="small text-muted">
+                        Criar e compartilhar escalas
+                    </div>
+                </a>
+
+                <a href="index.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Calcular divergência</strong>
+                    <div class="small text-muted">
+                        Registrar nova divergência
+                    </div>
+                </a>
+
+                <a href="historico.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Histórico</strong>
+                    <div class="small text-muted">
+                        Ver divergências registradas
+                    </div>
+                </a>
+
+                <a href="notas.html" class="list-group-item list-group-item-action py-3">
+                    <strong>Contagem de notas</strong>
+                    <div class="small text-muted">
+                        Contar cédulas e moedas
+                    </div>
+                </a>        
+
+                <a href="configuracoes.html" class="list-group-item list-group-item-action py-3 active" aria-current="page">
+                    <strong>Configurações</strong>
+                    <div class="small">
+                        Preferências do aplicativo
+                    </div>
+                </a>
             </div>
-
-            <hr class="my-4">
-
-            <div class="d-flex gap-2">
-                <button type="button" class="btn btn-danger" id="btnSalvar">
-                    Salvar configurações
-                </button>
-                <button type="button" class="btn btn-outline-secondary" id="btnResetar">
-                    Restaurar padrão
-                </button>
-            </div>
-
-            <div id="mensagemSucesso" class="alert alert-success mt-3 d-none" role="alert">
-                Configurações salvas com sucesso!
-            </div>
-
         </div>
     </div>
-</div>
 
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/configuracoes.js"></script>
+    <!-- CONTEÚDO -->
+    <div class="container">
+        <div class="card shadow-sm config-card">
+            <div class="card-body p-4">
+                
+                <h2 class="mb-4"><strong>Configurações</strong></h2>
+                <p class="text-muted mb-3">
+                    Configurações do aplicativo, incluindo aparência e preferências de exibição.
+                </p>
+                <hr class="my-4">
+                <!-- <h2 class="mb-4"><strong>Configurações</strong></h2>
+                <hr class="my-4"> -->
+                <h4 class="mb-3">Aparência</h4>
+
+                <!-- Cor de destaque -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Cor de destaque</label>
+                    <div class="d-flex flex-wrap gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="accentColor"
+                                id="accentTeal" value="#006F83">
+                            <label class="form-check-label" for="accentTeal">
+                                <span class="d-inline-block rounded"
+                                    style="width:18px;height:18px;background:#006F83;vertical-align:middle;"></span>
+                                Teal (padrão)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="accentColor"
+                                id="accentRed" value="#b6202f">
+                            <label class="form-check-label" for="accentRed">
+                                <span class="d-inline-block rounded"
+                                    style="width:18px;height:18px;background:#b6202f;vertical-align:middle;"></span>
+                                Vermelho (clássico)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modo escuro -->
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="cfg_darkMode">
+                    <label class="form-check-label" for="cfg_darkMode">
+                        Modo escuro
+                    </label>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- TABS -->
+                <ul class="nav nav-tabs mb-4" id="configTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="interface-tab" data-bs-toggle="tab"
+                                data-bs-target="#interface" type="button" role="tab">
+                            Interface
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="motivos-tab" data-bs-toggle="tab"
+                                data-bs-target="#motivos" type="button" role="tab">
+                            Motivos
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="configTabsContent">
+
+                    <!-- ===================== TAB INTERFACE ===================== -->
+                    <div class="tab-pane fade show active" id="interface" role="tabpanel">
+                        <p class="text-muted mb-3">
+                            Escolha quais informações devem aparecer no formulário principal.
+                        </p>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="cfg_codigoProduto">
+                            <label class="form-check-label" for="cfg_codigoProduto">
+                                Código do produto
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="cfg_pdv">
+                            <label class="form-check-label" for="cfg_pdv">
+                                PDV
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="cfg_descricao">
+                            <label class="form-check-label" for="cfg_descricao">
+                                Descrição do produto
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="cfg_valorTotal">
+                            <label class="form-check-label" for="cfg_valorTotal">
+                                Valor Total
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="cfg_motivo">
+                            <label class="form-check-label" for="cfg_motivo">
+                                Motivo da divergência
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- ===================== TAB MOTIVOS ===================== -->
+                    <div class="tab-pane fade" id="motivos" role="tabpanel">
+                        <div class="small text-muted">
+                            Em breve: Motivos de divergência personalizáveis. 
+                            <br>Por enquanto, os motivos são fixos e não podem ser alterados.
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-danger" id="btnSalvar">
+                        Salvar configurações
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="btnResetar">
+                        Restaurar padrão
+                    </button>
+                </div>
+
+                <div id="mensagemSucesso" class="alert alert-success mt-3 d-none" role="alert">
+                    Configurações salvas com sucesso!
+                </div>
+
+                
+
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/configuracoes.js"></script>
 
 </body>
 </html>

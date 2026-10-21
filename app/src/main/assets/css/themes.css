@@ -1,0 +1,122 @@
+/* =========================================================
+   THEMES – Divergências
+   ========================================================= */
+
+:root {
+    /* Accent (cor de destaque) – padrão novo */
+    --accent: #006F83;
+    --accent-hover: #005a6b;
+    --accent-rgb: 0, 111, 131;
+
+    /* Light mode (padrão) */
+    --bg-body: #f5f5f5;
+    --bg-card: #ffffff;
+    --bg-muted: #f8f9fa;
+    --text-primary: #212529;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --navbar-bg: var(--accent);
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --bg-body: #121212;
+    --bg-card: #1e1e1e;
+    --bg-muted: #2a2a2a;
+    --text-primary: #e8e8e8;
+    --text-muted: #a0a0a0;
+    --border-color: #333333;
+    --input-bg: #2a2a2a;
+    --input-border: #444444;
+    /* accent permanece o mesmo (ou escureça um pouco se preferir) */
+}
+
+/* Aplicação global */
+body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Navbar + offcanvas header */
+.navbar,
+.offcanvas-header {
+    background-color: var(--navbar-bg) !important;
+}
+
+/* Botões de destaque */
+.btn-danger {
+    background-color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+.btn-danger:hover,
+.btn-danger:focus {
+    background-color: var(--accent-hover) !important;
+    border-color: var(--accent-hover) !important;
+}
+
+.btn-outline-danger {
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+.btn-outline-danger:hover {
+    background-color: var(--accent) !important;
+    color: #fff !important;
+}
+
+/* Tabs ativas */
+.nav-tabs .nav-link.active {
+    color: var(--accent) !important;
+    border-bottom-color: var(--accent) !important;
+}
+
+/* Cards */
+.card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Formulários */
+.form-control,
+.form-select {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-primary);
+}
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.2rem rgba(var(--accent-rgb), 0.25);
+}
+
+/* List group / offcanvas body */
+.list-group-item {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+.list-group-item.active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+/* Textos muted e resultados */
+.text-muted {
+    color: var(--text-muted) !important;
+}
+.resultado,
+.descricao {
+    background-color: var(--bg-body);
+}
+
+/* Focus accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
