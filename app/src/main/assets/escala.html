@@ -9,7 +9,7 @@
     <link href="css/themes.css" rel="stylesheet">
     <link href="css/escala.css" rel="stylesheet">
     <style>
-        .nav-tabs .nav-link { color: #263746; font-weight: 600; }
+        .nav-tabs .nav-link { color: #FFFFFF; font-weight: 600; }
         /* .nav-tabs .nav-link.active { 
             color: #b6202f; 
             border-color: #dee2e6 #dee2e6 #fff; 
@@ -34,7 +34,7 @@
 <body>
 
     <!-- NAV -->
-    <nav class="navbar" data-bs-theme="dark">
+    <nav class="navbar fixed-top" data-bs-theme="dark">
     <!-- <nav class="navbar" style="background-color: #b6202f;" data-bs-theme="dark"> -->
         <div class="container-fluid">
             <button class="navbar-toggler border-0" type="button"
@@ -153,7 +153,8 @@
                             </button>
                         </div>
 
-                        <div class="alert alert-light border small mb-3" id="resumoMontar">
+                        <!-- <div class="alert alert-light border small mb-3" id="resumoMontar"> -->
+                        <div class="resumo-background border small mb-3" id="resumoMontar">
                             Nenhum funcionário na escala ainda.
                         </div>
 
@@ -161,11 +162,11 @@
                             <button type="button" class="btn btn-danger" id="salvarEscala">
                                 Salvar escala
                             </button>
-                            <button type="button" class="btn btn-success" id="gerarImagem">
+                            <button type="button" class="btn btn-danger" id="gerarImagem">
                                 Gerar imagem e compartilhar
                             </button>
-                            <button type="button" class="btn btn-outline-secondary" id="limparEscala">
-                                Limpar formulário
+                            <button type="button" class="btn btn-secondary" id="limparEscala">
+                                Fechar dados de escala
                             </button>
                         </div>
 

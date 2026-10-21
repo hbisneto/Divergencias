@@ -1,0 +1,49 @@
+.divergencia-card {
+    max-width: 800px;
+    margin: 40px auto;
+}
+
+.resultado {
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.valor-divergencia {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.input-group-text{
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+/* Aplica as variáveis globais nos componentes de input do Bootstrap */
+#formDivergencia .form-control,
+#formDivergencia .form-select {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-primary);
+}
+
+/* Força o navegador a renderizar a cor correta do Placeholder */
+#formDivergencia .form-control::placeholder {
+    color: var(--input-placeholder);
+    opacity: 1; /* Garante que o Firefox não aplique opacidade padrão */
+}
+
+/* Estilização do SPAN (R$) baseada no estado do input adjacente */
+#formDivergencia .input-group .input-group-text {
+    background-color: var(--input-span-bg);
+    border-color: var(--input-border);
+    color: var(--text-muted);
+}
+
+/* Seletor dinâmico: Se o input estiver vazio (placeholder ativo), destaca o span do R$ */
+#formDivergencia .input-group:has(.form-control:placeholder-shown) .input-group-text {
+    /* Exemplo: você pode usar a cor de destaque (accent) ou deixar estático */
+    color: var(--text-primary); 
+    font-weight: bold;
+}

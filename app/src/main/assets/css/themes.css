@@ -18,6 +18,10 @@
     --navbar-bg: var(--accent);
     --input-bg: #ffffff;
     --input-border: #ced4da;
+
+    /* VARIÁVEL DO PLACEHOLDER (Light) */
+    --input-placeholder: #adb5bd; 
+    --input-span-bg: #e9ecef;
 }
 
 /* Dark mode */
@@ -30,7 +34,17 @@
     --border-color: #333333;
     --input-bg: #2a2a2a;
     --input-border: #444444;
+
+    /* VARIÁVEL DO PLACEHOLDER CLARO (Dark) */
+    --input-placeholder: #7a828a; /* Tom cinza médio perfeitamente legível sobre o fundo #2a2a2a */
+    --input-span-bg: #222222;    /* Altera o fundo do "R$" no modo escuro */
     /* accent permanece o mesmo (ou escureça um pouco se preferir) */
+}
+
+.container {
+    padding-top: 50px;
+    max-width: 1100px;
+    margin: 28px auto;
 }
 
 /* Aplicação global */
@@ -93,6 +107,11 @@ body {
 }
 
 /* List group / offcanvas body */
+.offcanvas-body {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
 .list-group-item {
     background-color: var(--bg-card);
     color: var(--text-primary);
