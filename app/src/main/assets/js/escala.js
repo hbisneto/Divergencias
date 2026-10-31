@@ -305,7 +305,7 @@ function renderizarCards() {
         btnRemover.className = "btn btn-outline-danger btn-sm";
         btnRemover.textContent = "Remover";
         btnRemover.addEventListener("click", () => {
-            solicitarConfirmacao(`Remover ${func.nome} desta escala?`, () => {
+            solicitarConfirmacao(`Remover "${func.nome}" desta escala?`, () => {
                 funcionarios = funcionarios.filter(f => f.id !== func.id);
                 renderizarCards();
                 atualizarResumo();

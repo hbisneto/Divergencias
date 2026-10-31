@@ -1,10 +1,11 @@
 .divergencia-card {
     max-width: 800px;
-    margin: 40px auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .resultado {
-    background: #f8f8f8;
+    /* background: var(--bg-body); */
     border-radius: 10px;
     padding: 20px;
 }

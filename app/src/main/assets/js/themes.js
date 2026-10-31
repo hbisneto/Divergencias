@@ -7,7 +7,7 @@
 const THEME_STORAGE_KEY = "divergencias_config";
 
 const DEFAULT_THEME = {
-    accent: "#006F83",   // novo padrão
+    accent: "#b6202f",   // novo padrão
     mode: "light"        // "light" | "dark"
 };
 

@@ -1,7 +1,8 @@
 .sobre-card {
-            max-width: 800px;
-            margin: 40px auto;
-        }
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 .app-nome {
     font-size: 28px;

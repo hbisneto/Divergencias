@@ -6,32 +6,6 @@
     <title>Configurações - Divergências</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/themes.css" rel="stylesheet">
-    <style>
-        /* body { background: #f5f5f5; } */
-        .config-card {
-            max-width: 800px;
-            margin: 40px auto;
-        }
-        .form-check {
-            padding: 12px 12px 12px 40px;
-            border-radius: 8px;
-            transition: background 0.15s;
-        }
-        .form-check:hover {
-            background: #f0f0f0;
-        }
-        .nav-tabs .nav-link {
-            color: #555;
-            font-weight: 500;
-        }
-        .nav-tabs .nav-link.active {
-            /* color: #b6202f; */
-            color: var(--accent);
-            /* border-bottom-color: #b6202f; */
-            border-bottom-color: var(--accent);
-            font-weight: 600;
-        }
-    </style>
 </head>
 <body>
 
@@ -118,49 +92,17 @@
                     Configurações do aplicativo, incluindo aparência e preferências de exibição.
                 </p>
                 <hr class="my-4">
-                <!-- <h2 class="mb-4"><strong>Configurações</strong></h2>
-                <hr class="my-4"> -->
-                <h4 class="mb-3">Aparência</h4>
-
-                <!-- Cor de destaque -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Cor de destaque</label>
-                    <div class="d-flex flex-wrap gap-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="accentColor"
-                                id="accentTeal" value="#006F83">
-                            <label class="form-check-label" for="accentTeal">
-                                <span class="d-inline-block rounded"
-                                    style="width:18px;height:18px;background:#006F83;vertical-align:middle;"></span>
-                                Teal (padrão)
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="accentColor"
-                                id="accentRed" value="#b6202f">
-                            <label class="form-check-label" for="accentRed">
-                                <span class="d-inline-block rounded"
-                                    style="width:18px;height:18px;background:#b6202f;vertical-align:middle;"></span>
-                                Vermelho (clássico)
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modo escuro -->
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="cfg_darkMode">
-                    <label class="form-check-label" for="cfg_darkMode">
-                        Modo escuro
-                    </label>
-                </div>
-
-                <hr class="my-4">
 
                 <!-- TABS -->
                 <ul class="nav nav-tabs mb-4" id="configTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="interface-tab" data-bs-toggle="tab"
+                        <button class="nav-link active" id="aparencia-tab" data-bs-toggle="tab"
+                                data-bs-target="#aparencia" type="button" role="tab">
+                            Aparência
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="interface-tab" data-bs-toggle="tab"
                                 data-bs-target="#interface" type="button" role="tab">
                             Interface
                         </button>
@@ -173,10 +115,58 @@
                     </li>
                 </ul>
 
+                <!-- ===================== TAB APARENCIA ===================== -->
                 <div class="tab-content" id="configTabsContent">
+                    <div class="tab-pane fade show active" id="aparencia" role="tabpanel">
+                        <div class="mb-3">
+                            <h4>Cor de Destaque</h4>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="container text-center">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="accentColor" id="accentTeal" value="#006F83">
+                                                <label class="form-check-label" for="accentTeal">
+                                                    <span class="d-inline-block rounded"
+                                                        style="width:32px;height:32px;background:#006F83;vertical-align:middle;"></span>
+                                                    Teal (padrão)
+                                                </label>
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="col">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="accentColor"
+                                                    id="accentRed" value="#b6202f">
+                                                <label class="form-check-label" for="accentRed">
+                                                    <span class="d-inline-block rounded"
+                                                        style="width:32px;height:32px;background:#b6202f;vertical-align:middle;"></span>
+                                                    Vermelho (clássico)
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <!-- Modo escuro -->
+                                        <div class="col">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="cfg_darkMode">
+                                                <label class="form-check-label" for="cfg_darkMode">
+                                                    Modo escuro
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <!-- Modo escuro -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
 
                     <!-- ===================== TAB INTERFACE ===================== -->
-                    <div class="tab-pane fade show active" id="interface" role="tabpanel">
+                    <div class="tab-pane fade" id="interface" role="tabpanel">
                         <p class="text-muted mb-3">
                             Escolha quais informações devem aparecer no formulário principal.
                         </p>
@@ -240,9 +230,6 @@
                 <div id="mensagemSucesso" class="alert alert-success mt-3 d-none" role="alert">
                     Configurações salvas com sucesso!
                 </div>
-
-                
-
             </div>
         </div>
     </div>
