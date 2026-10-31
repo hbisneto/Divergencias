@@ -4,8 +4,8 @@
 
 :root {
     /* Accent (cor de destaque) – padrão novo */
-    --accent: #006F83;
-    --accent-hover: #005a6b;
+    --accent: #b6202f;
+    --accent-hover: #941925;
     --accent-rgb: 0, 111, 131;
     
     /* Light mode (padrão) */
