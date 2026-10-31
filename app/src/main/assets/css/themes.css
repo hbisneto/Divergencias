@@ -1,0 +1,189 @@
+/* =========================================================
+   THEMES – Divergências
+   ========================================================= */
+
+:root {
+    /* Accent (cor de destaque) – padrão novo */
+    --accent: #b6202f;
+    --accent-hover: #941925;
+    --accent-rgb: 0, 111, 131;
+    
+    /* Light mode (padrão) */
+    --bg-body: #f5f5f5;
+    --bg-card: #ffffff;
+    --bg-muted: #f8f9fa;
+    --text-primary: #212529;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --navbar-bg: var(--accent);
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --modal-title: #f5f5f5;
+    --modal-bg: #f5f5f5;
+    --modal-body: #1e1e1e;
+
+    /* VARIÁVEL DO PLACEHOLDER (Light) */
+    --input-placeholder: #adb5bd; 
+    --input-span-bg: #e9ecef;
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --bg-body: #121212;
+    --bg-card: #1e1e1e;
+    --bg-muted: #2a2a2a;
+    --text-primary: #e8e8e8;
+    --text-muted: #a0a0a0;
+    --border-color: #333333;
+    --input-bg: #2a2a2a;
+    --input-border: #444444;
+    --modal-bg: #1e1e1e;
+    --modal-body: #e8e8e8;
+
+    /* VARIÁVEL DO PLACEHOLDER CLARO (Dark) */
+    --input-placeholder: #7a828a; /* Tom cinza médio perfeitamente legível sobre o fundo #2a2a2a */
+    --input-span-bg: #222222;    /* Altera o fundo do "R$" no modo escuro */
+    /* accent permanece o mesmo (ou escureça um pouco se preferir) */
+}
+
+/* =========================================================
+   LAYOUT GLOBAL (navbar fixed-top)
+   =========================================================
+   Navbar Bootstrap fixed-top ≈ 56px.
+   padding-top garante folga igual em todas as páginas.
+   Cards internos não devem ter margin-top extra.
+*/
+.container {
+    padding-top: 72px;   /* 56px navbar + ~16px folga */
+    padding-bottom: 28px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Páginas que usam .escala-container junto com .container */
+.escala-container {
+    max-width: 1100px;
+}
+
+/* Aplicação global */
+body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Navbar + offcanvas header */
+.navbar,
+.offcanvas-header {
+    background-color: var(--navbar-bg) !important;
+}
+
+/* Botões de destaque */
+.btn-danger {
+    background-color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+.btn-danger:hover,
+.btn-danger:focus {
+    background-color: var(--accent-hover) !important;
+    border-color: var(--accent-hover) !important;
+}
+
+.btn-outline-danger {
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+.btn-outline-danger:hover {
+    background-color: var(--accent) !important;
+    color: #fff !important;
+}
+
+/* Tabs ativas */
+.nav-tabs .nav-link { color: var(--text-primary); font-weight: 600; }
+.nav-tabs .nav-link.active {
+    color: var(--accent) !important;
+    border-bottom-color: var(--accent) !important;
+}
+
+
+/* Cards */
+.card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Formulários */
+.form-control,
+.form-select {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-primary);
+}
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.2rem rgba(var(--accent-rgb), 0.25);
+}
+
+/* List group / offcanvas body */
+.offcanvas-body {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.list-group-item {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+.list-group-item.active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+/* Textos muted e resultados */
+.text-muted {
+    color: var(--text-muted) !important;
+}
+.resultado,
+.descricao {
+    background-color: var(--bg-body);
+}
+
+/* Focus accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.modal-content {
+    background-color: var(--modal-body);
+    color: var(--text-primary);
+}
+
+
+.modal-header
+{
+    background-color: var(--accent);
+    color: var(--text-primary);
+    border-bottom: none;
+}
+
+.modal-title {
+    color: var(--modal-title);
+}
+
+.modal-body {
+    background-color: var(--modal-bg);
+    color: var(--text-primary);
+}
+.modal-footer {
+    background-color: var(--modal-bg);
+    color: var(--text-primary);
+    border-top: none;
+}

@@ -8,12 +8,10 @@
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/themes.css" rel="stylesheet">
+    <link href="css/sobre.css" rel="stylesheet">
 
-    <style>
-        body {
-            background: #f5f5f5;
-        }
-
+    <!-- <style>
         .sobre-card {
             max-width: 800px;
             margin: 40px auto;
@@ -22,7 +20,7 @@
         .app-nome {
             font-size: 28px;
             font-weight: 700;
-            color: #b6202f;
+            color: var(--accent);
         }
 
         .info-item {
@@ -30,7 +28,8 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-bottom: 1px solid #eee;
+            /* border-bottom: 1px solid #FF0000; */
+            border-bottom: 1px solid var(--input-border);
         }
 
         .info-item:last-child {
@@ -48,12 +47,12 @@
         }
 
         .descricao {
-            background: #f8f8f8;
+            background: var(--bg-body);
             border-radius: 10px;
             padding: 20px;
             line-height: 1.6;
         }
-    </style>
+    </style> -->
 </head>
 
 <body>
@@ -67,8 +66,7 @@
      ========================================================= -->
 
 <nav
-    class="navbar"
-    style="background-color: #b6202f;"
+    class="navbar fixed-top"
     data-bs-theme="dark"
 >
     <div class="container-fluid">
@@ -99,6 +97,9 @@
     </div>
 </nav>
 
+<!-- <br>
+<br> -->
+
 
 <!-- =========================================================
      MENU LATERAL (Offcanvas)
@@ -110,7 +111,8 @@
     id="menuLateral"
     aria-labelledby="menuLateralLabel"
 >
-    <div class="offcanvas-header" style="background-color: #b6202f;">
+    <!-- <div class="offcanvas-header" style="background-color: #b6202f;"> -->
+    <div class="offcanvas-header">
         <h5
             class="offcanvas-title text-white fw-bold"
             id="menuLateralLabel"
@@ -281,6 +283,7 @@
 
 <script src="js/app.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/themes.js"></script>
 
 </body>
 </html>

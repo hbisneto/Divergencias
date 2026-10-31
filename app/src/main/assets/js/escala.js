@@ -284,7 +284,8 @@ function renderizarCards() {
         card.className = "card card-func-escala mb-3 shadow-sm";
 
         const header = document.createElement("div");
-        header.className = "card-header d-flex justify-content-between align-items-start gap-2 bg-white";
+        // header.className = "card-header d-flex justify-content-between align-items-start gap-2 bg-white";
+        header.className = "card-header d-flex justify-content-between align-items-start gap-2 resumo-background";
         const titulo = document.createElement("div");
         titulo.innerHTML = `<strong>${func.nome || "Sem nome"}</strong>
             ${func.cargo ? `<span class="badge text-bg-dark ms-1">${func.cargo}</span>` : ""}
@@ -304,7 +305,7 @@ function renderizarCards() {
         btnRemover.className = "btn btn-outline-danger btn-sm";
         btnRemover.textContent = "Remover";
         btnRemover.addEventListener("click", () => {
-            solicitarConfirmacao(`Remover ${func.nome} desta escala?`, () => {
+            solicitarConfirmacao(`Remover "${func.nome}" desta escala?`, () => {
                 funcionarios = funcionarios.filter(f => f.id !== func.id);
                 renderizarCards();
                 atualizarResumo();

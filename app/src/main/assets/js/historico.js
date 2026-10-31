@@ -77,7 +77,7 @@ function renderizarHistorico(divergencias) {
         historico.innerHTML = `
             <div class="text-center py-5">
                 <div class="text-muted mb-3">Nenhuma divergência registrada.</div>
-                <a href="index.html" class="btn btn-primary">Calcular divergência</a>
+                <a href="index.html" class="btn btn-danger btn">Calcular divergência</a>
             </div>
         `;
         return;

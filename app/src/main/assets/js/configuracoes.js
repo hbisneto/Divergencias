@@ -35,6 +35,19 @@ function aplicarNoFormulario(config) {
     document.getElementById("cfg_descricao").checked     = config.interface.descricao;
     document.getElementById("cfg_valorTotal").checked    = config.interface.valorTotal;
     document.getElementById("cfg_motivo").checked        = config.interface.motivo;
+
+    // Parte do tema (nova)
+    if (window.Theme) {
+        const theme = Theme.carregarTheme();
+
+        const radioTeal = document.getElementById("accentTeal");
+        const radioRed  = document.getElementById("accentRed");
+        if (radioTeal) radioTeal.checked = theme.accent === "#006F83";
+        if (radioRed)  radioRed.checked  = theme.accent === "#b6202f";
+
+        const darkSwitch = document.getElementById("cfg_darkMode");
+        if (darkSwitch) darkSwitch.checked = theme.mode === "dark";
+    }
 }
 
 function lerDoFormulario() {
@@ -50,9 +63,20 @@ function lerDoFormulario() {
 }
 
 document.getElementById("btnSalvar").addEventListener("click", () => {
+    // 1. Lê a parte de interface
     const config = lerDoFormulario();
     salvarConfig(config);
 
+    // 2. Lê e salva a parte de tema
+    if (window.Theme) {
+        const accent = document.querySelector('input[name="accentColor"]:checked')?.value || "#006F83";
+        const mode   = document.getElementById("cfg_darkMode")?.checked ? "dark" : "light";
+
+        Theme.salvarTheme({ accent, mode });
+        Theme.aplicarTheme({ accent, mode });
+    }
+
+    // 3. Mostra mensagem de sucesso
     const msg = document.getElementById("mensagemSucesso");
     msg.classList.remove("d-none");
     setTimeout(() => msg.classList.add("d-none"), 2500);
@@ -60,8 +84,15 @@ document.getElementById("btnSalvar").addEventListener("click", () => {
 
 document.getElementById("btnResetar").addEventListener("click", () => {
     if (confirm("Restaurar todas as configurações para o padrão?")) {
+        // Restaura interface
         salvarConfig(DEFAULT_CONFIG);
         aplicarNoFormulario(DEFAULT_CONFIG);
+
+        // Restaura tema
+        if (window.Theme) {
+            Theme.salvarTheme(Theme.DEFAULT_THEME);
+            Theme.aplicarTheme(Theme.DEFAULT_THEME);
+        }
     }
 });
 
