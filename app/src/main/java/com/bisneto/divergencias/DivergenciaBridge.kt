@@ -382,4 +382,48 @@ class DivergenciaBridge(
             "{}"
         }
     }
+
+    /* =========================================================
+    * LEMBRETE
+    * ========================================================= */
+
+    @JavascriptInterface
+    fun salvarLembrete(ativo: Boolean, hora: Int, minuto: Int, dias: String): String {
+        return try {
+            val prefs = LembretePreferences(context)
+            prefs.salvar(ativo, hora, minuto, dias)
+            if (ativo) {
+                LembreteScheduler.agendarProximo(context)
+            } else {
+                LembreteScheduler.cancelar(context)
+            }
+            "{\"ok\":true}"
+        } catch (e: Exception) {
+            "{\"ok\":false,\"erro\":\"${e.message}\"}"
+        }
+    }
+
+    @JavascriptInterface
+    fun cancelarLembrete(): String {
+        return try {
+            LembretePreferences(context).ativo = false
+            LembreteScheduler.cancelar(context)
+            "{\"ok\":true}"
+        } catch (e: Exception) {
+            "{\"ok\":false,\"erro\":\"${e.message}\"}"
+        }
+    }
+
+    @JavascriptInterface
+    fun obterLembrete(): String {
+        val prefs = LembretePreferences(context)
+        return """
+            {
+                "ativo": ${prefs.ativo},
+                "hora": ${prefs.hora},
+                "minuto": ${prefs.minuto},
+                "dias": "${prefs.dias}"
+            }
+        """.trimIndent()
+    }
 }
