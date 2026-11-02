@@ -18,7 +18,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.2.2"
+        versionName = "1.3.0"
 
         // Data da build (formato AAAA.MM.DD)
         val buildDate = SimpleDateFormat("yyyy.MM.dd").format(Date())
