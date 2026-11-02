@@ -8,79 +8,8 @@
     <link href="css/themes.css" rel="stylesheet">
 </head>
 <body>
-
-    <!-- NAVBAR -->
-    <!-- <nav class="navbar" style="background-color: #b6202f;" data-bs-theme="dark"> -->
-    <nav class="navbar fixed-top" data-bs-theme="dark">
-        <div class="container-fluid">
-            <button class="navbar-toggler border-0" type="button"
-                    data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
-                    aria-controls="menuLateral" aria-label="Abrir menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <a class="navbar-brand fw-bold mx-auto" href="index.html">Divergências</a>
-            <div style="width: 40px;"></div>
-        </div>
-    </nav>
-
-    <!-- MENU LATERAL -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
-        <!-- <div class="offcanvas-header" style="background-color: #b6202f;"> -->
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-white fw-bold" id="menuLateralLabel">Divergências</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            <div class="list-group list-group-flush">
-                <a href="sobre.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Sobre o app</strong>
-                    <div class="small text-muted">
-                        Versão e informações
-                    </div>
-                </a>
-
-                <a href="funcionarios.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Funcionários</strong>
-                    <div class="small text-muted">Cadastro de colaboradores</div>
-                </a>
-
-                <a href="escala.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Escala de funcionários</strong>
-                    <div class="small text-muted">
-                        Criar e compartilhar escalas
-                    </div>
-                </a>
-
-                <a href="index.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Calcular divergência</strong>
-                    <div class="small text-muted">
-                        Registrar nova divergência
-                    </div>
-                </a>
-
-                <a href="historico.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Histórico</strong>
-                    <div class="small text-muted">
-                        Ver divergências registradas
-                    </div>
-                </a>
-
-                <a href="notas.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Contagem de notas</strong>
-                    <div class="small text-muted">
-                        Contar cédulas e moedas
-                    </div>
-                </a>        
-
-                <a href="configuracoes.html" class="list-group-item list-group-item-action py-3 active" aria-current="page">
-                    <strong>Configurações</strong>
-                    <div class="small">
-                        Preferências do aplicativo
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
+    <!-- Navbar centralizado (carregado por js/navbar.js) -->
+    <div id="app-navbar"></div>
 
     <!-- CONTEÚDO -->
     <div class="container">
@@ -236,7 +165,8 @@
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/themes.js"></script>
-    <script src="js/configuracoes.js"></script>
+    <script src="js/navbar.js"></script>   <!-- ← novo -->
+    <script src="js/configuracoes.js"></script>   <!-- script específico da página -->
 
 </body>
 </html>
