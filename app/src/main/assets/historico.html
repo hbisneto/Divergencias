@@ -18,122 +18,11 @@
 </head>
 
 <body>
-    <!-- Navbar -->
     <!-- =========================================================
      NAVBAR + MENU LATERAL (estilo app nativo)
      ========================================================= -->
-
-    <nav
-        class="navbar fixed-top"
-        data-bs-theme="dark"
-    >
-        <div class="container-fluid">
-
-            <!-- Botão hamburger -->
-            <button
-                class="navbar-toggler border-0"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#menuLateral"
-                aria-controls="menuLateral"
-                aria-label="Abrir menu"
-            >
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Nome do app (centro) -->
-            <a
-                class="navbar-brand fw-bold mx-auto"
-                href="index.html"
-            >
-                Divergências
-            </a>
-
-            <!-- Espaço vazio para equilibrar o layout -->
-            <div style="width: 40px;"></div>
-
-        </div>
-    </nav>
-
-
-    <!-- =========================================================
-        MENU LATERAL (Offcanvas)
-        ========================================================= -->
-
-    <div
-        class="offcanvas offcanvas-start"
-        tabindex="-1"
-        id="menuLateral"
-        aria-labelledby="menuLateralLabel"
-    >
-        <!-- <div class="offcanvas-header" style="background-color: #b6202f;"> -->
-        <div class="offcanvas-header">
-            <h5
-                class="offcanvas-title text-white fw-bold"
-                id="menuLateralLabel"
-            >
-                Divergências
-            </h5>
-
-            <button
-                type="button"
-                class="btn-close btn-close-white"
-                data-bs-dismiss="offcanvas"
-                aria-label="Fechar"
-            ></button>
-        </div>
-
-        <div class="offcanvas-body p-0">
-            <div class="list-group list-group-flush">
-                <a href="sobre.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Sobre o app</strong>
-                    <div class="small text-muted">
-                        Versão e informações
-                    </div>
-                </a>
-
-                <a href="funcionarios.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Funcionários</strong>
-                    <div class="small text-muted">Cadastro de colaboradores</div>
-                </a>
-
-                <a href="escala.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Escala de funcionários</strong>
-                    <div class="small text-muted">
-                        Criar e compartilhar escalas
-                    </div>
-                </a>
-
-                <a href="index.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Calcular divergência</strong>
-                    <div class="small text-muted">
-                        Registrar nova divergência
-                    </div>
-                </a>
-
-                <a href="historico.html" class="list-group-item list-group-item-action py-3 active" aria-current="page">
-                    <strong>Histórico</strong>
-                    <div class="small">
-                        Ver divergências registradas
-                    </div>
-                </a>
-
-                <a href="notas.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Contagem de notas</strong>
-                    <div class="small text-muted">
-                        Contar cédulas e moedas
-                    </div>
-                </a>        
-
-                <a href="configuracoes.html" class="list-group-item list-group-item-action py-3">
-                    <strong>Configurações</strong>
-                    <div class="small text-muted">
-                        Preferências do aplicativo
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
+    <!-- Navbar centralizado (carregado por js/navbar.js) -->
+    <div id="app-navbar"></div>
 
 
     <!-- Conteúdo -->
@@ -344,9 +233,10 @@
             </div>
         </div>
     </div>
-
+    
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/themes.js"></script>
+    <script src="js/navbar.js"></script>   <!-- ← novo -->
     <script src="js/historico.js"></script>
 
 </body>
