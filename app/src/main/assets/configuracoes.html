@@ -113,13 +113,21 @@
                             Motivos
                         </button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="lembrete-tab" data-bs-toggle="tab"
+                                data-bs-target="#lembrete" type="button" role="tab">
+                            Lembrete
+                        </button>
+                    </li>
                 </ul>
 
                 <!-- ===================== TAB APARENCIA ===================== -->
                 <div class="tab-content" id="configTabsContent">
                     <div class="tab-pane fade show active" id="aparencia" role="tabpanel">
                         <div class="mb-3">
-                            <h4>Cor de Destaque</h4>
+                            <p class="text-muted mb-3">
+                                Escolha a cor de destaque do aplicativo. A cor escolhida será aplicada em botões, links e outros elementos.
+                            </p>
                             <div class="d-flex flex-wrap gap-3">
                                 <div class="container text-center">
                                     <div class="row">
@@ -133,9 +141,6 @@
                                                 </label>
                                             </div>
                                         </div>
-
-
-
 
                                         <div class="col">
                                             <div class="form-check">
@@ -212,6 +217,43 @@
                         <div class="small text-muted">
                             Em breve: Motivos de divergência personalizáveis. 
                             <br>Por enquanto, os motivos são fixos e não podem ser alterados.
+                        </div>
+                    </div>
+
+                    <!-- ===================== TAB LEMBRETE ===================== -->
+                    <div class="tab-pane fade" id="lembrete" role="tabpanel">
+                        <p class="text-muted mb-3">
+                            Receba um lembrete para não esquecer de registrar as divergências do dia (processo oficial em papel).
+                        </p>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="cfg_lembreteAtivo">
+                            <label class="form-check-label" for="cfg_lembreteAtivo">
+                                Ativar lembrete
+                            </label>
+                        </div>
+
+                        <div id="lembreteOpcoes" class="d-none">
+                            <div class="mb-3">
+                                <label for="cfg_lembreteHora" class="form-label">Horário</label>
+                                <!-- <input type="time" class="form-control" id="cfg_lembreteHora" value="18:00"> -->
+                                 <input
+                                    type="time"
+                                    class="form-control"
+                                    id="cfg_lembreteHora"
+                                    placeholder="17:00"
+                                    value="17:00"
+                                    required
+                                >
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Dias da semana (marque os que deseja)</label>
+                                <div id="lembreteListaDias" class="border rounded p-2">
+                                    <!-- gerado via JS -->
+                                </div>
+                                <div class="form-text">Igual ao padrão do “Inter” na escala de funcionários.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
