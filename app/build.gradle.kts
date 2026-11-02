@@ -18,7 +18,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.2.1"
+        versionName = "1.3.0"
 
         // Data da build (formato AAAA.MM.DD)
         val buildDate = SimpleDateFormat("yyyy.MM.dd").format(Date())
@@ -94,4 +94,7 @@ dependencies {
 
     // FileProvider
     implementation("androidx.core:core-ktx:1.13.1")
+
+    // Notification
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
 }

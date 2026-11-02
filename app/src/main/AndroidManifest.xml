@@ -9,6 +9,18 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Notificações (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Alarmes / agendamento (recomendado para confiabilidade) -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- Reagendar após reiniciar o aparelho -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <!-- Para Android 10+ não é necessário WRITE_EXTERNAL_STORAGE
         quando usamos MediaStore / Documents -->
 
@@ -21,6 +33,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Divergencias">
+
+        <!-- Receiver para lidar com o boot do dispositivo -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".MainActivity"
