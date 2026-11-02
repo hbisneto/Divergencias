@@ -280,17 +280,44 @@ function renderizarCards() {
             if (!datas.includes(d)) delete func.dias[d];
         });
 
+        const collapseId = `collapse-func-${func.id}`;
+
         const card = document.createElement("div");
         card.className = "card card-func-escala mb-3 shadow-sm";
 
+        // ========== HEADER (sempre visível + clicável) ==========
         const header = document.createElement("div");
-        // header.className = "card-header d-flex justify-content-between align-items-start gap-2 bg-white";
         header.className = "card-header d-flex justify-content-between align-items-start gap-2 resumo-background";
-        const titulo = document.createElement("div");
-        titulo.innerHTML = `<strong>${func.nome || "Sem nome"}</strong>
-            ${func.cargo ? `<span class="badge text-bg-dark ms-1">${func.cargo}</span>` : ""}
-            ${func.cracha ? `<div class="small text-muted">Crachá ${func.cracha}</div>` : ""}`;
+        header.style.cursor = "pointer";
+        header.setAttribute("data-bs-toggle", "collapse");
+        header.setAttribute("data-bs-target", `#${collapseId}`);
+        header.setAttribute("aria-expanded", "false");
+        header.setAttribute("aria-controls", collapseId);
 
+        // Lado esquerdo: setinha + nome
+        const ladoEsquerdo = document.createElement("div");
+        ladoEsquerdo.className = "d-flex align-items-start gap-2";
+
+        const seta = document.createElement("span");
+        seta.className = "collapse-chevron";
+        // seta.innerHTML = "▶";
+        seta.innerHTML = `<i class="bi bi-chevron-right"></i>`;
+        seta.style.transition = "transform 0.2s ease";
+        seta.style.display = "inline-block";
+        seta.style.marginTop = "2px";
+        seta.style.fontSize = "0.75rem";
+        seta.style.color = "var(--text-muted, #6c757d)";
+
+        const titulo = document.createElement("div");
+        titulo.innerHTML = `
+            <strong>${func.nome || "Sem nome"}</strong>
+            ${func.cargo ? `<span class="badge text-bg-dark ms-1">${func.cargo}</span>` : ""}
+            ${func.cracha ? `<div class="small text-muted">Crachá ${func.cracha}</div>` : ""}
+        `;
+
+        ladoEsquerdo.append(seta, titulo);
+
+        // Lado direito: botões Inter e Remover
         const acoes = document.createElement("div");
         acoes.className = "d-flex flex-wrap gap-1";
 
@@ -298,13 +325,17 @@ function renderizarCards() {
         btnInter.type = "button";
         btnInter.className = "btn btn-outline-warning btn-sm";
         btnInter.textContent = "Inter";
-        btnInter.addEventListener("click", () => abrirModalInter(func.id));
+        btnInter.addEventListener("click", (e) => {
+            e.stopPropagation(); // impede de abrir/fechar o card
+            abrirModalInter(func.id);
+        });
 
         const btnRemover = document.createElement("button");
         btnRemover.type = "button";
         btnRemover.className = "btn btn-outline-danger btn-sm";
         btnRemover.textContent = "Remover";
-        btnRemover.addEventListener("click", () => {
+        btnRemover.addEventListener("click", (e) => {
+            e.stopPropagation(); // impede de abrir/fechar o card
             solicitarConfirmacao(`Remover "${func.nome}" desta escala?`, () => {
                 funcionarios = funcionarios.filter(f => f.id !== func.id);
                 renderizarCards();
@@ -313,7 +344,12 @@ function renderizarCards() {
         });
 
         acoes.append(btnInter, btnRemover);
-        header.append(titulo, acoes);
+        header.append(ladoEsquerdo, acoes);
+
+        // ========== BODY (colapsável) ==========
+        const collapseWrapper = document.createElement("div");
+        collapseWrapper.id = collapseId;
+        collapseWrapper.className = "collapse"; // começa fechado
 
         const body = document.createElement("div");
         body.className = "card-body py-2";
@@ -383,8 +419,17 @@ function renderizarCards() {
             body.appendChild(linha);
         });
 
-        card.append(header, body);
+        collapseWrapper.appendChild(body);
+        card.append(header, collapseWrapper);
         listaCards.appendChild(card);
+
+        // Rotaciona a setinha quando abre/fecha
+        collapseWrapper.addEventListener("show.bs.collapse", () => {
+            seta.style.transform = "rotate(90deg)";
+        });
+        collapseWrapper.addEventListener("hide.bs.collapse", () => {
+            seta.style.transform = "rotate(0deg)";
+        });
     });
 
     atualizarResumo();

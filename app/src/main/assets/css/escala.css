@@ -13,6 +13,14 @@
 .badge-tipo-inter  { background: #ffe0b2; color: #9a4d00; }
 .input-time-sm { max-width: 110px; }
 
+.card-func-escala .card-header {
+    user-select: none;
+}
+
+.collapse-chevron {
+    transition: transform 0.2s ease;
+}
+
 /* padding-top vem do .container em themes.css */
 .escala-container {
     max-width: 1100px;
