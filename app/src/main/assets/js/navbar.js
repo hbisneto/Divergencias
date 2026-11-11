@@ -10,6 +10,11 @@
     // =========================================================
     const MENU_ITEMS = [
         {
+            href: "index.html",
+            title: "Home",
+            description: "Página inicial do app"
+        },
+        {
             href: "sobre.html",
             title: "Sobre o app",
             description: "Versão e informações"
@@ -25,7 +30,7 @@
             description: "Criar e compartilhar escalas"
         },
         {
-            href: "index.html",
+            href: "divergencias.html",
             title: "Divergências",
             description: "Registrar nova divergência"
         },

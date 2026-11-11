@@ -3,262 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Sistema de Divergências</title>
+    <title>Nome do aplicativo</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/themes.css" rel="stylesheet">
-    <link href="css/divergencia.css" rel="stylesheet">
+    <link href="css/home.css" rel="stylesheet">
 </head>
 
 <body>
-    <!-- =========================================================
-     NAVBAR + MENU LATERAL (estilo app nativo)
-     ========================================================= -->
-    <!-- Navbar centralizado (carregado por js/navbar.js) -->
+    <!-- Navbar (carregado por js/navbar.js) -->
     <div id="app-navbar"></div>
 
-    <div class="container">
-        <div class="card shadow-sm divergencia-card">
-            <div class="card-body p-4">
-                <h2 class="mb-4"><strong>Sistema de Divergências</strong></h2>
-                <p class="text-muted mb-3">
-                    Calcule divergências de preços entre etiquetas, tabloides e PDVs, registrando os resultados para referência futura.
-                </p>
-                <hr class="my-4">
-
-                <form id="formDivergencia">
-                    <!-- Código do produto (controlado por config) -->
-                    <div class="mb-3" id="campoCodigoProduto" style="display: none;">
-                        <label for="codigoProduto" class="form-label">
-                            Código do produto
-                        </label>
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="codigoProduto"
-                            placeholder="Ex: 7891234567890"
-                            inputmode="numeric"
-                        >
-                    </div>
-
-                    <!-- PDV (controlado por config) -->
-                    <div class="mb-3" id="campoPdv" style="display: none;">
-                        <label for="pdv" class="form-label">
-                            PDV
-                        </label>
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="pdv"
-                            placeholder="Ex: 12"
-                            inputmode="numeric"
-                        >
-                    </div>
-
-                    <!-- Descrição (controlado por config) -->
-                    <div class="mb-3" id="campoDescricao" style="display: none;">
-                        <label for="descricao" class="form-label">
-                            Descrição do produto
-                        </label>
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="descricao"
-                            placeholder="Ex: Arroz 5kg"
-                        >
-                    </div>
-
-                    <!-- Valor unitário original (sempre visível) -->
-                    <div class="mb-3">
-                        <label for="valorOriginal" class="form-label">
-                            Valor unitário original
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text">R$</span>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="valorOriginal"
-                                placeholder="0,00"
-                                inputmode="decimal"
-                                required
-                            >
-                        </div>
-                    </div>
-
-                    <!-- Quantidade (sempre visível) -->
-                    <div class="mb-3">
-                        <label for="quantidade" class="form-label">
-                            Quantidade
-                        </label>
-                        <input
-                            type="number"
-                            class="form-control"
-                            id="quantidade"
-                            min="1"
-                            placeholder="0"
-                            required
-                        >
-                    </div>
-
-                    <!-- Valor promocional unitário (sempre visível) -->
-                    <div class="mb-3">
-                        <label for="valorPromocional" class="form-label">
-                            Valor promocional unitário
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text">R$</span>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="valorPromocional"
-                                placeholder="0,00"
-                                inputmode="decimal"
-                                required
-                            >
-                        </div>
-                    </div>
-
-                    <!-- Valor Total (controlado por config) -->
-                    <div class="mb-3" id="campoValorTotal" style="display: none;">
-                        <label class="form-label">
-                            Valor Total
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text">R$</span>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="valorTotal"
-                                placeholder="0,00"
-                                readonly
-                            >
-                        </div>
-                        <div class="form-text">
-                            Calculado automaticamente (Valor unitário × Quantidade)
-                        </div>
-                    </div>
-
-                    <!-- Motivo (controlado por config) -->
-                    <div class="mb-4" id="campoMotivo" style="display: none;">
-                        <label for="motivo" class="form-label">
-                            Motivo da divergência
-                        </label>
-                        <select class="form-select" id="motivo">
-                            <option value="" selected disabled>Selecione o motivo</option>
-                            <option value="etiqueta_pdv">Etiqueta × PDV</option>
-                            <option value="etiqueta_tabloide">Etiqueta × Tabloide</option>
-                            <option value="tabloide_pdv">Tabloide × PDV</option>
-                            <option value="pc_virtual">PC Virtual / LMPM</option>
-                            <option value="ofertas_exclusivas">Ofertas Exclusivas</option>
-                            <option value="oferta_combinada">Oferta Combinada</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-danger w-100">
-                        Calcular divergência
-                    </button>
-
-                </form>
-
-                <hr class="my-4">
-
-                <div class="resultado">
-                    <div class="text-muted mb-2">
-                        Divergência encontrada
-                    </div>
-
-                    <div
-                            id="resultado"
-                            class="valor-divergencia"
-                    >
-                        R$ 0,00
-                    </div>
+    <div class="container home-container">
+        <div class="home-card">
+            <!-- Header -->
+            <div class="home-header">
+                <div class="home-header-icon">
+                    <!-- Ícone de camadas / plataforma -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8.235 1.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882l-7.5-4zM8 9.129 1.854 5.854 8 2.577l6.146 3.277L8 9.13z"/>
+                        <path d="M8.235 11.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882l-7.5-4z"/>
+                    </svg>
                 </div>
+                <div class="home-header-text">
+                    <h1 class="home-title">DIVERGÊNCIAS</h1>
+                    <p class="home-subtitle">Uma plataforma de ferramentas para o trabalho</p>
+                </div>
+            </div>
 
-                <hr class="my-4">
+            <hr class="home-divider">
 
-    <div>
-        <h4 class="mb-3">
-            Histórico de Divergências
-        </h4>
+            <!-- Grid de módulos -->
+            <div class="modules-grid">
 
-        <div id="historico">
-            <div class="text-muted text-center py-3">
-                Carregando histórico...
+                <!-- Divergências -->
+                <a href="divergencias.html" class="module-card">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z"/>
+                            <path d="M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-4z"/>
+                        </svg>
+                    </div>
+                    <h2 class="module-title">Financeiro</h2>
+                    <p class="module-desc">Cálculo e histórico de Divergências.</p>
+                </a>
+
+                <!-- Pessoas -->
+                <a href="funcionarios.html" class="module-card">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+                            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+                        </svg>
+                        
+                        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v5.451l6.5-2.6V4.24zM7.5 12.29V6.839l-6.5-2.6v5.451l6.5 2.6z"/>
+                            <path d="M1.5 1.5a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V2a.5.5 0 0 0-.5-.5h-13z"/>
+                        </svg> -->
+                    </div>
+                    <h2 class="module-title">Pessoal</h2>
+                    <p class="module-desc">Cadastro e identificação de colaboradores.</p>
+                </a>
+
+                <!-- Produtos -->
+                <!-- <a href="produtos.html" class="module-card">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v5.451l6.5-2.6V4.24zM7.5 12.29V6.839l-6.5-2.6v5.451l6.5 2.6z"/>
+                            <path d="M1.5 1.5a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V2a.5.5 0 0 0-.5-.5h-13z"/>
+                        </svg>
+                    </div>
+                    <h2 class="module-title">Produtos</h2>
+                    <p class="module-desc">Consulta de produtos, preços e códigos de barras.</p>
+                </a> -->
+
+                <!-- Escalas -->
+                <!-- <a href="escala.html" class="module-card">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                            <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm9 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                        </svg>
+                    </div>
+                    <h2 class="module-title">Escalas</h2>
+                    <p class="module-desc">Montagem semanal, folgas e compartilhamento por imagem.</p>
+                </a> -->
+
+                <a href="escala.html" class="module-card">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                            <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm9 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                        </svg>
+                    </div>
+                    <h2 class="module-title">Organização</h2>
+                    <p class="module-desc">Montagem e compartilhamento de escalas.</p>
+                </a>
+
+                <!-- Contagem -->
+                <a href="notas.html" class="module-card">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                    </div>
+                    <h2 class="module-title">Caixa</h2>
+                    <p class="module-desc">Contagem de cédulas e moedas.</p>
+                </a>
+
             </div>
         </div>
     </div>
 
-        </div>
-    </div>
-</div>
-
-<!-- =========================================================
-     MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
-     ========================================================= -->
-
-<div
-    class="modal fade"
-    id="modalConfirmarExclusao"
-    tabindex="-1"
-    aria-labelledby="modalConfirmarExclusaoLabel"
-    aria-hidden="true"
->
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5
-                    class="modal-title"
-                    id="modalConfirmarExclusaoLabel"
-                >
-                    Tem certeza?
-                </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Fechar"
-                ></button>
-            </div>
-
-            <div class="modal-body">
-                Deseja realmente excluir esta divergência?
-            </div>
-
-            <div class="modal-footer">
-
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                >
-                    Cancelar
-                </button>
-
-                <button
-                    type="button"
-                    class="btn btn-danger"
-                    id="confirmarExclusao"
-                >
-                    Excluir
-                </button>
-
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/themes.js"></script>
-<script src="js/navbar.js"></script>   <!-- ← novo -->
-<script src="js/app.js"></script>
-
-
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/navbar.js"></script>
 </body>
 </html>
