@@ -351,19 +351,32 @@ function renderizarCards() {
         collapseWrapper.id = collapseId;
         collapseWrapper.className = "collapse"; // começa fechado
 
-        const body = document.createElement("div");
-        body.className = "card-body py-2";
+                const body = document.createElement("div");
+        body.className = "card-body py-3";
+
+        // === CABEÇALHO DAS COLUNAS (só no desktop / tablet) ===
+        const cabecalho = document.createElement("div");
+        cabecalho.className = "dia-linha dia-linha-header d-none d-md-grid";
+        cabecalho.innerHTML = `
+            <div class="fw-semibold small text-muted">Dia</div>
+            <div class="fw-semibold small text-muted">Tipo</div>
+            <div class="fw-semibold small text-muted">Tipo de escala</div>
+            <div class="fw-semibold small text-muted">Entrada</div>
+            <div class="fw-semibold small text-muted">Saída</div>
+        `;
+        body.appendChild(cabecalho);
 
         datas.forEach(data => {
             const info = func.dias[data] || { tipo: "normal", entrada: "08:00", saida: "16:20" };
             const linha = document.createElement("div");
             linha.className = "dia-linha";
 
+            // Coluna 1 – Data
             const label = document.createElement("div");
-            label.className = "small fw-semibold";
-            label.style.minWidth = "90px";
+            label.className = "dia-data small fw-semibold";
             label.textContent = formatarData(data, true);
 
+            // Coluna 2 – Badge (NORMAL / INTER / FOLGA)
             const badge = document.createElement("span");
             badge.className = "badge " + (
                 info.tipo === "folga" ? "badge-tipo-folga" :
@@ -372,9 +385,9 @@ function renderizarCards() {
             badge.textContent = info.tipo === "folga" ? "FOLGA" :
                 info.tipo === "inter" ? "INTER" : "NORMAL";
 
+            // Coluna 3 – Select do tipo
             const selTipo = document.createElement("select");
             selTipo.className = "form-select form-select-sm";
-            selTipo.style.maxWidth = "110px";
             ["normal", "folga", "inter"].forEach(t => {
                 const o = document.createElement("option");
                 o.value = t;
@@ -383,15 +396,17 @@ function renderizarCards() {
                 selTipo.appendChild(o);
             });
 
+            // Coluna 4 – Entrada
             const inpEnt = document.createElement("input");
             inpEnt.type = "time";
-            inpEnt.className = "form-control form-control-sm input-time-sm";
+            inpEnt.className = "form-control form-control-sm";
             inpEnt.value = info.entrada || "08:00";
             inpEnt.disabled = info.tipo === "folga";
 
+            // Coluna 5 – Saída
             const inpSai = document.createElement("input");
             inpSai.type = "time";
-            inpSai.className = "form-control form-control-sm input-time-sm";
+            inpSai.className = "form-control form-control-sm";
             inpSai.value = info.saida || "16:20";
             inpSai.disabled = info.tipo === "folga";
 
