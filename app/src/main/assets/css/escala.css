@@ -4,10 +4,17 @@
    
 .card-func-escala { border: 1px solid #dee2e6; border-radius: 10px; }
 .card-func-escala .dia-linha {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-    padding: 8px 0; border-bottom: 1px solid #f0f0f0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color, #f0f0f0);
+    align-items: center;
 }
+
 .card-func-escala .dia-linha:last-child { border-bottom: 0; }
+
+/* Badges e inputs */
 .badge-tipo-normal { background: #e3f4e8; color: #1b5e20; }
 .badge-tipo-folga  { background: #fde8e8; color: #9b1c1c; }
 .badge-tipo-inter  { background: #ffe0b2; color: #9a4d00; }
@@ -15,6 +22,14 @@
 
 .card-func-escala .card-header {
     user-select: none;
+}
+
+/* Cabeçalho (visível só a partir de tablet) */
+.card-func-escala .dia-linha-header {
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border-color, #dee2e6);
+    opacity: 0.85;
 }
 
 .collapse-chevron {
@@ -308,4 +323,56 @@ input:focus-visible {
     .inter-campos {
         grid-template-columns: minmax(0, 1fr);
     }
+}
+
+/* Mobile: empilha e mostra rótulos via data-label se quiser */
+@media (max-width: 767.98px) {
+    .card-func-escala .dia-linha {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .card-func-escala .dia-linha > .dia-data {
+        font-size: 0.95rem;
+        margin-bottom: 2px;
+    }
+}
+
+/* Tablet e Desktop: 5 colunas bem distribuídas */
+@media (min-width: 768px) {
+    .card-func-escala .dia-linha {
+        grid-template-columns: 
+            minmax(110px, 1.2fr)   /* Dia */
+            minmax(70px, 0.7fr)    /* Badge */
+            minmax(120px, 1.2fr)   /* Select Tipo */
+            minmax(110px, 1fr)     /* Entrada */
+            minmax(110px, 1fr);    /* Saída */
+        gap: 12px 16px;
+        padding: 10px 4px;
+    }
+
+    .card-func-escala .dia-linha select,
+    .card-func-escala .dia-linha input[type="time"] {
+        width: 100%;
+        max-width: none;          /* remove o limite antigo de 110px */
+        min-width: 0;
+    }
+}
+
+/* Desktop grande: ainda mais folga */
+@media (min-width: 992px) {
+    .card-func-escala .dia-linha {
+        grid-template-columns: 
+            minmax(130px, 1.3fr)
+            minmax(80px, 0.7fr)
+            minmax(140px, 1.3fr)
+            minmax(130px, 1fr)
+            minmax(130px, 1fr);
+        gap: 14px 20px;
+    }
+}
+
+.card-func-escala .form-select-sm,
+.card-func-escala .form-control-sm {
+    font-size: 0.875rem;
 }

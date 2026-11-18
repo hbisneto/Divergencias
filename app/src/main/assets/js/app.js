@@ -195,7 +195,7 @@ function salvarDivergencia() {
     const divergencia      = calcularDivergencia();
 
     if (valorOriginal <= 0 || !quantidade || quantidade <= 0 || valorPromocional <= 0 || divergencia === null) {
-        alert("Preencha todos os campos obrigatórios corretamente.");
+        mostrarAviso("Preencha todos os campos obrigatórios corretamente.");
         return;
     }
 
@@ -220,7 +220,7 @@ function salvarDivergencia() {
         limparFormulario();
         carregarHistorico();
     } else {
-        alert("Não foi possível salvar a divergência.");
+        mostrarAviso("Não foi possível salvar a divergência.");
     }
 }
 
@@ -236,7 +236,7 @@ function atualizarDivergencia() {
     const divergencia      = calcularDivergencia();
 
     if (valorOriginal <= 0 || !quantidade || quantidade <= 0 || valorPromocional <= 0 || divergencia === null) {
-        alert("Preencha todos os campos obrigatórios corretamente.");
+        mostrarAviso("Preencha todos os campos obrigatórios corretamente.");
         return;
     }
 
@@ -264,7 +264,7 @@ function atualizarDivergencia() {
         limparFormulario();
         carregarHistorico();
     } else {
-        alert("Não foi possível atualizar a divergência.");
+        mostrarAviso("Não foi possível atualizar a divergência.");
     }
 }
 
@@ -360,13 +360,13 @@ function editarDivergencia(id) {
         lista = JSON.parse(Android.listar());
     } catch (error) {
         console.error(error);
-        alert("Não foi possível carregar a divergência.");
+        mostrarAviso("Não foi possível carregar a divergência.");
         return;
     }
 
     const item = lista.find(d => String(d.id) === String(id));
     if (!item) {
-        alert("Divergência não encontrada.");
+        mostrarAviso("Divergência não encontrada.");
         return;
     }
 
@@ -429,7 +429,7 @@ function confirmarExclusao() {
 
     } else {
 
-        alert(
+        mostrarAviso(
             "Não foi possível excluir a divergência."
         );
     }
