@@ -120,7 +120,7 @@ function realizarExportacao() {
         const resultado = Android.compartilharArquivoTexto(
             nomeArquivo,
             conteudo,
-            "application/json"
+            "application/vnd.bisneto.nexo+json"
         );
 
         if (

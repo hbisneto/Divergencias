@@ -1,9 +1,9 @@
 package com.bisneto.divergencias
-
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import org.json.JSONArray
 
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(
@@ -217,5 +217,69 @@ class DatabaseHelper(context: Context) :
     companion object {
         private const val DATABASE_NAME = "divergencias.db"
         private const val DATABASE_VERSION = 3
+    }
+
+    fun substituirDadosBackup(
+        funcionarios: JSONArray,
+        divergencias: JSONArray
+    ): Boolean {
+
+        val db = writableDatabase
+
+        db.beginTransaction()
+
+        return try {
+
+            db.delete("divergencias", null, null)
+            db.delete("funcionarios", null, null)
+
+            // Restaurar funcionários
+            for (i in 0 until funcionarios.length()) {
+
+                val item = funcionarios.getJSONObject(i)
+
+                val values = ContentValues().apply {
+                    put("cracha", item.getString("cracha"))
+                    put("nome", item.getString("nome"))
+                    put("cargo", item.getString("cargo"))
+                }
+
+                db.insertOrThrow("funcionarios", null, values)
+            }
+
+            // Restaurar divergências
+            for (i in 0 until divergencias.length()) {
+
+                val item = divergencias.getJSONObject(i)
+
+                val values = ContentValues().apply {
+                    put("id", item.getLong("id"))
+                    put("codigo_produto", item.optString("codigoProduto"))
+                    put("pdv", item.optString("pdv"))
+                    put("descricao", item.optString("descricao"))
+                    put("valor_original", item.getLong("valorOriginal"))
+                    put("quantidade", item.getInt("quantidade"))
+                    put("valor_promocional", item.getLong("valorPromocional"))
+                    put("divergencia", item.getLong("divergencia"))
+                    put("motivo", item.optString("motivo"))
+                    put("data_hora", item.getLong("dataHora"))
+                }
+
+                db.insertOrThrow("divergencias", null, values)
+            }
+
+            db.setTransactionSuccessful()
+
+            true
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+            false
+
+        } finally {
+
+            db.endTransaction()
+        }
     }
 }
