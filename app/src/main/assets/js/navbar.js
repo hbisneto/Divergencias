@@ -45,6 +45,11 @@
             description: "Contar cédulas e moedas"
         },
         {
+            href: "exportar.html",
+            title: "Backup e exportação",
+            description: "Exportar dados do aplicativo"
+        },
+        {
             href: "configuracoes.html",
             title: "Configurações",
             description: "Preferências do aplicativo"

@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Exportar dados - Nexo</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/themes.css" rel="stylesheet">
+</head>
+<body>
+
+    <div id="app-navbar"></div>
+
+    <main class="container">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <h2 class="mb-3">
+                    <strong>Exportar dados</strong>
+                </h2>
+
+                <p class="text-muted">
+                    Gere uma cópia de segurança dos dados armazenados
+                    no aplicativo.
+                </p>
+
+                <hr>
+
+                <div class="mb-4">
+                    <h5>Informações incluídas</h5>
+
+                    <ul>
+                        <li>Funcionários cadastrados e seus dados.</li>
+                        <li>Escalas salvas e horários de cada funcionário.</li>
+                        <li>Divergências, incluindo PDV, motivo e valores.</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-info">
+                    A exportação não altera nem exclui os dados existentes.
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-danger w-100"
+                    id="btnExportar">
+                    Exportar todos os dados
+                </button>
+
+                <div
+                    id="mensagemExportacao"
+                    class="alert d-none mt-3"
+                    role="alert">
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/android-web.js"></script>
+    <script src="js/ui-modals.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/exportar.js"></script>
+
+</body>
+</html>
