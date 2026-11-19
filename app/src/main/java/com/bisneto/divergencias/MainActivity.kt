@@ -1,4 +1,5 @@
 package com.bisneto.divergencias
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -17,6 +18,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         database = DatabaseHelper(this)
