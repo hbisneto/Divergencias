@@ -899,7 +899,7 @@ function gerarCanvasEscala(dados) {
     ctx.fillStyle = "#5f6b76";
     ctx.font = "14px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Gerado pelo aplicativo Divergências", largura / 2, legY + 40);
+    ctx.fillText("Gerado pelo aplicativo Nexo", largura / 2, legY + 40);
 
     return canvas;
 }

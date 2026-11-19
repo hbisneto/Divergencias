@@ -436,7 +436,7 @@ function gerarHtmlEmail(divergenciasDoDia) {
                     <tr>
                         <td style="background-color: #f8f9fa; padding: 20px 32px; text-align: center; border-top: 1px solid #e9ecef;">
                             <p style="margin: 0; font-size: 12px; color: #999;">
-                                Gerado pelo aplicativo <strong style="color: #b6202f;">Divergências</strong><br>
+                                Gerado pelo aplicativo <strong style="color: #b6202f;">Nexo</strong><br>
                                 Bisneto Inc. · ${new Date().getFullYear()}
                             </p>
                         </td>
