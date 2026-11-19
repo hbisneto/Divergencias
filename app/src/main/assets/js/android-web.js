@@ -13,9 +13,16 @@
     "use strict";
 
     // Se já existir o bridge nativo (app Android), não sobrescreve
-    if (typeof window.Android !== "undefined" && window.Android.__isNative) {
+    if (
+        typeof window.Android !== "undefined" &&
+        typeof window.Android.isNative === "function" &&
+        window.Android.isNative()
+    ) {
         return;
     }
+    // if (typeof window.Android !== "undefined" && window.Android.__isNative) {
+    //     return;
+    // }
 
     // Chaves alinhadas com o que o código original já usava onde possível
     const STORAGE_KEYS = {
