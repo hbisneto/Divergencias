@@ -215,7 +215,7 @@ function criarDiasComHorarioPadrao(datas, entrada, saida) {
     return dias;
 }
 
-function criarFuncionario({ cracha = "", nome = "", cargo = "", entrada = "08:00", saida = "16:20" } = {}) {
+function criarFuncionario({ cracha = "", nome = "", cargo = "", entrada = "13:08", saida = "23:00" } = {}) {
     const datas = obterDatas();
     return {
         id: proximoId++,
@@ -272,7 +272,7 @@ function renderizarCards() {
         // sincroniza dias se o período mudou
         datas.forEach(d => {
             if (!func.dias[d]) {
-                func.dias[d] = { tipo: "normal", entrada: "08:00", saida: "16:20" };
+                func.dias[d] = { tipo: "normal", entrada: "13:00", saida: "23:00" };
             }
         });
         // remove dias fora do período
@@ -367,7 +367,7 @@ function renderizarCards() {
         body.appendChild(cabecalho);
 
         datas.forEach(data => {
-            const info = func.dias[data] || { tipo: "normal", entrada: "08:00", saida: "16:20" };
+            const info = func.dias[data] || { tipo: "normal", entrada: "13:00", saida: "23:00" };
             const linha = document.createElement("div");
             linha.className = "dia-linha";
 
@@ -400,22 +400,22 @@ function renderizarCards() {
             const inpEnt = document.createElement("input");
             inpEnt.type = "time";
             inpEnt.className = "form-control form-control-sm";
-            inpEnt.value = info.entrada || "08:00";
+            inpEnt.value = info.entrada || "13:00";
             inpEnt.disabled = info.tipo === "folga";
 
             // Coluna 5 – Saída
             const inpSai = document.createElement("input");
             inpSai.type = "time";
             inpSai.className = "form-control form-control-sm";
-            inpSai.value = info.saida || "16:20";
+            inpSai.value = info.saida || "23:00";
             inpSai.disabled = info.tipo === "folga";
 
             const atualizar = () => {
                 const tipo = selTipo.value;
                 func.dias[data] = {
                     tipo,
-                    entrada: inpEnt.value || "08:00",
-                    saida: inpSai.value || "16:20"
+                    entrada: inpEnt.value || "13:00",
+                    saida: inpSai.value || "23:00"
                 };
                 badge.className = "badge " + (
                     tipo === "folga" ? "badge-tipo-folga" :
@@ -461,8 +461,8 @@ function abrirModalAdicionarFuncionario() {
     addNome.value = "";
     addCracha.value = "";
     addCargo.value = "";
-    addEntrada.value = "08:00";
-    addSaida.value = "16:20";
+    addEntrada.value = "13:00";
+    addSaida.value = "23:00";
     modalAdicionar.show();
 }
 
@@ -494,8 +494,8 @@ btnConfirmarAdicionar.addEventListener("click", () => {
         return;
     }
 
-    const entrada = addEntrada.value || "08:00";
-    const saida = addSaida.value || "16:20";
+    const entrada = addEntrada.value || "13:00";
+    const saida = addSaida.value || "23:00";
     if (entrada === saida) {
         mostrarMensagem("Entrada e saída não podem ser iguais.", "warning");
         return;
@@ -534,8 +534,8 @@ function abrirModalInter(idFunc) {
     if (!func) return;
     idFuncInterAtual = idFunc;
     interNomeFunc.textContent = `Funcionário: ${func.nome}`;
-    interEntrada.value = "09:00";
-    interSaida.value = "17:20";
+    interEntrada.value = "10:00";
+    interSaida.value = "20:00";
 
     const datas = obterDatas();
     interListaDias.replaceChildren();
@@ -564,8 +564,8 @@ btnConfirmarInter.addEventListener("click", () => {
     const func = funcionarios.find(f => f.id === idFuncInterAtual);
     if (!func) return;
 
-    const entrada = interEntrada.value || "09:00";
-    const saida = interSaida.value || "17:20";
+    const entrada = interEntrada.value || "10:00";
+    const saida = interSaida.value || "20:00";
     if (entrada === saida) {
         mostrarMensagem("Entrada e saída do Inter não podem ser iguais.", "warning");
         return;
@@ -704,7 +704,7 @@ function carregarEscala(id) {
     // compatibilidade com formato antigo (horarios texto)
     funcionarios.forEach(f => {
         if (!f.dias || Object.keys(f.dias).length === 0) {
-            f.dias = criarDiasComHorarioPadrao(obterDatas(), "08:00", "16:20");
+            f.dias = criarDiasComHorarioPadrao(obterDatas(), "13:00", "23:00");
         }
     });
     escalaEditandoId = esc.id;
@@ -899,7 +899,7 @@ function gerarCanvasEscala(dados) {
     ctx.fillStyle = "#5f6b76";
     ctx.font = "14px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Gerado pelo aplicativo Divergências", largura / 2, legY + 40);
+    ctx.fillText("Gerado pelo aplicativo Nexo", largura / 2, legY + 40);
 
     return canvas;
 }
@@ -957,7 +957,7 @@ function aoMudarPeriodo() {
     const datas = obterDatas();
     funcionarios.forEach(f => {
         datas.forEach(d => {
-            if (!f.dias[d]) f.dias[d] = { tipo: "normal", entrada: "08:00", saida: "16:20" };
+            if (!f.dias[d]) f.dias[d] = { tipo: "normal", entrada: "13:00", saida: "23:00" };
         });
         Object.keys(f.dias).forEach(d => {
             if (!datas.includes(d)) delete f.dias[d];

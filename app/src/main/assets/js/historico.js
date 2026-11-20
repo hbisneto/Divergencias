@@ -89,7 +89,7 @@ function renderizarHistorico(divergencias) {
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
                     <div>
                         <div class="text-muted small">Divergência</div>
-                        <div class="fs-4 fw-bold text-danger">
+                        <div class="valor-divergencia">
                             ${centavosParaMoeda(item.divergencia)}
                         </div>
                         <div class="text-muted small mt-1">
@@ -126,7 +126,7 @@ function abrirDetalhes(id) {
     conteudoDetalhes.innerHTML = `
         <div class="mb-3">
             <div class="text-muted small">Valor da divergência</div>
-            <div class="fs-3 fw-bold text-danger">${centavosParaMoeda(item.divergencia)}</div>
+            <div class="valor-divergencia">${centavosParaMoeda(item.divergencia)}</div>
         </div>
         <hr>
         <div class="row g-3">
@@ -436,7 +436,7 @@ function gerarHtmlEmail(divergenciasDoDia) {
                     <tr>
                         <td style="background-color: #f8f9fa; padding: 20px 32px; text-align: center; border-top: 1px solid #e9ecef;">
                             <p style="margin: 0; font-size: 12px; color: #999;">
-                                Gerado pelo aplicativo <strong style="color: #b6202f;">Divergências</strong><br>
+                                Gerado pelo aplicativo <strong style="color: #b6202f;">Nexo</strong><br>
                                 Bisneto Inc. · ${new Date().getFullYear()}
                             </p>
                         </td>

@@ -211,3 +211,9 @@ select:focus-visible {
     color: var(--text-primary) !important;
     opacity: 1;
 }
+
+.valor-divergencia {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent)
+}

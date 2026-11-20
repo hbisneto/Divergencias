@@ -30,6 +30,11 @@ class DivergenciaBridge(
     private val sender = GmailSmtpSender()
     private val scope = CoroutineScope(Dispatchers.Main)
 
+    @JavascriptInterface
+    fun isNative(): Boolean {
+        return true
+    }
+
     /* =========================================================
      * GET INFO
      * ========================================================= */
@@ -425,5 +430,45 @@ class DivergenciaBridge(
                 "dias": "${prefs.dias}"
             }
         """.trimIndent()
+    }
+
+    @JavascriptInterface
+    fun importarBackupBanco(conteudo: String): String {
+
+        return try {
+
+            val backup = JSONObject(conteudo)
+            val dados = backup.getJSONObject("data")
+
+            if (backup.getString("format") != "nexo-backup") {
+                throw Exception("Formato de backup inválido.")
+            }
+
+            if (backup.getInt("schemaVersion") != 1) {
+                throw Exception("Versão não suportada.")
+            }
+
+            val funcionarios = dados.getJSONArray("funcionarios")
+            val divergencias = dados.getJSONArray("divergencias")
+
+            val sucesso = database.substituirDadosBackup(
+                funcionarios,
+                divergencias
+            )
+
+            JSONObject().apply {
+                put("ok", sucesso)
+                if (!sucesso) {
+                    put("erro", "Não foi possível restaurar o banco.")
+                }
+            }.toString()
+
+        } catch (e: Exception) {
+
+            JSONObject().apply {
+                put("ok", false)
+                put("erro", e.message ?: "Erro na restauração.")
+            }.toString()
+        }
     }
 }
