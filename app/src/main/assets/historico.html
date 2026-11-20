@@ -39,7 +39,7 @@
 
                     <div class="dropdown">
                         <button
-                            class="btn btn-link text-body p-1 triple-dots"
+                            class="btn btn-link p-1 triple-dots"
                             type="button"
                             id="menuOpcoes"
                             data-bs-toggle="dropdown"
@@ -52,7 +52,7 @@
 
                         <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="menuOpcoes">
                             <li>
-                                <a class="dropdown-item" href="index.html">
+                                <a class="dropdown-item" href="divergencias.html">
                                     Nova divergência
                                 </a>
                             </li>
@@ -128,10 +128,10 @@
                     </button>
 
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-primary" id="btnExportarItem">
+                        <button type="button" class="btn btn-secondary" id="btnExportarItem">
                             Exportar
                         </button>
-                        <button type="button" class="btn btn-primary" id="btnCompartilharItem">
+                        <button type="button" class="btn btn-danger" id="btnCompartilharItem">
                             Compartilhar
                         </button>
                     </div>
@@ -145,7 +145,7 @@
     <div class="modal fade" id="modalEmailDia" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header" style="background-color: #b6202f;">
+                <div class="modal-header" style="background-color: var(--accent);">
                     <h5 class="modal-title text-white">Enviar por e-mail</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -190,7 +190,7 @@
     <div class="modal fade" id="modalEmailPeriodo" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-            <div class="modal-header" style="background-color:#b6202f;">
+            <div class="modal-header" style="background-color: var(--accent);">
                 <h5 class="modal-title text-white">E-mail por período</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -228,13 +228,15 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="btnConfirmarEmailPeriodo">Enviar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEmailPeriodo">Enviar</button>
             </div>
             </div>
         </div>
     </div>
     
     <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/android-web.js"></script>
+    <script src="js/ui-modals.js"></script>
     <script src="js/themes.js"></script>
     <script src="js/navbar.js"></script>   <!-- ← novo -->
     <script src="js/historico.js"></script>

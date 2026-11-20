@@ -169,13 +169,25 @@ select:focus-visible {
 
 .modal-header
 {
-    background-color: var(--accent);
-    color: var(--text-primary);
+    background-color: var(--accent) !important;
+    color: #fff !important;
     border-bottom: none;
 }
 
 .modal-title {
-    color: var(--modal-title);
+    color: #fff !important;
+}
+
+/* X sempre branco no header vermelho (claro e escuro) */
+.modal-header .btn-close,
+.modal-header .btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.9;
+}
+
+.modal-header .btn-close:hover,
+.modal-header .btn-close-white:hover {
+    opacity: 1;
 }
 
 .modal-body {
@@ -186,4 +198,22 @@ select:focus-visible {
     background-color: var(--modal-bg);
     color: var(--text-primary);
     border-top: none;
+}
+
+/* Botão dos 3 pontinhos (menu de opções do histórico) */
+.triple-dots {
+    color: var(--text-primary) !important;
+    opacity: 0.85;
+}
+
+.triple-dots:hover,
+.triple-dots:focus {
+    color: var(--text-primary) !important;
+    opacity: 1;
+}
+
+.valor-divergencia {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent)
 }

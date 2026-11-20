@@ -18,7 +18,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.3.0"
+        versionName = "1.4.0"
 
         // Data da build (formato AAAA.MM.DD)
         val buildDate = SimpleDateFormat("yyyy.MM.dd").format(Date())
@@ -66,6 +66,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

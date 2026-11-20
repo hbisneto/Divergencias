@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Importar backup - Nexo</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/themes.css" rel="stylesheet">
+</head>
+<body>
+
+    <div id="app-navbar"></div>
+
+    <main class="container">
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <h2>Importar backup</h2>
+
+                <p class="text-muted">
+                    Selecione um arquivo de backup do Nexo
+                    para visualizar e restaurar seus dados.
+                </p>
+
+                <input
+                    type="file"
+                    id="arquivoBackup"
+                    class="form-control"
+                    accept=".nexo,application/vnd.bisneto.nexo+json,application/json">
+
+                <div id="informacoesBackup" class="d-none mt-4">
+
+                    <hr>
+
+                    <h5>Conteúdo do backup</h5>
+
+                    <div id="resumoBackup"></div>
+
+                    <div class="alert alert-warning mt-3">
+                        A restauração substituirá os dados atuais
+                        pelos dados presentes no backup.
+                    </div>
+
+                    <button
+                        type="button"
+                        id="btnRestaurar"
+                        class="btn btn-danger w-100">
+                        Restaurar backup
+                    </button>
+
+                </div>
+
+                <div
+                    id="mensagemImportacao"
+                    class="alert d-none mt-3">
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/android-web.js"></script>
+    <script src="js/ui-modals.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/importar.js"></script>
+
+</body>
+</html>

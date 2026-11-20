@@ -77,7 +77,7 @@ function renderizarHistorico(divergencias) {
         historico.innerHTML = `
             <div class="text-center py-5">
                 <div class="text-muted mb-3">Nenhuma divergência registrada.</div>
-                <a href="index.html" class="btn btn-danger btn">Calcular divergência</a>
+                <a href="divergencias.html" class="btn btn-danger btn">Calcular divergência</a>
             </div>
         `;
         return;
@@ -89,7 +89,7 @@ function renderizarHistorico(divergencias) {
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
                     <div>
                         <div class="text-muted small">Divergência</div>
-                        <div class="fs-4 fw-bold text-danger">
+                        <div class="valor-divergencia">
                             ${centavosParaMoeda(item.divergencia)}
                         </div>
                         <div class="text-muted small mt-1">
@@ -126,7 +126,7 @@ function abrirDetalhes(id) {
     conteudoDetalhes.innerHTML = `
         <div class="mb-3">
             <div class="text-muted small">Valor da divergência</div>
-            <div class="fs-3 fw-bold text-danger">${centavosParaMoeda(item.divergencia)}</div>
+            <div class="valor-divergencia">${centavosParaMoeda(item.divergencia)}</div>
         </div>
         <hr>
         <div class="row g-3">
@@ -242,12 +242,12 @@ function exportarCsvNativo(conteudo, nomeArquivo) {
         const caminho = Android.salvarArquivo(nomeArquivo, conteudoComBom);
 
         if (caminho && caminho.length > 0) {
-            alert(
+            mostrarAviso(
                 "Arquivo salvo com sucesso!\n\n" +
                 "Local:\n" + caminho
             );
         } else {
-            alert(
+            mostrarAviso(
                 "Não foi possível salvar o arquivo.\n" +
                 "Verifique se o aplicativo tem permissão de armazenamento."
             );
@@ -262,7 +262,7 @@ function exportarCsvNativo(conteudo, nomeArquivo) {
         a.download = nomeArquivo;
         a.click();
         URL.revokeObjectURL(url);
-        alert("Arquivo baixado (modo navegador).");
+        mostrarAviso("Arquivo baixado (modo navegador).");
     }
 }
 
@@ -436,7 +436,7 @@ function gerarHtmlEmail(divergenciasDoDia) {
                     <tr>
                         <td style="background-color: #f8f9fa; padding: 20px 32px; text-align: center; border-top: 1px solid #e9ecef;">
                             <p style="margin: 0; font-size: 12px; color: #999;">
-                                Gerado pelo aplicativo <strong style="color: #b6202f;">Divergências</strong><br>
+                                Gerado pelo aplicativo <strong style="color: #b6202f;">Nexo</strong><br>
                                 Bisneto Inc. · ${new Date().getFullYear()}
                             </p>
                         </td>
@@ -464,12 +464,12 @@ function compartilharPorEmail() {
         const resultado = Android.compartilharPorEmail(html, assunto);
 
         if (resultado !== "ok") {
-            alert("Não foi possível abrir o cliente de e-mail.\n" + resultado);
+            mostrarAviso("Não foi possível abrir o cliente de e-mail.\n" + resultado);
         }
     } else {
         // Fallback para navegador (abre mailto – HTML limitado)
         console.warn("Android.compartilharPorEmail não disponível");
-        alert("Compartilhamento por e-mail disponível apenas no aplicativo Android.");
+        mostrarAviso("Compartilhamento por e-mail disponível apenas no aplicativo Android.");
     }
 }
 
@@ -480,7 +480,7 @@ function compartilharPorEmail() {
 // Exportar TUDO (CSV)
 document.getElementById("btnExportarTudo").addEventListener("click", () => {
     if (!listaCompleta || listaCompleta.length === 0) {
-        alert("Não há divergências para exportar.");
+        mostrarAviso("Não há divergências para exportar.");
         return;
     }
 
@@ -515,7 +515,7 @@ document.getElementById("btnCompartilharItem").addEventListener("click", async (
     if (!divergenciaAtual) return;
 
     if (typeof Android === "undefined" || !Android.compartilharImagemBase64) {
-        alert("Disponível apenas no app Android.");
+        mostrarAviso("Disponível apenas no app Android.");
         return;
     }
 
@@ -534,10 +534,10 @@ document.getElementById("btnCompartilharItem").addEventListener("click", async (
         const resultado = await compartilharImagemQuandoPronta(dataUrl, nome);
 
         if (resultado !== "ok") {
-            alert(resultado || "Não foi possível compartilhar a imagem.");
+            mostrarAviso(resultado || "Não foi possível compartilhar a imagem.");
         }
     } catch (e) {
-        alert("Erro ao gerar imagem: " + (e.message || e));
+        mostrarAviso("Erro ao gerar imagem: " + (e.message || e));
     } finally {
         btn.disabled = false;
         btn.textContent = textoOriginal;
@@ -657,7 +657,7 @@ function atualizarUiCredenciaisEmail() {
 
 document.getElementById("btnEmailDia").addEventListener("click", () => {
     if (!listaCompleta || filtrarDivergenciasDoDia(listaCompleta).length === 0) {
-        alert("Não há divergências do dia para enviar.");
+        mostrarAviso("Não há divergências do dia para enviar.");
         return;
     }
     document.getElementById("emailStatus").textContent = "";
@@ -670,27 +670,27 @@ document.getElementById("btnSalvarCredenciais").addEventListener("click", () => 
     const senha = document.getElementById("cfgAppPassword").value.trim();
 
     if (!email || !senha) {
-        alert("Preencha e-mail e senha de app.");
+        mostrarAviso("Preencha e-mail e senha de app.");
         return;
     }
 
     if (typeof Android === "undefined" || !Android.salvarCredenciaisEmail(email, senha)) {
-        alert("Não foi possível salvar as credenciais.");
+        mostrarAviso("Não foi possível salvar as credenciais.");
         return;
     }
 
-    alert("Credenciais salvas!");
+    mostrarAviso("Credenciais salvas!");
     atualizarUiCredenciaisEmail();
 });
 
 document.getElementById("btnConfirmarEmail").addEventListener("click", () => {
     if (typeof Android === "undefined") {
-        alert("Disponível apenas no aplicativo Android.");
+        mostrarAviso("Disponível apenas no aplicativo Android.");
         return;
     }
 
     if (!Android.emailEstaConfigurado()) {
-        alert("Salve o e-mail e a senha de app primeiro.");
+        mostrarAviso("Salve o e-mail e a senha de app primeiro.");
         return;
     }
 
@@ -814,7 +814,7 @@ function gerarAnexoHtmlCompleto(divergencias, labelInicio, labelFim) {
 
 document.getElementById("btnEmailPeriodo")?.addEventListener("click", () => {
     if (typeof Android === "undefined" || !Android.emailEstaConfigurado()) {
-        alert("Configure o e-mail e a senha de app antes de enviar.");
+        mostrarAviso("Configure o e-mail e a senha de app antes de enviar.");
         return;
     }
 
@@ -855,7 +855,7 @@ document.getElementById("btnConfirmarEmailPeriodo")?.addEventListener("click", (
     const formatoAnexo = document.getElementById("emailFormatoAnexo").value; // csv | html
 
     if (!inicioStr || !fimStr) {
-        alert("Informe data início e data fim.");
+        mostrarAviso("Informe data início e data fim.");
         return;
     }
 
@@ -863,24 +863,24 @@ document.getElementById("btnConfirmarEmailPeriodo")?.addEventListener("click", (
     const tsFim = fimDoDia(new Date(fimStr + "T00:00:00"));
 
     if (tsFim < tsInicio) {
-        alert("A data fim deve ser maior ou igual à data início.");
+        mostrarAviso("A data fim deve ser maior ou igual à data início.");
         return;
     }
 
     const qtdDias = diasEntre(tsInicio, tsFim);
     if (qtdDias > MAX_DIAS_PERIODO) {
-        alert(`O período máximo é de ${MAX_DIAS_PERIODO} dias. Você selecionou ${qtdDias} dias.`);
+        mostrarAviso(`O período máximo é de ${MAX_DIAS_PERIODO} dias. Você selecionou ${qtdDias} dias.`);
         return;
     }
 
     if (!destinatario) {
-        alert("Informe o destinatário.");
+        mostrarAviso("Informe o destinatário.");
         return;
     }
 
     const filtradas = filtrarPorPeriodo(listaCompleta, tsInicio, tsFim);
     if (filtradas.length === 0) {
-        alert("Não há divergências nesse período.");
+        mostrarAviso("Não há divergências nesse período.");
         return;
     }
 
@@ -931,12 +931,12 @@ window.onEmailResult = function (sucesso, mensagem) {
     if (statusPeriodo) statusPeriodo.textContent = mensagem;
 
     if (sucesso) {
-        alert("E-mail enviado com sucesso!");
+        mostrarAviso("E-mail enviado com sucesso!");
         modalEmailPeriodo?.hide();
         // se tiver modal do dia:
         // modalEmailDia?.hide();
     } else {
-        alert("Erro: " + mensagem);
+        mostrarAviso("Erro: " + mensagem);
     }
 };
 
@@ -1189,12 +1189,12 @@ function ellipsis(ctx, text, maxWidth) {
  */
 function compartilharListaWhatsApp(lista, formatoFallback) {
     if (!lista || lista.length === 0) {
-        alert("Nada para compartilhar.");
+        mostrarAviso("Nada para compartilhar.");
         return;
     }
 
     if (typeof Android === "undefined") {
-        alert("Disponível apenas no app Android.");
+        mostrarAviso("Disponível apenas no app Android.");
         return;
     }
 
@@ -1214,9 +1214,9 @@ function compartilharListaWhatsApp(lista, formatoFallback) {
         const mime = usarHtml ? "text/html" : "text/csv";
 
         const r = Android.compartilharArquivoTexto(nome, conteudo, mime);
-        if (r !== "ok") alert(r);
+        if (r !== "ok") mostrarAviso(r);
         else {
-            alert(
+            mostrarAviso(
                 `Há ${lista.length} registros (máx. ${LIMITES.maxItensImagem} na imagem). ` +
                 `Compartilhando arquivo ${usarHtml ? "HTML" : "CSV"}.`
             );
@@ -1233,7 +1233,7 @@ function compartilharListaWhatsApp(lista, formatoFallback) {
         : `resumo_divergencias_${Date.now()}.png`;
 
     const r = Android.compartilharImagemBase64(dataUrl, nome);
-    if (r !== "ok") alert(r);
+    if (r !== "ok") mostrarAviso(r);
 }
 
 /* =========================================================
