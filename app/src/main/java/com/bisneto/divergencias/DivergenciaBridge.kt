@@ -30,6 +30,11 @@ class DivergenciaBridge(
     private val sender = GmailSmtpSender()
     private val scope = CoroutineScope(Dispatchers.Main)
 
+    @JavascriptInterface
+    fun isNative(): Boolean {
+        return true
+    }
+
     /* =========================================================
      * GET INFO
      * ========================================================= */

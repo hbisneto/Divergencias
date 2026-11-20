@@ -86,7 +86,7 @@ document.getElementById("btnSalvar").addEventListener("click", () => {
 });
 
 document.getElementById("btnResetar").addEventListener("click", () => {
-    if (confirm("Restaurar todas as configurações para o padrão?")) {
+    if (solicitarConfirmacaoGlobal("Restaurar todas as configurações para o padrão?")) {
         // Restaura interface
         salvarConfig(DEFAULT_CONFIG);
         aplicarNoFormulario(DEFAULT_CONFIG);
@@ -201,7 +201,7 @@ function salvarLembreteDoFormulario() {
         .join(",");
 
     if (ativo && !diasMarcados) {
-        alert("Marque pelo menos um dia da semana.");
+        mostrarAviso("Marque pelo menos um dia da semana.");
         return false;
     }
 
@@ -214,13 +214,13 @@ function salvarLembreteDoFormulario() {
         const resultado = Android.salvarLembrete(ativo, h || 18, m || 0, diasMarcados || "1,2,3,4,5");
         const json = JSON.parse(resultado || "{}");
         if (!json.ok) {
-            alert("Erro ao salvar lembrete: " + (json.erro || "desconhecido"));
+            mostrarAviso("Erro ao salvar lembrete: " + (json.erro || "desconhecido"));
             return false;
         }
         return true;
     } catch (e) {
         console.error(e);
-        alert("Erro ao comunicar com o aplicativo nativo.");
+        mostrarAviso("Erro ao comunicar com o aplicativo nativo.");
         return false;
     }
 }

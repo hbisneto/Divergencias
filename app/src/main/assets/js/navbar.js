@@ -10,6 +10,11 @@
     // =========================================================
     const MENU_ITEMS = [
         {
+            href: "index.html",
+            title: "Home",
+            description: "Página inicial do app"
+        },
+        {
             href: "sobre.html",
             title: "Sobre o app",
             description: "Versão e informações"
@@ -25,7 +30,7 @@
             description: "Criar e compartilhar escalas"
         },
         {
-            href: "index.html",
+            href: "divergencias.html",
             title: "Divergências",
             description: "Registrar nova divergência"
         },
@@ -84,7 +89,7 @@
                             aria-controls="menuLateral" aria-label="Abrir menu">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <a class="navbar-brand fw-bold mx-auto" href="index.html">Divergências</a>
+                    <a class="navbar-brand fw-bold mx-auto" href="index.html">NEXO</a>
                     <div style="width: 40px;"></div>
                 </div>
             </nav>
