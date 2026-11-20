@@ -89,7 +89,7 @@ function renderizarHistorico(divergencias) {
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
                     <div>
                         <div class="text-muted small">Divergência</div>
-                        <div class="fs-4 fw-bold text-danger">
+                        <div class="valor-divergencia">
                             ${centavosParaMoeda(item.divergencia)}
                         </div>
                         <div class="text-muted small mt-1">
@@ -126,7 +126,7 @@ function abrirDetalhes(id) {
     conteudoDetalhes.innerHTML = `
         <div class="mb-3">
             <div class="text-muted small">Valor da divergência</div>
-            <div class="fs-3 fw-bold text-danger">${centavosParaMoeda(item.divergencia)}</div>
+            <div class="valor-divergencia">${centavosParaMoeda(item.divergencia)}</div>
         </div>
         <hr>
         <div class="row g-3">

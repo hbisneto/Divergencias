@@ -10,10 +10,10 @@
     padding: 20px;
 }
 
-.valor-divergencia {
+/* .valor-divergencia {
     font-size: 32px;
     font-weight: 700;
-}
+} */
 
 .input-group-text{
     background-color: var(--accent);
