@@ -112,10 +112,10 @@
 
         /* ---- info de build ---- */
         getBuildDate: function () {
-            return "2026.11.17";
+            return "2026.11.20";
         },
         getBuildDateBr: function () {
-            return "17/11/2026";
+            return "20/11/2026";
         },
         getVersionName: function () {
             return "1.4.0-web";
